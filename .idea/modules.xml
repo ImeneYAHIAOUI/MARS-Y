@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gateway.iml" filepath="$PROJECT_DIR$/gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mission-commander.iml" filepath="$PROJECT_DIR$/mission-commander.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rocket-department.iml" filepath="$PROJECT_DIR$/rocket-department.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/soa-marsy-marsy-23-24-team-d.iml" filepath="$PROJECT_DIR$/.idea/soa-marsy-marsy-23-24-team-d.iml" />
+      <module fileurl="file://$PROJECT_DIR$/weather-department.iml" filepath="$PROJECT_DIR$/weather-department.iml" />
+    </modules>
+  </component>
+</project>
