@@ -2,9 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/gateway" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mission-commander" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/rocket-department" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/weather-department" vcs="Git" />
   </component>
 </project>
