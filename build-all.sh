@@ -9,11 +9,7 @@ function compile_dir()  # $1 is the dir to get it
 
 echo "** Compiling all"
 
-compile_dir "menu-service"
-
-compile_dir "dining-service"
-
-compile_dir "kitchen-service"
+compile_dir "marsy-rocket"
 
 compile_dir "gateway"
 

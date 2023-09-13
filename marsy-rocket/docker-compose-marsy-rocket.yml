@@ -1,0 +1,13 @@
+version: "1"
+
+services:
+  marsy-rocket-service:
+    image: "nestjs-marsy/marsy-rocket"
+    restart: always
+    ports:
+      - 3001:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

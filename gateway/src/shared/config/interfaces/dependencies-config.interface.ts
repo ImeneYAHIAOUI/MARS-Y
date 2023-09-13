@@ -1,5 +1,3 @@
 export interface DependenciesConfig {
-  menu_service_url_with_port: string;
-  kitchen_service_url_with_port: string;
-  dining_service_url_with_port: string;
+  _marsy_rocket_service_url_with_port: string;
 }
