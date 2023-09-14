@@ -1,0 +1,26 @@
+name: Production
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+  workflow_call:
+
+jobs:
+  integration:
+    name: Microserices integration tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2 
+
+      - name: "running integration tests"
+        shell: bash
+        run: |
+          ./run-local-integrationtest.sh
