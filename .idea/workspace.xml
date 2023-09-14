@@ -5,251 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/monitoring/monitoring.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.docker" beforeDir="false" afterPath="$PROJECT_DIR$/.env.docker" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/build-all.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.env.docker" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.env.production" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.eslintrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.eslintrc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.nvmrc" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.nvmrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/.prettierrc" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.prettierrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/build.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/docker-compose-dining-alone.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/docker-compose-dining.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/nest-cli.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/nest-cli.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/app.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/health/health.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/health/health.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/dependencies.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/interfaces/app-config.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/interfaces/app-config.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/interfaces/dependencies-config.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/interfaces/dependencies-config.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/interfaces/mongodb-config.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/interfaces/mongodb-config.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/interfaces/swaggerui-config.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/interfaces/swaggerui-config.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/mongodb.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/config/swaggerui.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/swaggerui.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/dto/error.dto.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/dto/error.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/services/mongoose-config.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/services/startup-logic.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/shared/services/startup-logic.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/controllers/table-orders.controller.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/controllers/table-orders.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/dto/add-menu-item.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/dto/item-to-be-cooked.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/dto/preparation.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/dto/prepared-item.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/dto/start-ordering.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/exceptions/add-menu-item-dto-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/exceptions/table-order-already-billed.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/exceptions/table-order-id-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/interfaces/ordering-lines-with-preparations.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/params/get-table-order.params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/schemas/menu-item.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/schemas/ordering-item.schema.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/schemas/ordering-item.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/schemas/ordering-line.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/schemas/table-order.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/services/kitchen-proxy.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/services/kitchen-proxy.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/services/menu-proxy.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/services/menu-proxy.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/services/table-orders.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/services/table-orders.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/table-orders/table-orders.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables-with-order/dto/table-with-order.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables-with-order/exceptions/table-order-table-number-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables-with-order/services/tables-with-order.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables-with-order/services/tables-with-order.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables-with-order/tables-with-order.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/controllers/tables.controller.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/controllers/tables.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/dto/add-table.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/exceptions/table-already-exists.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/exceptions/table-already-free.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/exceptions/table-already-taken.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/exceptions/table-number-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/params/get-table.params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/schemas/table.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/services/tables.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/services/tables.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/src/tables/tables.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/start.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/stop.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/test/jest-e2e.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/test/jest-e2e.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/test/tableOrders.e2e-spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/test/tables.e2e-spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/tsconfig.build.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/tsconfig.build.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dining-service/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/follow-logs.sh" beforeDir="false" afterPath="$PROJECT_DIR$/follow-logs.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/.env" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/.env.docker" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/.env.docker" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/build.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/docker-compose-gateway-alone.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/docker-compose-gateway.yml" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/docker-compose-gateway.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rocket/schemas/rocket.schema.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rocket/services/rocket.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/app.module.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/health/health.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/health/health.module.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gateway/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/shared/config/dependencies.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/shared/config/dependencies.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gateway/src/shared/config/interfaces/dependencies-config.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/shared/config/interfaces/dependencies-config.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/.env.gateway" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/jest.config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/config/config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/dto/add-menu-item.dto.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/dto/start-ordering.dto.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/tests/dining-service.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/tests/menu-service.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/tests/restaurant.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/menu-item.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/preparation-lite.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/preparation-without-recipes.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/preparation.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/prepared-item-lite.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/prepared-item-without-recipes.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/prepared-item.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/recipe.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/table-order.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration-tests/src/validators/table.validator.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.env" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.env.docker" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.env.docker" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.env.production" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.eslintrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.nvmrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/.prettierrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/build.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/docker-compose-kitchen-alone.yml" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/docker-compose-marsy-rocket.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/docker-compose-kitchen.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/nest-cli.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/app.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/health/health.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/health/health.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/kitchenFacade/exceptions/recipe-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/kitchenFacade/kitchen-facade.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/kitchenFacade/services/kitchen-facade.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/kitchenFacade/services/kitchen-facade.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/controllers/preparations.controller.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/controllers/preparations.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/monitoring/controllers/monitoring.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/dto/item-to-be-cooked.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/dto/preparation-request.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/dto/preparation.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/dto/prepared-item.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/empty-items-to-be-cooked-sent-in-kitchen.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/items-to-be-cooked-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/preparation-already-taken-from-kitchen.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/preparation-id-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/preparation-not-ready-in-kitchen.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/table-number-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/exceptions/wrong-query-parameter.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/params/preparation-id.params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/params/state-table-number.query-params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/preparations.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/schemas/preparation-state-enum.schema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/monitoring/schemas/rocket-status-enum.schema.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/schemas/preparation.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/schemas/table.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/services/dining-proxy.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/services/dining-proxy.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/services/preparations.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparations/services/preparations.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/controllers/prepared-items.controller.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/controllers/prepared-items.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/exceptions/item-already-finished-to-be-cooked.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/exceptions/item-already-started-to-be-cooked.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/exceptions/item-not-started-to-be-cooked.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/exceptions/prepared-item-id-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/params/post.query-params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/params/prepared-item-id.params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/prepared-items.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/schemas/prepared-item.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/services/prepared-items.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/preparedItems/services/prepared-items.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/app.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/dependencies.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/interfaces/app-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/interfaces/dependencies-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/interfaces/mongodb-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/interfaces/swaggerui-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/mongodb.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/config/swaggerui.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/dto/error.dto.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/dto/error.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/interfaces/recipe-with-item-to-be-cooked.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/schemas/post-enum.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/schemas/recipe.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/services/mongoose-config.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/services/startup-logic.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/src/shared/services/startup-logic.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/start.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/stop.sh" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/stop.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/test/jest-e2e.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/test/preparations.e2e-spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/test/prepared-items.e2e-spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/tsconfig.build.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kitchen-service/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.env.docker" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.env.production" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.eslintrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.nvmrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/.prettierrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/build.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/docker-compose-menu.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/nest-cli.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/app.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/health/health.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/health/health.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/controllers/menus.controller.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/controllers/menus.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/dto/add-menu-item.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/exceptions/menu-item-id-not-found.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/exceptions/menu-item-short-name-already-exists.exception.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/menus.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/params/get-menu-item.params.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/schemas/category-enum.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/schemas/menu-item.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/services/menus.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/menus/services/menus.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/config/app.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/config/interfaces/app-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/config/interfaces/mongodb-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/config/interfaces/swaggerui-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/config/mongodb.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/config/swaggerui.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/dto/error.dto.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/dto/error.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/services/mongoose-config.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/services/startup-logic.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/src/shared/services/startup-logic.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/start.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/stop.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/test/jest-e2e.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/test/menus.e2e-spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/tsconfig.build.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu-service/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/start-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/start-all.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stop-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/stop-all.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/app.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/monitoring/controllers/monitoring.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rocket/controllers/rocket.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/monitoring/monitoring.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rocket/rocket.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/monitoring/schemas/rocket-status-enum.schema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rocket/schemas/rocket-status-enum.schema.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/monitoring/services/monitoring.service.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -300,6 +67,10 @@
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\test" />
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\monitoring" />
+      <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\shared" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -309,7 +80,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1694600026402</updated>
-      <workItem from="1694600027394" duration="21507000" />
+      <workItem from="1694600027394" duration="32731000" />
     </task>
     <servers />
   </component>

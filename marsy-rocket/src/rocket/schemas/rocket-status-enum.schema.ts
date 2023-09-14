@@ -1,5 +1,5 @@
-export enum RocketStatusEnum {
-  READY_FOR_LAUNCH = 'readyToBeServed',
+export enum RocketStatus {
+  READY_FOR_LAUNCH = 'readyForLaunch',
   FUELING = 'fueling',
   LOADING_PAYLOAD = 'loadingPayload',
   PRELAUNCH_CHECKS = 'prelaunchChecks',

@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from './shared/config/app.config';
 import swaggeruiConfig from './shared/config/swaggerui.config';
 
-import { MonitoringModule } from './monitoring/monitoring.module';
+import { RocketModule } from './rocket/rocket.module';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
       isGlobal: true,
       load: [appConfig, swaggeruiConfig],
     }),
-    MonitoringModule,
+    RocketModule,
   ],
 })
 export class AppModule {}
