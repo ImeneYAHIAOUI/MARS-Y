@@ -28,4 +28,5 @@ jobs:
       - name: "running integration tests"
         shell: bash
         run: |
+          npm i -g jest
           ./run-local-integrationtest.sh
