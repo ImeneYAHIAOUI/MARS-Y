@@ -20,6 +20,11 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v2 
 
+      - name: "building services"
+        shell: bash
+        run: |
+          ./build-all.sh
+
       - name: "running integration tests"
         shell: bash
         run: |
