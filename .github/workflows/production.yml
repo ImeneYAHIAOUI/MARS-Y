@@ -25,8 +25,15 @@ jobs:
         run: |
           ./build-all.sh
 
+      - name: "installing dependencies"
+        shell: bash
+        run: |
+          cd integration-tests
+          npm install
+
       - name: "running integration tests"
         shell: bash
         run: |
+          cd ..
           npm i -g jest
           ./run-local-integrationtest.sh
