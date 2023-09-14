@@ -36,5 +36,6 @@ jobs:
         run: |
           cd ..
           pwd | cat
+          ls | cat
           npm i -g jest
           ./run-local-integrationtest.sh
