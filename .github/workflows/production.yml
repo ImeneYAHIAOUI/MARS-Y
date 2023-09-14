@@ -34,7 +34,6 @@ jobs:
       - name: "running integration tests"
         shell: bash
         run: |
-          cd ..
           pwd | cat
           ls | cat
           npm i -g jest
