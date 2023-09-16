@@ -30,14 +30,9 @@ jobs:
       - name: "debug : service name"
         run: echo "$SERVICE_NAME"
 
-      - name: "cd to service dir"
-        shell: bash
-        run: cd $SERVICE_NAME
-
       - name: "install dependencies"
-        run: | 
-          echo "directory => $(pwd)"
-          echo "files => $(ls)"
+        run: |
+          cd $SERVICE_NAME
           npm i
 
       - name: Run MongoDB Container
@@ -65,14 +60,9 @@ jobs:
       - name: "debug : service name"
         run: echo "$SERVICE_NAME"
 
-      - name: "cd to service dir"
-        shell: bash
-        run: cd $SERVICE_NAME
-
       - name: "install dependencies"
         run: | 
-          echo "directory => $(pwd)"
-          echo "files => $(ls)"
+          cd $SERVICE_NAME
           npm i
 
       - name: "🔍 lint code"
