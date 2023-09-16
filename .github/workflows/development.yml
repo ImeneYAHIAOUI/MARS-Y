@@ -35,11 +35,13 @@ jobs:
           cd $SERVICE_NAME
           npm i
 
-      - name: Run MongoDB Container
+      - name: "Run MongoDB Container"
         run: docker run -d --name mongodb-container -p 27017:27017 mongo
 
       - name: "Run E2E Tests"
-        run: npm run test:e2e
+        run: |
+          cd $SERVICE_NAME
+          npm run test:e2e
 
   lint:
     name: Code standards9
@@ -66,5 +68,7 @@ jobs:
           npm i
 
       - name: "🔍 lint code"
-        run: npm run lint --if-present
+        run: |
+          cd $SERVICE_NAME
+          npm run lint --if-present
         
