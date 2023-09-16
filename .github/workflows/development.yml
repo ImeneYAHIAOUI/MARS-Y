@@ -28,16 +28,11 @@ jobs:
         run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
 
       - name: "debug : service name"
-        run: echo "$($SERVICE_NAME)"
+        run: echo "$SERVICE_NAME"
 
       - name: "cd to service dir"
         shell: bash
         run: cd $SERVICE_NAME
-
-      - name: "setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16.16.0
 
       - name: "install npm@latest"
         run: npm i
@@ -65,16 +60,11 @@ jobs:
         run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
 
       - name: "debug : service name"
-        run: echo "$($SERVICE_NAME)"
+        run: echo "$SERVICE_NAME"
 
       - name: "cd to service dir"
         shell: bash
         run: cd $SERVICE_NAME
-
-      - name: "setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16.16.0
 
       - name: "install npm@latest"
         run: npm i
