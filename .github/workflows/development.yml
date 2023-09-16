@@ -34,8 +34,11 @@ jobs:
         shell: bash
         run: cd $SERVICE_NAME
 
-      - name: "install npm@latest"
-        run: npm i
+      - name: "install dependencies"
+        run: | 
+          echo "directory => $(pwd)"
+          echo "files => $(ls)"
+          npm i
 
       - name: Run MongoDB Container
         run: docker run -d --name mongodb-container -p 27017:27017 mongo
@@ -66,8 +69,11 @@ jobs:
         shell: bash
         run: cd $SERVICE_NAME
 
-      - name: "install npm@latest"
-        run: npm i
+      - name: "install dependencies"
+        run: | 
+          echo "directory => $(pwd)"
+          echo "files => $(ls)"
+          npm i
 
       - name: "🔍 lint code"
         run: npm run lint --if-present
