@@ -25,7 +25,7 @@ jobs:
         run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
 
       - name: "get sevice name"
-        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2)" >> $GITHUB_ENV
+        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
 
       - name: "debug : service name"
         run: echo "$($SERVICE_NAME)"
@@ -62,7 +62,7 @@ jobs:
         run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
 
       - name: "get sevice name"
-        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2)" >> $GITHUB_ENV
+        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
 
       - name: "debug : service name"
         run: echo "$($SERVICE_NAME)"
