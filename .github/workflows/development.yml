@@ -25,28 +25,23 @@ jobs:
         run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
 
       - name: "get sevice name"
-        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2)" >> $GITHUB_ENV
+        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
 
       - name: "debug : service name"
-        run: echo "$($SERVICE_NAME)"
+        run: echo "$SERVICE_NAME"
 
-      - name: "cd to service dir"
-        shell: bash
-        run: cd $SERVICE_NAME
+      - name: "install dependencies"
+        run: |
+          cd $SERVICE_NAME
+          npm i
 
-      - name: "setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16.16.0
-
-      - name: "install npm@latest"
-        run: npm i
-
-      - name: Run MongoDB Container
+      - name: "Run MongoDB Container"
         run: docker run -d --name mongodb-container -p 27017:27017 mongo
 
       - name: "Run E2E Tests"
-        run: npm run test:e2e
+        run: |
+          cd $SERVICE_NAME
+          npm run test:e2e
 
   lint:
     name: Code standards9
@@ -62,23 +57,18 @@ jobs:
         run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
 
       - name: "get sevice name"
-        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2)" >> $GITHUB_ENV
+        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
 
       - name: "debug : service name"
-        run: echo "$($SERVICE_NAME)"
+        run: echo "$SERVICE_NAME"
 
-      - name: "cd to service dir"
-        shell: bash
-        run: cd $SERVICE_NAME
-
-      - name: "setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16.16.0
-
-      - name: "install npm@latest"
-        run: npm i
+      - name: "install dependencies"
+        run: | 
+          cd $SERVICE_NAME
+          npm i
 
       - name: "🔍 lint code"
-        run: npm run lint --if-present
+        run: |
+          cd $SERVICE_NAME
+          npm run lint --if-present
         
