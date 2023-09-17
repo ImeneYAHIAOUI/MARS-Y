@@ -14,7 +14,7 @@ export class GoPollService {
     const _rocketStatus = await this.marsyRocketProxyService.retrieveRocketStatus(_rocketId);
     const _weatherStatus = await this.marsyWeatherProxyService.retrieveWeatherStatus();
 
-    return (_rocketStatus === "Ready" && _weatherStatus === "Good") ;
+    return (_rocketStatus === "Ready" && _weatherStatus === "Sunny") ;
   }
 
 }

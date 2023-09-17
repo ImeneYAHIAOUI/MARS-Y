@@ -20,7 +20,7 @@ export class MarsyRocketProxyService {
 
     async retrieveRocketStatus(_rocketId : string) : Promise<string> {
         if (this._rocketStatus === null) {
-            const response: AxiosResponse<string> = await firstValueFrom(this.httpService.get<string>(`${this._baseUrl}${this._rocketsPath}`));
+            const response: AxiosResponse<string> = await firstValueFrom(this.httpService.get<string>(`${this._baseUrl}${this._rocketsPath}/${_rocketId}/status`));
             this._rocketStatus = response.data;
         }
         return this._rocketStatus;

@@ -5,7 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
-
+import { WeatherStatusDto } from '../../dto/weather.status.dto'; // Import the WeatherStatusDto
 
 describe('MarsyWeatherProxyService', () => {
   let service: MarsyWeatherProxyService;
@@ -16,20 +16,18 @@ describe('MarsyWeatherProxyService', () => {
   let getRetrieveWeatherStatusAxiosResponse: Function;
 
   beforeEach(async () => {
-    
     mockDependenciesConfig = {
       marsy_weather_url_with_port: 'marsy_weather_url:port', 
       marsy_rocket_url_with_port: 'marsy_rocket_url:port',
     };
 
     getRetrieveWeatherStatusAxiosResponse = (data) => ({
-      data,
+      data: { status: data }, // Wrap the data in the WeatherStatusDto
       headers: {},
       config: { url: `http://${mockDependenciesConfig.marsy_weather_url_with_port}/weather` },
       status: 200,
       statusText: 'OK',
     });
-
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -52,7 +50,6 @@ describe('MarsyWeatherProxyService', () => {
     service = module.get<MarsyWeatherProxyService>(MarsyWeatherProxyService);
     configService = module.get<ConfigService>(ConfigService);
     httpService = module.get<HttpService>(HttpService);
-
   });
 
   it('should be defined', () => {
@@ -71,5 +68,4 @@ describe('MarsyWeatherProxyService', () => {
       );
     });
   });
-
 });

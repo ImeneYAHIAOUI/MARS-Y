@@ -39,7 +39,7 @@ describe('GoPollService', () => {
   it('should return true when both rocket and weather are ready', async () => {
     // Mock the responses of the dependencies
     (marsyRocketProxyService.retrieveRocketStatus as jest.Mock).mockResolvedValue('Ready');
-    (marsyWeatherProxyService.retrieveWeatherStatus as jest.Mock).mockResolvedValue('Good');
+    (marsyWeatherProxyService.retrieveWeatherStatus as jest.Mock).mockResolvedValue('Sunny');
 
     const result = await service.goOrNoGoPoll('rocket1');
 

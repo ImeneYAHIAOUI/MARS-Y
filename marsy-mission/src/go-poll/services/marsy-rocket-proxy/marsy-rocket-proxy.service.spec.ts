@@ -23,7 +23,7 @@ describe('MarsyRocketProxyService', () => {
     getRetrieveRocketStatusAxiosResponse = (data) => ({
       data,
       headers: {},
-      config: { url: `http://${mockDependenciesConfig.marsy_rocket_url_with_port}/rockets` },
+      config: { url: `http://${mockDependenciesConfig.marsy_rocket_url_with_port}/rockets/rocket1/status` },
       status: 200,
       statusText: 'OK',
     });
@@ -63,7 +63,7 @@ describe('MarsyRocketProxyService', () => {
       const rocketStatus = await service.retrieveRocketStatus('rocket1');
       expect(rocketStatus).toBe('ready');
       expect(httpService.get).toHaveBeenCalledWith(
-        `http://${mockDependenciesConfig.marsy_rocket_url_with_port}/rockets`
+        `http://${mockDependenciesConfig.marsy_rocket_url_with_port}/rockets/rocket1/status`
       );
     });
   });

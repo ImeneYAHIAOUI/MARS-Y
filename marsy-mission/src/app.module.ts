@@ -1,11 +1,20 @@
 import { Module } from '@nestjs/common';
-import { GoPollController } from './go-poll/controllers/go-poll.controller';
-import { GoPollService } from './go-poll/services/go-poll.service';
-import { MarsyWeatherProxyService } from './go-poll/services/marsy-weather-proxy/marsy-weather-proxy.service';
+import { ConfigModule } from '@nestjs/config';
+import appConfig from './shared/config/app.config';
+import swaggeruiConfig from './shared/config/swaggerui.config';
+import dependenciesConfig from './shared/config/dependencies.config';
+import { GoPollModule } from './go-poll/go-poll.module';
+
 
 @Module({
-  imports: [],
-  controllers: [GoPollController],
-  providers: [GoPollService, MarsyWeatherProxyService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig, swaggeruiConfig, dependenciesConfig],
+    }),
+    GoPollModule
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
