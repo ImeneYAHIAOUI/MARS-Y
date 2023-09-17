@@ -1,0 +1,74 @@
+name: Development
+
+on:
+  pull_request:
+    branches:
+      - 'dev'
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+jobs:
+  test:
+    name: E2E Service Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: "checkout repository"
+        uses: actions/checkout@v2
+
+      - name: "get branch name (pull request)"
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: "get sevice name"
+        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
+
+      - name: "debug : service name"
+        run: echo "$SERVICE_NAME"
+
+      - name: "install dependencies"
+        run: |
+          cd $SERVICE_NAME
+          npm i
+
+      - name: "Run MongoDB Container"
+        run: docker run -d --name mongodb-container -p 27017:27017 mongo
+
+      - name: "Run E2E Tests"
+        run: |
+          cd $SERVICE_NAME
+          npm run test:e2e
+
+  lint:
+    name: Code standards9
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: "checkout repository"
+        uses: actions/checkout@v2
+
+      - name: "get branch name (pull request)"
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: "get sevice name"
+        run: echo "SERVICE_NAME=$(echo ${{ env.BRANCH_NAME }} | cut -d'-' -f2-3)" >> $GITHUB_ENV
+
+      - name: "debug : service name"
+        run: echo "$SERVICE_NAME"
+
+      - name: "install dependencies"
+        run: | 
+          cd $SERVICE_NAME
+          npm i
+
+      - name: "🔍 lint code"
+        run: |
+          cd $SERVICE_NAME
+          npm run lint --if-present
+        

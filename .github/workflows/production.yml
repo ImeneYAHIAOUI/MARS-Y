@@ -28,12 +28,13 @@ jobs:
       - name: "installing dependencies"
         shell: bash
         run: |
-          cd integration-tests
+          cd ./integration-tests
           npm install
 
       - name: "running integration tests"
         shell: bash
         run: |
-          cd ..
+          pwd | cat
+          ls | cat
           npm i -g jest
           ./run-local-integrationtest.sh
