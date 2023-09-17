@@ -1,7 +1,7 @@
 version: "1"
 
 services:
-  marsy-mission:
+  marsy-mission-service:
     image: "nestjs-marsy/marsy-mission"
     restart: always
     ports:
