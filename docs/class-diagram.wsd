@@ -1,0 +1,46 @@
+@startuml
+left to right direction
+
+enum RocketStatus {
+    READY
+    NOT_READY
+    LAUNCHED
+}
+
+class Rocket {
+    String id
+    String name
+    Integer fuel
+    RocketStatus status
+}
+
+class Payload {
+    String id 
+    String content
+} 
+
+class Mission {
+    String id 
+    String name
+}
+
+class Site {
+    String id
+    String name
+    Long latitude
+    Long longitude
+    Long altitude
+}
+
+class Client {
+    String id 
+    String name 
+}
+
+Rocket ..|> RocketStatus : use
+Rocket "1"--"1" Payload
+Payload "n"--"1" Client
+Mission "n"--"1" Site
+Mission "n"--"1..n" Rocket
+
+@enduml
