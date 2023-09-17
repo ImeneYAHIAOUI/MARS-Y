@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +57,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-rocket/node_modules/jest",
+    "nodejs.jest.jest_package": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-weather/node_modules/jest",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
@@ -190,7 +190,7 @@
       <updated>1694600026402</updated>
       <workItem from="1694600027394" duration="32839000" />
       <workItem from="1694801106112" duration="33000" />
-      <workItem from="1694801306951" duration="53145000" />
+      <workItem from="1694801306951" duration="53333000" />
     </task>
     <servers />
   </component>

@@ -58,7 +58,7 @@ describe('RocketController (e2e)', () => {
 
   it('/rockets (GET)', () => {
     return request(app.getHttpServer())
-      .get('/tables')
+      .get('/rockets')
       .expect(200)
       .expect(rocketService.findAll());
   });
