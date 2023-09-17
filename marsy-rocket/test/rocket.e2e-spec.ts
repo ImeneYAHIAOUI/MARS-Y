@@ -31,7 +31,7 @@ describe('RocketController (e2e)', () => {
   ];
   const rocketService = {
     findAll: () => mockRocket,
-    findByName: () => mockRocket[0],
+    findRocketByName: () => mockRocket[0],
     create: () => ({
       name: 'Rocket4',
     }),
@@ -74,7 +74,7 @@ describe('RocketController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/rockets/mockRocket1')
       .expect(200)
-      .expect(rocketService.findByName());
+      .expect(rocketService.findRocketByName());
   });
 
   it('/rockets (POST) without status', () => {
