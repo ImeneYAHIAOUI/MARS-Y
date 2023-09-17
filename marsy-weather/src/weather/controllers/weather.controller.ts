@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { WeatherStatus } from '../schemas/weather-status.enum';
 
-@Controller('weather')
+@Controller('/status')
 export class WeatherController {
   @Get()
   getWeatherStatus(): { status: WeatherStatus } {
