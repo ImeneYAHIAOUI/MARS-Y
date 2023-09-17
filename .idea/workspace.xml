@@ -5,7 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/follow-logs.sh" beforeDir="false" afterPath="$PROJECT_DIR$/follow-logs.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-weather/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-weather/docker-compose-marsy-weather.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/start-all.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stop-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/stop-all.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,12 +61,12 @@
     "WebServerToolWindowFactoryState": "true",
     "ignore.virus.scanning.warn.message": "true",
     "jdk.selected.JAVA_MODULE": "openjdk-19",
-    "last_opened_file_path": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/gateway",
+    "last_opened_file_path": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-weather",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-weather/node_modules/jest",
+    "nodejs.jest.jest_package": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-rocket/node_modules/jest",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
@@ -69,11 +78,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\yimen\Documents\soa-marsy-marsy-23-24-team-d\marsy-weather" />
       <recent name="C:\Users\yimen\Documents\soa-marsy-marsy-23-24-team-d\gateway" />
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\monitoring" />
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src" />
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket" />
-      <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\test" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\yimen\Documents\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\rockets" />
@@ -81,25 +90,13 @@
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\shared" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.WeatherController (e2e)">
+  <component name="RunManager" selected="Jest.RocketController (e2e)">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="ALL" />
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketController (e2e) (1)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/test/rocket-e2e.spec.ts" />
-      <test-names>
-        <test-name value="RocketController (e2e)" />
-      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="RocketController (e2e)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
@@ -126,7 +123,34 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="RocketService.findByName" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="RocketService.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+        <test-name value="create" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketService.create.should insert a new rocket" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+        <test-name value="create" />
+        <test-name value="should insert a new rocket" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketService.findByName.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/marsy-rocket" />
@@ -136,18 +160,7 @@
       <test-names>
         <test-name value="RocketService" />
         <test-name value="findByName" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="WeatherController (e2e)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-weather/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-weather" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-weather/test/get-weather.e2e-spec.ts" />
-      <test-names>
-        <test-name value="WeatherController (e2e)" />
+        <test-name value="create" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -164,19 +177,19 @@
     <list>
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.RocketController (e2e)" />
-      <item itemvalue="Jest.RocketController (e2e) (1)" />
       <item itemvalue="Jest.RocketService" />
-      <item itemvalue="Jest.RocketService.findByName" />
-      <item itemvalue="Jest.WeatherController (e2e)" />
+      <item itemvalue="Jest.RocketService.create" />
+      <item itemvalue="Jest.RocketService.create.should insert a new rocket" />
+      <item itemvalue="Jest.RocketService.findByName.create" />
       <item itemvalue="npm.marsy-rocket" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Jest.WeatherController (e2e)" />
         <item itemvalue="Jest.RocketController (e2e)" />
-        <item itemvalue="Jest.RocketController (e2e) (1)" />
         <item itemvalue="Jest.RocketService" />
-        <item itemvalue="Jest.RocketService.findByName" />
+        <item itemvalue="Jest.RocketService.create" />
+        <item itemvalue="Jest.RocketService.create.should insert a new rocket" />
+        <item itemvalue="Jest.RocketService.findByName.create" />
       </list>
     </recent_temporary>
   </component>
@@ -190,7 +203,7 @@
       <updated>1694600026402</updated>
       <workItem from="1694600027394" duration="32839000" />
       <workItem from="1694801106112" duration="33000" />
-      <workItem from="1694801306951" duration="53333000" />
+      <workItem from="1694801306951" duration="58916000" />
     </task>
     <servers />
   </component>
@@ -234,6 +247,12 @@
           <line>16</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts</url>
+          <line>20</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="23" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
