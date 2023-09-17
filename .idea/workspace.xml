@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/dto/send-status.dto.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/build.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +104,47 @@
       </test-names>
       <method v="2" />
     </configuration>
+    <configuration name="RocketService.findAll.should return all rockets" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+        <test-name value="findAll" />
+        <test-name value="should return all rockets" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketService.findByName" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+        <test-name value="findByName" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketService.findByName.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+        <test-name value="findByName" />
+        <test-name value="create" />
+      </test-names>
+      <method v="2" />
+    </configuration>
     <configuration name="RocketService.findByName.create.should insert a new rocket with specific status" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
@@ -117,48 +157,6 @@
         <test-name value="findByName" />
         <test-name value="create" />
         <test-name value="should insert a new rocket with specific status" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.findByName.create.should return RocketAlreadyExistsException if table already exists" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="create" />
-        <test-name value="should return RocketAlreadyExistsException if table already exists" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.findByName.getRocketStatus.should throw RocketNameNotFoundException when the rocket is not found" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="getRocketStatus" />
-        <test-name value="should throw RocketNameNotFoundException when the rocket is not found" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="StartupLogicService" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.spec.ts" />
-      <test-names>
-        <test-name value="StartupLogicService" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -175,19 +173,19 @@
     <list>
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.RocketService" />
+      <item itemvalue="Jest.RocketService.findAll.should return all rockets" />
+      <item itemvalue="Jest.RocketService.findByName" />
+      <item itemvalue="Jest.RocketService.findByName.create" />
       <item itemvalue="Jest.RocketService.findByName.create.should insert a new rocket with specific status" />
-      <item itemvalue="Jest.RocketService.findByName.create.should return RocketAlreadyExistsException if table already exists" />
-      <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw RocketNameNotFoundException when the rocket is not found" />
-      <item itemvalue="Jest.StartupLogicService" />
       <item itemvalue="npm.marsy-rocket" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Jest.RocketService" />
+        <item itemvalue="Jest.RocketService.findByName" />
+        <item itemvalue="Jest.RocketService.findAll.should return all rockets" />
+        <item itemvalue="Jest.RocketService.findByName.create" />
         <item itemvalue="Jest.RocketService.findByName.create.should insert a new rocket with specific status" />
-        <item itemvalue="Jest.StartupLogicService" />
-        <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw RocketNameNotFoundException when the rocket is not found" />
-        <item itemvalue="Jest.RocketService.findByName.create.should return RocketAlreadyExistsException if table already exists" />
       </list>
     </recent_temporary>
   </component>
@@ -201,7 +199,7 @@
       <updated>1694600026402</updated>
       <workItem from="1694600027394" duration="32839000" />
       <workItem from="1694801106112" duration="33000" />
-      <workItem from="1694801306951" duration="48880000" />
+      <workItem from="1694801306951" duration="50063000" />
     </task>
     <servers />
   </component>
@@ -239,24 +237,6 @@
           <line>14</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts</url>
-          <line>33</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts</url>
-          <line>38</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts</url>
-          <line>39</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
