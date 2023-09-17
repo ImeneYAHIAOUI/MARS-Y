@@ -92,9 +92,7 @@ describe('RocketController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/rockets/mockRocket1/status')
       .expect(200)
-      .expect(
-        SendStatusDto.SendStatusDtoFactory(rocketService.getRocketStatus()),
-      );
+      .expect({ status: 'fueling' });
   });
 
   it('/rockets (POST) with status', () => {
