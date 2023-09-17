@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +84,7 @@
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\shared" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.RocketController (e2e)">
+  <component name="RunManager" selected="Jest.RocketController.retrieveRocketStatus().updateRocketStatusById()">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
@@ -91,68 +93,72 @@
       <scope-kind value="ALL" />
       <method v="2" />
     </configuration>
-    <configuration name="RocketController (e2e)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="RocketController.retrieveRocketStatus()" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/marsy-rocket" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" />
       <test-names>
-        <test-name value="RocketController (e2e)" />
+        <test-name value="RocketController" />
+        <test-name value="retrieveRocketStatus()" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="RocketService" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="RocketController.retrieveRocketStatus().retrieveRocketStatusById()" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/marsy-rocket" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" />
       <test-names>
-        <test-name value="RocketService" />
+        <test-name value="RocketController" />
+        <test-name value="retrieveRocketStatus()" />
+        <test-name value="retrieveRocketStatusById()" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="RocketService.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="create" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.create.should insert a new rocket" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="RocketController.retrieveRocketStatus().should return the rocket status" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/marsy-rocket" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" />
       <test-names>
-        <test-name value="RocketService" />
-        <test-name value="create" />
-        <test-name value="should insert a new rocket" />
+        <test-name value="RocketController" />
+        <test-name value="retrieveRocketStatus()" />
+        <test-name value="should return the rocket status" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="RocketService.findByName.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="RocketController.retrieveRocketStatus().updateRocketStatusById()" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/marsy-rocket" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" />
       <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="create" />
+        <test-name value="RocketController" />
+        <test-name value="retrieveRocketStatus()" />
+        <test-name value="updateRocketStatusById()" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketController.retrieveRocketStatus().updateRocketStatus()" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.spec.ts" />
+      <test-names>
+        <test-name value="RocketController" />
+        <test-name value="retrieveRocketStatus()" />
+        <test-name value="updateRocketStatus()" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -168,20 +174,20 @@
     </configuration>
     <list>
       <item itemvalue="Jest.All Tests" />
-      <item itemvalue="Jest.RocketController (e2e)" />
-      <item itemvalue="Jest.RocketService" />
-      <item itemvalue="Jest.RocketService.create" />
-      <item itemvalue="Jest.RocketService.create.should insert a new rocket" />
-      <item itemvalue="Jest.RocketService.findByName.create" />
+      <item itemvalue="Jest.RocketController.retrieveRocketStatus()" />
+      <item itemvalue="Jest.RocketController.retrieveRocketStatus().retrieveRocketStatusById()" />
+      <item itemvalue="Jest.RocketController.retrieveRocketStatus().should return the rocket status" />
+      <item itemvalue="Jest.RocketController.retrieveRocketStatus().updateRocketStatus()" />
+      <item itemvalue="Jest.RocketController.retrieveRocketStatus().updateRocketStatusById()" />
       <item itemvalue="npm.marsy-rocket" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Jest.RocketController (e2e)" />
-        <item itemvalue="Jest.RocketService" />
-        <item itemvalue="Jest.RocketService.create" />
-        <item itemvalue="Jest.RocketService.create.should insert a new rocket" />
-        <item itemvalue="Jest.RocketService.findByName.create" />
+        <item itemvalue="Jest.RocketController.retrieveRocketStatus().updateRocketStatusById()" />
+        <item itemvalue="Jest.RocketController.retrieveRocketStatus().retrieveRocketStatusById()" />
+        <item itemvalue="Jest.RocketController.retrieveRocketStatus()" />
+        <item itemvalue="Jest.RocketController.retrieveRocketStatus().should return the rocket status" />
+        <item itemvalue="Jest.RocketController.retrieveRocketStatus().updateRocketStatus()" />
       </list>
     </recent_temporary>
   </component>
@@ -245,6 +251,36 @@
           <line>20</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts</url>
+          <line>35</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts</url>
+          <line>33</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts</url>
+          <line>130</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts</url>
+          <line>133</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts</url>
+          <line>135</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
