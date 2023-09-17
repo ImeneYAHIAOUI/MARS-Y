@@ -13,11 +13,12 @@ import { MongooseConfigService } from '../src/shared/services/mongoose-config.se
 import { RocketModule } from '../src/rockets/rocket.module';
 import { RocketService } from '../src/rockets/services/rocket.service';
 import { RocketStatus } from '../src/rockets/schemas/rocket-status-enum.schema';
+import { SendStatusDto } from '../src/rockets/dto/send-status.dto';
 
 describe('RocketController (e2e)', () => {
   let app: INestApplication;
 
-  const mockRocker = [
+  const mockRocket = [
     {
       name: 'mockRocket1',
     },
@@ -29,10 +30,15 @@ describe('RocketController (e2e)', () => {
     },
   ];
   const rocketService = {
-    findAll: () => mockRocker,
-    findByName: () => mockRocker[0],
+    findAll: () => mockRocket,
+    findByName: () => mockRocket[0],
     create: () => ({
       name: 'Rocket4',
+    }),
+    getRocketStatus: () => RocketStatus.FUELING,
+    updateStatus: () => ({
+      name: 'Rocket4',
+      status: RocketStatus.SUCCESSFUL_LAUNCH,
     }),
   };
 
@@ -82,6 +88,15 @@ describe('RocketController (e2e)', () => {
       .expect(rocketService.create());
   });
 
+  it('/rockets/$name/status (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets/mockRocket1/status')
+      .expect(200)
+      .expect(
+        SendStatusDto.SendStatusDtoFactory(rocketService.getRocketStatus()),
+      );
+  });
+
   it('/rockets (POST) with status', () => {
     return request(app.getHttpServer())
       .post('/rockets')
@@ -92,6 +107,17 @@ describe('RocketController (e2e)', () => {
       .set('Accept', 'application/json')
       .expect(201)
       .expect(rocketService.create());
+  });
+
+  it('/rockets/$name/status (PUT)', () => {
+    return request(app.getHttpServer())
+      .put('/rockets/mockRocket1/status')
+      .send({
+        status: RocketStatus.SUCCESSFUL_LAUNCH,
+      })
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect(rocketService.updateStatus());
   });
 
   afterAll(async () => {
