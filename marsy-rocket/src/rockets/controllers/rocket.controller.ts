@@ -14,7 +14,8 @@ import { RocketDto } from '../dto/rocket.dto';
 import { AddRocketDto } from '../dto/add-rocket.dto';
 import { RocketNameNotFoundException } from '../exceptions/rocket-name-not-found.exception';
 import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exists.exception';
-import {UpdateRocketStatusDto} from "../dto/update-rocket.dto";
+import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
+import { SendStatusDto } from '../dto/send-status.dto';
 
 @ApiTags('rockets')
 @Controller('/rockets')
@@ -41,13 +42,14 @@ export class RocketController {
     return this.rocketService.findRocketByName(rocketName);
   }
   @ApiParam({ name: 'rocketName' })
-  @ApiOkResponse({ type: String, description: 'The rockets status.' })
+  @ApiOkResponse({ type: SendStatusDto, description: 'The rockets status.' })
   @Get(':rocketName/status')
   async retrieveRocketStatus(
     @Param() params: { rocketName: string },
-  ): Promise<string> {
+  ): Promise<SendStatusDto> {
     const rocketName = params.rocketName; // Access the 'rocketId' property
-    return await this.rocketService.getRocketStatus(rocketName);
+    const status = await this.rocketService.getRocketStatus(rocketName);
+    return SendStatusDto.SendStatusDtoFactory(status);
   }
 
   @ApiBody({ type: AddRocketDto })
