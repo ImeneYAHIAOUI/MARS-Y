@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="" />
+    <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,7 +63,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "ts.external.directory.path": "C:\\Users\\yimen\\Documents\\soa-marsy-marsy-23-24-team-d\\marsy-rocket\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "C:\\Users\\yimen\\Documents\\soa-marsy-marsy-23-24-team-d\\gateway\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -195,7 +197,7 @@
       <updated>1694600026402</updated>
       <workItem from="1694600027394" duration="32839000" />
       <workItem from="1694801106112" duration="33000" />
-      <workItem from="1694801306951" duration="51435000" />
+      <workItem from="1694801306951" duration="52030000" />
     </task>
     <servers />
   </component>
