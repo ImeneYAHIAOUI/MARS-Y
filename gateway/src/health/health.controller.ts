@@ -22,7 +22,7 @@ export class HealthController {
     this._marsyRocketServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_rocket_service_url_with_port}/health`;
   }
 
-  /* async checkIsHealthy(name, url) {
+  async checkIsHealthy(name, url) {
     try {
       return await this.http.responseCheck(
         name,
@@ -44,5 +44,5 @@ export class HealthController {
           this._marsyRocketServiceHealthCheckUrl,
         ),
     ]);
-  }*/
+  }
 }

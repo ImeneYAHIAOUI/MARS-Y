@@ -9,4 +9,5 @@ export enum RocketStatus {
   FAILED_LAUNCH = 'faildeLaunch',
   RETURNING = 'returning',
   LANDED = 'landed',
+  UNKNOWN = 'unknown',
 }
