@@ -29,6 +29,16 @@ async function bootstrap() {
       },
     }),
   );
+  app.use(
+    '/weather',
+    createProxyMiddleware({
+      target: `http://${dependenciesConfig.marsy_weather_service_url_with_port}`,
+      changeOrigin: true,
+      pathRewrite: {
+        [`^/weather`]: '',
+      },
+    }),
+  );
 
   // Run the app
   const appPort = configService.get('app.port');

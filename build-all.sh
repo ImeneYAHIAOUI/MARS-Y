@@ -15,6 +15,7 @@ compile_dir "gateway"
 
 compile_dir "marsy-weather"
 
+compile_dir "gateway"
 
 echo "** Done all"
 
