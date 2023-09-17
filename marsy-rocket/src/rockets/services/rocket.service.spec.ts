@@ -23,12 +23,17 @@ describe('RocketService', () => {
   let model: Model<Rocket>;
 
   let addRocketDto: AddRocketDto;
+  let addRocketDto2: AddRocketDto;
   let mockRocket;
   let mockRocketList;
 
   beforeEach(async () => {
     addRocketDto = {
       name: 'new rocket',
+    };
+    addRocketDto2 = {
+      name: 'new rocket2',
+      status: RocketStatus.ABORTED,
     };
 
     mockRocket = {
@@ -139,6 +144,8 @@ describe('RocketService', () => {
         expect(rocketDtoFactorySpy).toHaveBeenCalledTimes(1);
         expect(newRocket).toEqual(mockRocket);
       });
+
+
       it('should return RocketAlreadyExistsException if table already exists', async () => {
         jest.spyOn(model, 'find').mockResolvedValueOnce([mockRocket]);
 

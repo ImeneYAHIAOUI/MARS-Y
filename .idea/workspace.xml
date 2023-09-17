@@ -5,39 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/gateway/docker-compose-gateway-alone.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/health/health.controller.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/health/health.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/dto/add-rocket.dto.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/dto/rocket.dto.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/dto/update-rocket.dto.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/exceptions/invalid-status.exception.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/exceptions/rocket-already-exists.exception.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/exceptions/rocket-name-not-found.exception.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/schemas/rocket.schema.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/config/mongodb.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/dto/error.dto.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/dto/error.dto.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/services/mongoose-config.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/.env" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/.env" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/.env.production" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/docker-compose-marsy-rocket.yml" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/docker-compose-marsy-rocket.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/app.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rocket/controllers/rocket.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/controllers/rocket.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rocket/rocket.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/rocket.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rocket/schemas/rocket-status-enum.schema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/schemas/rocket-status-enum.schema.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rocket/schemas/rocket.schema.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rocket/services/rocket.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/shared/config/interfaces/dependencies-config.interface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/start.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/start-all.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/shared/services/startup-logic.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +21,23 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IlluminatedCloudWorkspaceSettings">
+    <option name="projectWorkspaceSettings">
+      <ProjectWorkspaceSettings>
+        <option name="soqlQuerySettings">
+          <SoqlQuerySettings>
+            <option name="savedDocuments">
+              <list>
+                <SoqlQuerySavedDocument>
+                  <option name="name" value="SOQL Query 1" />
+                </SoqlQuerySavedDocument>
+              </list>
+            </option>
+          </SoqlQuerySettings>
+        </option>
+      </ProjectWorkspaceSettings>
+    </option>
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="fkwhq24c" />
@@ -96,13 +85,40 @@
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\shared" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.StartupLogicService">
+  <component name="RunManager" selected="Jest.RocketService">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketService" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketService.findByName.create.should insert a new rocket with specific status" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-names>
+        <test-name value="RocketService" />
+        <test-name value="findByName" />
+        <test-name value="create" />
+        <test-name value="should insert a new rocket with specific status" />
+      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="RocketService.findByName.create.should return RocketAlreadyExistsException if table already exists" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
@@ -117,36 +133,6 @@
         <test-name value="findByName" />
         <test-name value="create" />
         <test-name value="should return RocketAlreadyExistsException if table already exists" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.findByName.getRocketStatus.should throw BadRequestException when rocketName is not provided" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="getRocketStatus" />
-        <test-name value="should throw BadRequestException when rocketName is not provided" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.findByName.getRocketStatus.should throw InternalServerErrorException on other errors" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="getRocketStatus" />
-        <test-name value="should throw InternalServerErrorException on other errors" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -189,20 +175,20 @@
     </configuration>
     <list>
       <item itemvalue="Jest.All Tests" />
+      <item itemvalue="Jest.RocketService" />
+      <item itemvalue="Jest.RocketService.findByName.create.should insert a new rocket with specific status" />
       <item itemvalue="Jest.RocketService.findByName.create.should return RocketAlreadyExistsException if table already exists" />
-      <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw BadRequestException when rocketName is not provided" />
-      <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw InternalServerErrorException on other errors" />
       <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw RocketNameNotFoundException when the rocket is not found" />
       <item itemvalue="Jest.StartupLogicService" />
       <item itemvalue="npm.marsy-rocket" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.RocketService" />
+        <item itemvalue="Jest.RocketService.findByName.create.should insert a new rocket with specific status" />
         <item itemvalue="Jest.StartupLogicService" />
         <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw RocketNameNotFoundException when the rocket is not found" />
         <item itemvalue="Jest.RocketService.findByName.create.should return RocketAlreadyExistsException if table already exists" />
-        <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw InternalServerErrorException on other errors" />
-        <item itemvalue="Jest.RocketService.findByName.getRocketStatus.should throw BadRequestException when rocketName is not provided" />
       </list>
     </recent_temporary>
   </component>
@@ -216,7 +202,7 @@
       <updated>1694600026402</updated>
       <workItem from="1694600027394" duration="32839000" />
       <workItem from="1694801106112" duration="33000" />
-      <workItem from="1694801306951" duration="43418000" />
+      <workItem from="1694801306951" duration="47995000" />
     </task>
     <servers />
   </component>

@@ -67,25 +67,17 @@ export class RocketService {
   ): Promise<RocketDto> {
     const rocket = await this.findRocketByName(rocketName);
 
-    // Check if the newStatus is a valid enum value
-    if (!(newStatus in RocketStatus)) {
-      throw new BadRequestException('Invalid status value');
-    }
-
     // Check if the newStatus is a valid value from the RocketStatus enum
     if (!Object.values(RocketStatus).includes(newStatus)) {
       throw new InvalidStatusException(newStatus);
     }
 
-    // Update the rocket's status in the database
-    const updatedRocket = await this.rocketModel.findByIdAndUpdate(
-      rocket._id,
-      rocket,
-      {
-        status: newStatus,
-      },
-    );
+    rocket.status = newStatus;
 
-    return RocketDto.RocketDtoFactory(updatedRocket);
+    return RocketDto.RocketDtoFactory(
+      await this.rocketModel.findByIdAndUpdate(rocket._id, rocket, {
+        returnDocument: 'after',
+      }),
+    );
   }
 }

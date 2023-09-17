@@ -5,6 +5,7 @@ import { Connection } from 'mongoose';
 import { StartupLogicService } from './startup-logic.service';
 
 import { AddRocketDto } from '../../rockets/dto/add-rocket.dto';
+import { RocketStatus } from '../../rockets/schemas/rocket-status-enum.schema';
 
 describe('StartupLogicService', () => {
   let service: StartupLogicService;
@@ -46,7 +47,7 @@ describe('StartupLogicService', () => {
     expect(addRocket).toEqual(rocket);
   });
 
-  it('should add a new rocket', async () => {
+  it('should add a new rocket with default status', async () => {
     const mockName = 'mockrocket2';
 
     const mockRocket = {
@@ -58,6 +59,23 @@ describe('StartupLogicService', () => {
       .spyOn(connection.models.Rocket, 'create')
       .mockImplementationOnce(() => Promise.resolve(mockRocket));
     const newTable = await service.addRocket(mockName);
+    expect(newTable).toEqual(mockRocket);
+  });
+
+  it('should add a new rocket with specified status', async () => {
+    const mockName = 'mockrocket3';
+    const status = RocketStatus.READY_FOR_LAUNCH;
+
+    const mockRocket = {
+      rocket: mockName,
+      status,
+    };
+
+    jest.spyOn(connection.models.Rocket, 'find').mockResolvedValueOnce([]);
+    jest
+      .spyOn(connection.models.Rocket, 'create')
+      .mockImplementationOnce(() => Promise.resolve(mockRocket));
+    const newTable = await service.addRocket(mockName, status);
     expect(newTable).toEqual(mockRocket);
   });
 
