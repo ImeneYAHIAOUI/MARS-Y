@@ -1,0 +1,15 @@
+version: "1"
+
+services:
+  gateway:
+    image: "nestjs-marsy/gateway"
+    restart: always
+    ports:
+      - 9500:3000
+    environment:
+      - MARSY_WEATHER_SERVICE_URL_WITH_PORT=${MARSY_WEATHER_SERVICE}:3000
+    networks:
+        - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge
