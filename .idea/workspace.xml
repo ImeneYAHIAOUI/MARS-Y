@@ -81,13 +81,37 @@
       <recent name="C:\Users\yimen\Documents\project_edge_ia\soa-marsy-marsy-23-24-team-d\marsy-rocket\src\shared" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.RocketService">
+  <component name="RunManager" selected="Jest.WeatherController (e2e)">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketController (e2e) (1)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/test/rocket-e2e.spec.ts" />
+      <test-names>
+        <test-name value="RocketController (e2e)" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="RocketController (e2e)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" />
+      <test-names>
+        <test-name value="RocketController (e2e)" />
+      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="RocketService" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
@@ -99,20 +123,6 @@
       <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
       <test-names>
         <test-name value="RocketService" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.findAll.should return all rockets" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findAll" />
-        <test-name value="should return all rockets" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -129,32 +139,15 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="RocketService.findByName.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="WeatherController (e2e)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
+      <jest-package value="$PROJECT_DIR$/marsy-weather/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/marsy-weather" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
+      <test-file value="$PROJECT_DIR$/marsy-weather/test/get-weather.e2e-spec.ts" />
       <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="create" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RocketService.findByName.create.should insert a new rocket with specific status" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/marsy-rocket/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/marsy-rocket" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" />
-      <test-names>
-        <test-name value="RocketService" />
-        <test-name value="findByName" />
-        <test-name value="create" />
-        <test-name value="should insert a new rocket with specific status" />
+        <test-name value="WeatherController (e2e)" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -170,20 +163,20 @@
     </configuration>
     <list>
       <item itemvalue="Jest.All Tests" />
+      <item itemvalue="Jest.RocketController (e2e)" />
+      <item itemvalue="Jest.RocketController (e2e) (1)" />
       <item itemvalue="Jest.RocketService" />
-      <item itemvalue="Jest.RocketService.findAll.should return all rockets" />
       <item itemvalue="Jest.RocketService.findByName" />
-      <item itemvalue="Jest.RocketService.findByName.create" />
-      <item itemvalue="Jest.RocketService.findByName.create.should insert a new rocket with specific status" />
+      <item itemvalue="Jest.WeatherController (e2e)" />
       <item itemvalue="npm.marsy-rocket" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.WeatherController (e2e)" />
+        <item itemvalue="Jest.RocketController (e2e)" />
+        <item itemvalue="Jest.RocketController (e2e) (1)" />
         <item itemvalue="Jest.RocketService" />
         <item itemvalue="Jest.RocketService.findByName" />
-        <item itemvalue="Jest.RocketService.findAll.should return all rockets" />
-        <item itemvalue="Jest.RocketService.findByName.create" />
-        <item itemvalue="Jest.RocketService.findByName.create.should insert a new rocket with specific status" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +190,7 @@
       <updated>1694600026402</updated>
       <workItem from="1694600027394" duration="32839000" />
       <workItem from="1694801106112" duration="33000" />
-      <workItem from="1694801306951" duration="52030000" />
+      <workItem from="1694801306951" duration="53145000" />
     </task>
     <servers />
   </component>
@@ -235,6 +228,12 @@
           <line>14</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts</url>
+          <line>16</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
