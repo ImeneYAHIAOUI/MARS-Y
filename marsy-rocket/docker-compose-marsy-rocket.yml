@@ -1,0 +1,22 @@
+version: "1"
+
+services:
+  marsy-rocket-service:
+    image: "nestjs-marsy/marsy-rocket"
+    restart: always
+    ports:
+      - 3001:3000
+    depends_on:
+      - mongo_db_marsy_rocket
+    networks:
+      - nestjs-marsy-network
+  mongo_db_marsy_rocket:
+    image: "mongo:4.4.15"
+    restart: always
+    ports:
+      - 27019:27017
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge
