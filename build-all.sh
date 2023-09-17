@@ -13,5 +13,8 @@ compile_dir "marsy-rocket"
 
 compile_dir "gateway"
 
+compile_dir "marsy-weather"
+
+
 echo "** Done all"
 
