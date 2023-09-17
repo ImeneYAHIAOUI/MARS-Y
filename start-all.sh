@@ -1,11 +1,8 @@
-#!/bin/bash
-
-source ./framework.sh
-
 echo "starting all"
 docker-compose --env-file ./.env.docker \
-               --file marsy-weather/docker-compose.yml \
                --file marsy-rocket/docker-compose-marsy-rocket.yml \
-               --file marsy-mission/docker-compose-marsy-mission.yml up -d      
-                  
+               --file marsy-weather/docker-compose.yml \
+               --file marsy-mission/docker-compose-marsy-mission.yml\
+               --file gateway/docker-compose-gateway.yml up -d         
+wait_on_health http://localhost:9500 gateway
 echo "all services started behind gateway"

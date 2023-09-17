@@ -9,6 +9,7 @@ function compile_dir()  # $1 is the dir to get it
 
 echo "** Compiling all"
 
+compile_dir "gateway"
 compile_dir "marsy-rocket"
 compile_dir "marsy-weather"
 compile_dir "marsy-mission"
