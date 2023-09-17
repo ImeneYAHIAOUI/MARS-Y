@@ -6,15 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="86497f4c-c171-49f7-9222-9c67f25c114b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/follow-logs.sh" beforeDir="false" afterPath="$PROJECT_DIR$/follow-logs.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/health/health.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/src/rockets/services/rocket.service.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-rocket/test/rocket.e2e-spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marsy-weather/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/marsy-weather/docker-compose-marsy-weather.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/start-all.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stop-all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/stop-all.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,27 +46,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "true",
-    "ignore.virus.scanning.warn.message": "true",
-    "jdk.selected.JAVA_MODULE": "openjdk-19",
-    "last_opened_file_path": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-weather",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-rocket/node_modules/jest",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "ts.external.directory.path": "C:\\Users\\yimen\\Documents\\soa-marsy-marsy-23-24-team-d\\gateway\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-19&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-weather&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/yimen/Documents/soa-marsy-marsy-23-24-team-d/marsy-rocket/node_modules/jest&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\yimen\\Documents\\soa-marsy-marsy-23-24-team-d\\gateway\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\yimen\Documents\soa-marsy-marsy-23-24-team-d\marsy-weather" />
