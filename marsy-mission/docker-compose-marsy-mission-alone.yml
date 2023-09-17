@@ -7,8 +7,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      - MARSY_ROCKET_URL_WITH_PORT=${MARSY_ROCKET}:3000
-      - MARSY_WEATHER_URL_WITH_PORT=${MARSY_ROCKET}:3000
+      - MARSY_ROCKET_URL_WITH_PORT=${MARSY_ROCKET_SERVICE}:3000
+      - MARSY_WEATHER_URL_WITH_PORT=${MARSY_WEATHER_SERVICE}:3000
     networks:
       - nestjs-marsy-network
 networks:
