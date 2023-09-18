@@ -23,17 +23,12 @@ describe('RocketService', () => {
   let model: Model<Rocket>;
 
   let addRocketDto: AddRocketDto;
-  let addRocketDto2: AddRocketDto;
   let mockRocket;
   let mockRocketList;
 
   beforeEach(async () => {
     addRocketDto = {
-      name: 'new rocket',
-    };
-    addRocketDto2 = {
-      name: 'new rocket2',
-      status: RocketStatus.ABORTED,
+      name: 'rocket id',
     };
 
     mockRocket = {
@@ -94,11 +89,7 @@ describe('RocketService', () => {
         .spyOn(RocketDto, 'RocketDtoFactory')
         .mockImplementation((rocket) => {
           const index = mockRocketList.findIndex((r) => r === rocket);
-          if (index !== -1) {
-            return mockRocketList[index]; // Use the index to access the correct rocket
-          } else {
-            throw new Error('Rocket not found in mockRocketList');
-          }
+          return mockRocketList[index]; // Use the index to access the correct rocket
         });
       const rockets = await service.findAll();
       // Verify that RocketDtoFactory was called
@@ -132,74 +123,73 @@ describe('RocketService', () => {
       };
       await expect(testFindOne).rejects.toThrow(RocketNameNotFoundException);
     });
+  });
 
-    describe('create', () => {
-      it('should insert a new rocket', async () => {
-        jest.spyOn(model, 'find').mockResolvedValueOnce([]);
-        jest
-          .spyOn(model, 'create')
-          .mockImplementationOnce(() => Promise.resolve(mockRocket));
-        const rocketDtoFactorySpy = jest.spyOn(RocketDto, 'RocketDtoFactory');
-        const newRocket = await service.create(addRocketDto);
-        expect(rocketDtoFactorySpy).toHaveBeenCalledTimes(1);
-        expect(newRocket).toEqual(mockRocket);
-      });
-
-
-      it('should return RocketAlreadyExistsException if table already exists', async () => {
-        jest.spyOn(model, 'find').mockResolvedValueOnce([mockRocket]);
-
-        const testCreate = async () => {
-          await service.create(addRocketDto);
-        };
-        await expect(testCreate).rejects.toThrow(RocketAlreadyExistsException);
-      });
+  describe('create', () => {
+    it('should insert a new rocket', async () => {
+      jest.spyOn(model, 'find').mockResolvedValueOnce([]);
+      jest
+        .spyOn(model, 'create')
+        .mockImplementationOnce(() => Promise.resolve(mockRocket));
+      const rocketDtoFactorySpy = jest.spyOn(RocketDto, 'RocketDtoFactory');
+      const newRocket = await service.create(addRocketDto);
+      expect(rocketDtoFactorySpy).toHaveBeenCalledTimes(1);
+      expect(newRocket).toEqual(mockRocket);
     });
-    describe('getRocketStatus', () => {
-      it('should return the status of an existing rocket', async () => {
-        jest.spyOn(service, 'findRocketByName').mockResolvedValueOnce({
-          _id: 'rocketId1',
-          name: 'existing-rocket',
-          status: RocketStatus.READY_FOR_LAUNCH,
-        });
 
-        const rocketName = 'existing-rocket';
-        const status = await service.getRocketStatus(rocketName);
+    it('should return RocketAlreadyExistsException if table already exists', async () => {
+      jest.spyOn(model, 'find').mockResolvedValueOnce([mockRocket]);
 
-        expect(status).toBe(RocketStatus.READY_FOR_LAUNCH);
+      const testCreate = async () => {
+        await service.create(addRocketDto);
+      };
+      await expect(testCreate).rejects.toThrow(RocketAlreadyExistsException);
+    });
+  });
+  describe('getRocketStatus', () => {
+    it('should return the status of an existing rocket', async () => {
+      jest.spyOn(service, 'findRocketByName').mockResolvedValueOnce({
+        _id: 'rocketId1',
+        name: 'existing-rocket',
+        status: RocketStatus.READY_FOR_LAUNCH,
       });
-      it('should throw BadRequestException when rocketName is not provided', async () => {
-        const rocketName = undefined;
 
-        try {
-          await service.getRocketStatus(rocketName);
-        } catch (error) {
-          expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toBe('Rocket name is required');
-        }
-      });
-      it('should throw BadRequestException when rocketName is not provided', async () => {
-        const rocketName = undefined;
+      const rocketName = 'existing-rocket';
+      const status = await service.getRocketStatus(rocketName);
 
-        try {
-          await service.getRocketStatus(rocketName);
-        } catch (error) {
-          expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toBe('Rocket name is required');
-        }
-      });
-      it('should throw RocketNameNotFoundException when the rocket is not found', async () => {
-        const rocketName = 'NonExistentRocket';
+      expect(status).toBe(RocketStatus.READY_FOR_LAUNCH);
+    });
+    it('should throw BadRequestException when rocketName is not provided', async () => {
+      const rocketName = undefined;
 
-        // Mock the findOne method to return null when called
-        jest.spyOn(model, 'findOne').mockReturnValue({
-          lean: jest.fn().mockResolvedValueOnce(null),
-        } as any);
-        const test = async () => {
-          await service.getRocketStatus(rocketName);
-        }; // Call with a non-existent rocket name
-        await expect(test).rejects.toThrow(RocketNameNotFoundException);
-      });
+      try {
+        await service.getRocketStatus(rocketName);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe('Rocket name is required');
+      }
+    });
+    it('should throw BadRequestException when rocketName is not provided', async () => {
+      const rocketName = undefined;
+
+      try {
+        await service.getRocketStatus(rocketName);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe('Rocket name is required');
+      }
+    });
+    it('should throw RocketNameNotFoundException when the rocket is not found', async () => {
+      const rocketName = 'NonExistentRocket';
+
+      // Mock the findOne method to return null when called
+      jest.spyOn(model, 'findOne').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(null),
+      } as any);
+      const test = async () => {
+        await service.getRocketStatus(rocketName);
+      }; // Call with a non-existent rocket name
+      await expect(test).rejects.toThrow(RocketNameNotFoundException);
     });
   });
 });

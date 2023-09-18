@@ -80,4 +80,40 @@ export class RocketService {
       }),
     );
   }
+
+  findRocketById(rocketId: string) {
+    return this.rocketModel.findById(rocketId);
+  }
+
+  async getRocketStatusById(rocketId: string = null): Promise<RocketStatus> {
+    if (!rocketId) {
+      // Handle the case where rocketId is not provided.
+      throw new BadRequestException('Rocket name is required');
+    }
+
+    const rocket: Rocket = await this.findRocketById(rocketId);
+
+    // If the rocket is found, return its status.
+    return rocket.status;
+  }
+
+  async updateStatusById(
+    rocketId: string,
+    newStatus: RocketStatus,
+  ): Promise<RocketDto> {
+    const rocket = await this.findRocketById(rocketId);
+
+    // Check if the newStatus is a valid value from the RocketStatus enum
+    if (!Object.values(RocketStatus).includes(newStatus)) {
+      throw new InvalidStatusException(newStatus);
+    }
+
+    rocket.status = newStatus;
+
+    return RocketDto.RocketDtoFactory(
+      await this.rocketModel.findByIdAndUpdate(rocket._id, rocket, {
+        returnDocument: 'after',
+      }),
+    );
+  }
 }

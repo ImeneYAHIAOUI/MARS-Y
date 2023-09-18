@@ -12,11 +12,13 @@ import { MongooseConfigService } from '../src/shared/services/mongoose-config.se
 
 import { RocketModule } from '../src/rockets/rocket.module';
 import { RocketService } from '../src/rockets/services/rocket.service';
+import { RocketStatus } from '../src/rockets/schemas/rocket-status-enum.schema';
+import { SendStatusDto } from '../src/rockets/dto/send-status.dto';
 
 describe('RocketController (e2e)', () => {
   let app: INestApplication;
 
-  const mockRocker = [
+  const mockRocket = [
     {
       name: 'mockRocket1',
     },
@@ -28,10 +30,15 @@ describe('RocketController (e2e)', () => {
     },
   ];
   const rocketService = {
-    findAll: () => mockRocker,
-    findByNumber: () => mockRocker[0],
+    findAll: () => mockRocket,
+    findRocketByName: () => mockRocket[0],
     create: () => ({
       name: 'Rocket4',
+    }),
+    getRocketStatus: () => RocketStatus.FUELING,
+    updateStatus: () => ({
+      name: 'Rocket4',
+      status: RocketStatus.SUCCESSFUL_LAUNCH,
     }),
   };
 
@@ -61,6 +68,54 @@ describe('RocketController (e2e)', () => {
       .get('/rockets')
       .expect(200)
       .expect(rocketService.findAll());
+  });
+
+  it('/rockets/$name (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets/mockRocket1')
+      .expect(200)
+      .expect(rocketService.findRocketByName());
+  });
+
+  it('/rockets (POST) without status', () => {
+    return request(app.getHttpServer())
+      .post('/rockets')
+      .send({
+        name: 'newRocket',
+      })
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect(rocketService.create());
+  });
+
+  it('/rockets/$name/status (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets/mockRocket1/status')
+      .expect(200)
+      .expect({ status: 'fueling' });
+  });
+
+  it('/rockets (POST) with status', () => {
+    return request(app.getHttpServer())
+      .post('/rockets')
+      .send({
+        name: 'newRocket2',
+        status: RocketStatus.LOADING_PAYLOAD,
+      })
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect(rocketService.create());
+  });
+
+  it('/rockets/$name/status (PUT)', () => {
+    return request(app.getHttpServer())
+      .put('/rockets/mockRocket1/status')
+      .send({
+        status: RocketStatus.SUCCESSFUL_LAUNCH,
+      })
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect(rocketService.updateStatus());
   });
 
   afterAll(async () => {
