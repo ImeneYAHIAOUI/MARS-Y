@@ -1,8 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query, Logger } from '@nestjs/common';
 import { GoPollService } from '../services/go-poll.service';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { GoResponseDto } from '../dto/go.dto';; // Import your DTO
-import { Logger } from '@nestjs/common'; // Import the Logger
 
 const logger = new Logger('GoPollController'); 
 
@@ -12,15 +11,14 @@ const logger = new Logger('GoPollController');
 export class GoPollController {
   constructor(private readonly goPollService: GoPollService) {}
 
-  @Get('rocket/:rocketId')
-  @ApiParam({ name: 'rocketId' })
+  @Get('rockets')
+  @ApiQuery({ name: 'name', required: true })
   @ApiOkResponse({ type: GoResponseDto, description: 'Go or Not poll response' })
-  async goOrNoGo(@Param('rocketId') rocketId: string): Promise<GoResponseDto> {
-    const logger = new Logger('GoPollController'); // Create a logger instance here if needed
-    logger.log(`Received request for rocket name: ${rocketId}`);
+  async goOrNoGo(@Query('name') rocketName: string): Promise<GoResponseDto> {
+    logger.log(`Received request for rocket name: ${rocketName}`);
 
-      const go = await this.goPollService.goOrNoGoPoll(rocketId);
-      logger.log(`Response for rocket ID: ${rocketId}, Go: ${go}`);
+      const go = await this.goPollService.goOrNoGoPoll(rocketName);
+      logger.log(`Response for rocket name: ${rocketName}, Go: ${go}`);
       return { go };
     
   }

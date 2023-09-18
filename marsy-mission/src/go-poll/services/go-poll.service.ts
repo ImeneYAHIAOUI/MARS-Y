@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
+
+const logger = new Logger('GoPollService');
 
 @Injectable()
 export class GoPollService {
