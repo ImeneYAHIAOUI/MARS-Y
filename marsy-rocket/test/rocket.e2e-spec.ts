@@ -111,7 +111,7 @@ describe('RocketController (e2e)', () => {
 
   it('/rockets/rocketId/status (GET)', () => {
     return request(app.getHttpServer())
-      .get('/rockets/mock-id/rocketStatus')
+      .get('/rockets/mock-id/status')
       .expect(200)
       .expect({ status: 'fueling' });
   });
@@ -141,7 +141,7 @@ describe('RocketController (e2e)', () => {
 
   it('/rockets/rocketId/status (PUT)', () => {
     return request(app.getHttpServer())
-      .put('/rockets/mockRocket1/status')
+      .put('/rockets/mock-id/status')
       .send({
         status: RocketStatus.SUCCESSFUL_LAUNCH,
       })
