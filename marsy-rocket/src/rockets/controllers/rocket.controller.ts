@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put, Logger } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Query,
+  Post,
+  Put,
+  Logger,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiConflictResponse,
@@ -6,6 +15,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -25,7 +35,7 @@ export class RocketController {
   constructor(private readonly rocketService: RocketService) {}
 
   @ApiOkResponse({ type: RocketDto, isArray: true })
-  @Get()
+  @Get('all')
   async listAllRockets(): Promise<RocketDto[]> {
     return this.rocketService.findAll();
   }
@@ -36,30 +46,27 @@ export class RocketController {
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Get('id/:rocketId')
+  @Get(':rocketId')
   async getRocketById(
     @Param() params: { rocketId: string },
   ): Promise<RocketDto> {
     const rocketId = params.rocketId; // Access the 'rocketName' property
     return this.rocketService.findRocketById(rocketId);
   }
-  @ApiParam({ name: 'rocketName' })
+  @ApiQuery({ name: 'name', required: true })
   @ApiOkResponse({ type: RocketDto })
   @ApiNotFoundResponse({
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Get(':rocketName')
-  async getRocketByName(
-    @Param() params: { rocketName: string },
-  ): Promise<RocketDto> {
-    const rocketName = params.rocketName; // Access the 'rocketName' property
+  @Get()
+  async getRocketByName(@Query('name') rocketName: string): Promise<RocketDto> {
     return this.rocketService.findRocketByName(rocketName);
   }
 
   @ApiParam({ name: 'rocketId' })
   @ApiOkResponse({ type: SendStatusDto, description: 'The rockets status.' })
-  @Get('id/:rocketId/status')
+  @Get(':rocketId/status')
   async retrieveRocketStatusById(
     @Param() params: { rocketId: string },
   ): Promise<SendStatusDto> {
@@ -67,17 +74,16 @@ export class RocketController {
     const status = await this.rocketService.getRocketStatusById(rocketId);
     return SendStatusDto.SendStatusDtoFactory(status);
   }
-  @ApiParam({ name: 'rocketName' })
+ /* @ApiQuery({ name: 'name', required: true })
   @ApiOkResponse({ type: SendStatusDto, description: 'The rockets status.' })
-  @Get(':rocketName/status')
+  @Get('rocketStatus')
   async retrieveRocketStatus(
-    @Param() params: { rocketName: string },
+    @Query('name') rocketName: string,
   ): Promise<SendStatusDto> {
-    const rocketName = params.rocketName; // Access the 'rocketId' property
+    console.log(rocketName);
     const status = await this.rocketService.getRocketStatus(rocketName);
-    logger.log(`status for ${rocketName} is ${status}`);
     return SendStatusDto.SendStatusDtoFactory(status);
-  }
+  }*/
 
   @ApiBody({ type: AddRocketDto })
   @ApiCreatedResponse({
@@ -93,7 +99,7 @@ export class RocketController {
     return await this.rocketService.create(addRocketDto);
   }
 
-  @ApiParam({ name: 'rocketName' })
+  @ApiQuery({ name: 'name', required: true })
   @ApiBody({ type: UpdateRocketStatusDto })
   @ApiOkResponse({
     type: RocketDto,
@@ -103,17 +109,16 @@ export class RocketController {
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Put(':rocketName/status')
+  @Put('')
   async updateRocketStatus(
-    @Param() params: { rocketName: string },
+    @Query('name') rocketName: string,
     @Body() updateStatusDto: UpdateRocketStatusDto, // Receive as enum
   ): Promise<RocketDto> {
-    const rocketName = params.rocketName; // Access the 'rocketId' property
     const newStatus = updateStatusDto.status; // Use the enum value
     return await this.rocketService.updateStatus(rocketName, newStatus);
   }
 
-  @ApiParam({ name: 'rocketId' })
+  @ApiParam({ name: '' })
   @ApiBody({ type: UpdateRocketStatusDto })
   @ApiOkResponse({
     type: RocketDto,
@@ -123,7 +128,7 @@ export class RocketController {
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Put('id/:rocketId/status')
+  @Put(':rocketId/status')
   async updateRocketStatusById(
     @Param() params: { rocketId: string },
     @Body() updateStatusDto: UpdateRocketStatusDto, // Receive as enum
