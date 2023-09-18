@@ -74,7 +74,7 @@ export class RocketController {
     const status = await this.rocketService.getRocketStatusById(rocketId);
     return SendStatusDto.SendStatusDtoFactory(status);
   }
- /* @ApiQuery({ name: 'name', required: true })
+  /* @ApiQuery({ name: 'name', required: true })
   @ApiOkResponse({ type: SendStatusDto, description: 'The rockets status.' })
   @Get('rocketStatus')
   async retrieveRocketStatus(
@@ -109,7 +109,7 @@ export class RocketController {
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Put('')
+  @Put('status')
   async updateRocketStatus(
     @Query('name') rocketName: string,
     @Body() updateStatusDto: UpdateRocketStatusDto, // Receive as enum

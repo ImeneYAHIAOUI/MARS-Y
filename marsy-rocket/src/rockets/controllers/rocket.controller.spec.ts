@@ -109,58 +109,56 @@ describe('RocketController', () => {
         controller.retrieveRocketStatus(mockRocket.name),
       ).resolves.toEqual(sendStatusDto);
       expect(service.getRocketStatus).toHaveBeenCalledWith(mockRocket.name);
-    });*/
+    });
+  });*/
 
-    describe('retrieveRocketStatusById()', () => {
-      it('should return the rocket status', async () => {
-        await expect(
-          controller.retrieveRocketStatusById({ rocketId: mockRocket._id }),
-        ).resolves.toEqual(sendStatusDto);
-        expect(service.getRocketStatusById).toHaveBeenCalledWith(
-          mockRocket._id,
-        );
-      });
-
-      describe('addRocket()', () => {
-        it('should create a rocket', async () => {
-          const createSpy = jest
-            .spyOn(service, 'create')
-            .mockResolvedValueOnce(mockRocket);
-
-          await controller.addRocket(addRocketDto);
-          expect(createSpy).toHaveBeenCalledWith(addRocketDto);
-        });
-      });
+  describe('retrieveRocketStatusById()', () => {
+    it('should return the rocket status', async () => {
+      await expect(
+        controller.retrieveRocketStatusById({ rocketId: mockRocket._id }),
+      ).resolves.toEqual(sendStatusDto);
+      expect(service.getRocketStatusById).toHaveBeenCalledWith(mockRocket._id);
     });
 
-    describe('updateRocketStatus()', () => {
-      it('should update the rocket status', async () => {
-        const updateStatusSpy = jest
-          .spyOn(service, 'updateStatus')
+    describe('addRocket()', () => {
+      it('should create a rocket', async () => {
+        const createSpy = jest
+          .spyOn(service, 'create')
           .mockResolvedValueOnce(mockRocket);
 
-        await controller.updateRocketStatus(mockRocket.name, updateStatusDto);
-        expect(updateStatusSpy).toHaveBeenCalledWith(
-          mockRocket.name,
-          updateStatusDto.status,
-        );
+        await controller.addRocket(addRocketDto);
+        expect(createSpy).toHaveBeenCalledWith(addRocketDto);
       });
     });
-    describe('updateRocketStatusById()', () => {
-      it('should update the rocket status', async () => {
-        const updateStatusSpy = jest
-          .spyOn(service, 'updateStatusById')
-          .mockResolvedValueOnce(mockRocket);
+  });
 
-        await controller.updateRocketStatusById(
-          { rocketId: mockRocket._id },
-          updateStatusDto,
-        );
-        expect(updateStatusSpy).toHaveBeenCalledWith(
-          mockRocket._id,
-          updateStatusDto.status,
-        );
-      });
+  describe('updateRocketStatus()', () => {
+    it('should update the rocket status', async () => {
+      const updateStatusSpy = jest
+        .spyOn(service, 'updateStatus')
+        .mockResolvedValueOnce(mockRocket);
+
+      await controller.updateRocketStatus(mockRocket.name, updateStatusDto);
+      expect(updateStatusSpy).toHaveBeenCalledWith(
+        mockRocket.name,
+        updateStatusDto.status,
+      );
+    });
+  });
+  describe('updateRocketStatusById()', () => {
+    it('should update the rocket status', async () => {
+      const updateStatusSpy = jest
+        .spyOn(service, 'updateStatusById')
+        .mockResolvedValueOnce(mockRocket);
+
+      await controller.updateRocketStatusById(
+        { rocketId: mockRocket._id },
+        updateStatusDto,
+      );
+      expect(updateStatusSpy).toHaveBeenCalledWith(
+        mockRocket._id,
+        updateStatusDto.status,
+      );
     });
   });
 });
