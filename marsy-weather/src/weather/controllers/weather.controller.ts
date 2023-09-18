@@ -1,8 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { WeatherStatus } from '../schemas/weather-status.enum';
 import { Logger } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('weather/status')
+@ApiTags('weather/status')
 export class WeatherController {
   private readonly logger = new Logger(WeatherController.name);
 
