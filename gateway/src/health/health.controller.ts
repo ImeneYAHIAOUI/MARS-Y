@@ -20,6 +20,9 @@ export class HealthController {
     const dependenciesConfig =
       this.configService.get<DependenciesConfig>('dependencies');
     this._marsyRocketServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_rocket_service_url_with_port}/health`;
+    //this._marsyWeatherServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_weather_service_url_with_port}/health`;
+    //this._marsyMissionServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_mission_service_url_with_port}/health`;
+
   }
 
   async checkIsHealthy(name, url) {
