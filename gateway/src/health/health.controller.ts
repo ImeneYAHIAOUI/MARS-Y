@@ -11,8 +11,6 @@ import { DependenciesConfig } from '../shared/config/interfaces/dependencies-con
 @Controller('health')
 export class HealthController {
   private _marsyRocketServiceHealthCheckUrl: string;
-  private _marsyWeatherServiceHealthCheckUrl: string;
-  private _marsyMissionServiceHealthCheckUrl: string;
 
   constructor(
     private configService: ConfigService,
@@ -24,6 +22,7 @@ export class HealthController {
     this._marsyRocketServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_rocket_service_url_with_port}/health`;
     //this._marsyWeatherServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_weather_service_url_with_port}/health`;
     //this._marsyMissionServiceHealthCheckUrl = `http://${dependenciesConfig.marsy_mission_service_url_with_port}/health`;
+
   }
 
   async checkIsHealthy(name, url) {
@@ -46,17 +45,6 @@ export class HealthController {
         this.checkIsHealthy(
           'marsy-rocket-service',
           this._marsyRocketServiceHealthCheckUrl,
-        ),
-      async () =>
-        this.checkIsHealthy(
-          'marsy-weather-service',
-          this._marsyWeatherServiceHealthCheckUrl,
-        ),
-
-      async () =>
-        this.checkIsHealthy(
-          'marsy-mission-service',
-          this._marsyMissionServiceHealthCheckUrl,
         ),
     ]);
   }

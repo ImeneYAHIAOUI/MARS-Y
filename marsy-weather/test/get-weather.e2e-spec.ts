@@ -21,7 +21,7 @@ describe('WeatherController (e2e)', () => {
 
   it('/weather (GET)', () => {
     return request(app.getHttpServer())
-      .get('/weather')
+      .get('weather/status'')
       .expect(200)
       .expect((response) => {
         const status = response.body.status;
