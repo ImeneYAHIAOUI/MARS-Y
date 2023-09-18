@@ -1,3 +1,7 @@
+#!/bin/bash
+
+source ./framework.sh
+
 echo "starting all"
 docker-compose --env-file ./.env.docker \
                --file marsy-rocket/docker-compose-marsy-rocket.yml \
