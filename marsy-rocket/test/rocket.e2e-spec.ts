@@ -14,6 +14,7 @@ import { RocketModule } from '../src/rockets/rocket.module';
 import { RocketService } from '../src/rockets/services/rocket.service';
 import { RocketStatus } from '../src/rockets/schemas/rocket-status-enum.schema';
 import { SendStatusDto } from '../src/rockets/dto/send-status.dto';
+import dependenciesConfig from "../src/shared/config/dependencies.config";
 
 describe('RocketController (e2e)', () => {
   let app: INestApplication;
@@ -54,7 +55,7 @@ describe('RocketController (e2e)', () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [appConfig, mongodbConfig, swaggeruiConfig],
+          load: [appConfig, mongodbConfig, swaggeruiConfig, dependenciesConfig],
         }),
         MongooseModule.forRootAsync({
           useClass: MongooseConfigService,

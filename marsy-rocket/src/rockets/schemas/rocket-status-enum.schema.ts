@@ -6,6 +6,7 @@ export enum RocketStatus {
   ABORTED = 'aborted',
   IN_FLIGHT = 'inFlight',
   SUCCESSFUL_LAUNCH = 'successfulLaunch',
+  STARTING_LAUNCH = 'startingLaunch',
   FAILED_LAUNCH = 'faildeLaunch',
   RETURNING = 'returning',
   LANDED = 'landed',
