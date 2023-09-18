@@ -43,17 +43,6 @@ export class HealthController {
           'marsy-rocket-service',
           this._marsyRocketServiceHealthCheckUrl,
         ),
-      async () =>
-        this.checkIsHealthy(
-          'marsy-weather-service',
-          this._marsyWeatherServiceHealthCheckUrl,
-        ),
-
-      async () =>
-        this.checkIsHealthy(
-          'marsy-mission-service',
-          this._marsyMissionServiceHealthCheckUrl,
-        ),
     ]);
   }
 }
