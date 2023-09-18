@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Logger } from '@nestjs/common';
 import {
   ApiBody,
   ApiConflictResponse,
@@ -8,6 +8,8 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+
+const logger = new Logger('RocketController');
 
 import { RocketService } from '../services/rocket.service';
 import { RocketDto } from '../dto/rocket.dto';
@@ -49,6 +51,7 @@ export class RocketController {
   ): Promise<SendStatusDto> {
     const rocketName = params.rocketName; // Access the 'rocketId' property
     const status = await this.rocketService.getRocketStatus(rocketName);
+    logger.log(`status for ${rocketName} is ${status}`);
     return SendStatusDto.SendStatusDtoFactory(status);
   }
 
