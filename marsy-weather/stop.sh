@@ -2,4 +2,4 @@
 
 echo "stopping marsy-weather service"
 docker-compose --env-file ./.env.docker \
-               --file docker-compose-marsy.yml down
+               --file docker-compose-marsy-weather.yml down
