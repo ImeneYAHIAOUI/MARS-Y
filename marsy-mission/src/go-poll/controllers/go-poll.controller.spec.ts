@@ -38,24 +38,30 @@ describe('GoPollController', () => {
   });
 
   it('should return true as a DTO when both rocket and weather are ready', async () => {
-    // Mock the GoPollService's goOrNoGoPoll method
+    // Mock the GoPollService's goOrNoGoPoll method to return true
     const mockGoOrNoGoPoll = goPollService.goOrNoGoPoll as jest.Mock;
     mockGoOrNoGoPoll.mockResolvedValue(true);
 
     const result = await controller.goOrNoGo('rocket1');
 
-    expect(result).toEqual({ go: true }); // Expect the DTO
+    // Expect the DTO with "go" property set to true
+    expect(result).toEqual({ go: true });
+    
+    // Ensure that goOrNoGoPoll was called with the correct argument
     expect(mockGoOrNoGoPoll).toHaveBeenCalledWith('rocket1');
   });
 
   it('should return false as a DTO when either rocket or weather is not ready', async () => {
-    // Mock the GoPollService's goOrNoGoPoll method
+    // Mock the GoPollService's goOrNoGoPoll method to return false
     const mockGoOrNoGoPoll = goPollService.goOrNoGoPoll as jest.Mock;
     mockGoOrNoGoPoll.mockResolvedValue(false);
 
     const result = await controller.goOrNoGo('rocket1');
 
-    expect(result).toEqual({ go: false }); // Expect the DTO
+    // Expect the DTO with "go" property set to false
+    expect(result).toEqual({ go: false });
+    
+    // Ensure that goOrNoGoPoll was called with the correct argument
     expect(mockGoOrNoGoPoll).toHaveBeenCalledWith('rocket1');
   });
 });

@@ -13,7 +13,7 @@ describe('GoPollController (e2e)', () => {
   let app: INestApplication;
 
   const mockGoPollService = {
-    goOrNoGoPoll: (rocketId: string) => true, // Mock the goOrNoGoPoll method as needed
+    goOrNoGoPoll: (rocketName: string) => true, // Mock the goOrNoGoPoll method as needed
   };
 
   beforeAll(async () => {
@@ -23,27 +23,32 @@ describe('GoPollController (e2e)', () => {
           isGlobal: true,
           load: [appConfig],
         }),
-        HttpModule, // Add HttpModule
+        HttpModule,
       ],
-      controllers: [GoPollController], // Add your GoPollController
-      providers: [GoPollService], // Add your GoPollService
-    })
-      .overrideProvider(GoPollService)
-      .useValue(mockGoPollService)
-      .compile();
+      controllers: [GoPollController], 
+      providers: [
+        {
+          provide: GoPollService,
+          useValue: mockGoPollService, // Use the mock service
+        },
+      ],
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('/go/rocket/:rocketId (GET)', () => {
+  it('/go/rockets (GET)', () => {
     return request(app.getHttpServer())
-      .get('/go/rocket/rocket1') // Replace 'rocket1' with the desired rocket ID
+      .get('/go/rockets')
+      .query({ name: 'rocket1' })
       .expect(200)
-      .expect({ go: true }); // Adjust the expected response as needed
+      .expect({ go: true });
   });
 
   afterAll(async () => {
     await app.close();
   });
 });
+
+

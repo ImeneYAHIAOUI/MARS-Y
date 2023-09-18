@@ -64,7 +64,7 @@ describe('MarsyWeatherProxyService', () => {
       const weatherStatus = await service.retrieveWeatherStatus();
       expect(weatherStatus).toBe('sunny');
       expect(httpService.get).toHaveBeenCalledWith(
-        `http://${mockDependenciesConfig.marsy_weather_url_with_port}/weather`
+        `http://${mockDependenciesConfig.marsy_weather_url_with_port}/weather/status`
       );
     });
   });

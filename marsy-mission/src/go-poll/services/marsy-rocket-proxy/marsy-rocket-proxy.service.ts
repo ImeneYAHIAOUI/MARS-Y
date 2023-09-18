@@ -5,8 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
-import { RocketStatusDto } from 'src/go-poll/dto/rocket.status.dto';
-import { RocketNotFoundException } from 'src/go-poll/exceptions/rocket-not-found.exception';
+import { RocketDto } from 'src/go-poll/dto/rocket.dto';
 
 const logger = new Logger('MarsyRocketProxyService');
 
@@ -14,7 +13,6 @@ const logger = new Logger('MarsyRocketProxyService');
 export class MarsyRocketProxyService {
     private _baseUrl: string;
     private _rocketsPath = '/rockets';
-    private _rocketStatus: RocketStatusDto= null;
 
 
     constructor(private configService: ConfigService, private readonly httpService: HttpService) {
@@ -22,18 +20,13 @@ export class MarsyRocketProxyService {
         this._baseUrl = `http://${dependenciesConfig.marsy_rocket_url_with_port}`;
     }
 
-    async retrieveRocketStatus(_rocketId : string) : Promise<string> {
-        if (this._rocketStatus === null) {
-            const response: AxiosResponse<RocketStatusDto> = await firstValueFrom(this.httpService.get<RocketStatusDto>(`${this._baseUrl}${this._rocketsPath}/${_rocketId}/status`));
-            if(response.status == HttpStatus.OK){
-                this._rocketStatus = response.data;
-                return this._rocketStatus.status;
-            }
-            else  {
-                throw new HttpException(response.data, response.status);
-            }            
-        }
-        return this._rocketStatus.status;
+    async retrieveRocketStatus(_rocketName : string) : Promise<string> {
+        const response = await this.httpService.get<RocketDto>(
+            `${this._baseUrl}${this._rocketsPath}?name=${_rocketName}`
+          ).toPromise();
+          const status = response.data.status;
+        logger.log( `retrieving rocket status successfully, status is ${status}`)
+        return status;       
     }
 
 }
