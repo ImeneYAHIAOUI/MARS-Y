@@ -24,11 +24,11 @@ export class MarsyMissionProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_mission_url_with_port}`;
   }
 
-  async goOrNoGoPoll(_rocketId: string): Promise<boolean> {
+  async goOrNoGoPoll(_rocketName: string): Promise<boolean> {
     if (this._goNoGo === null) {
       const response: AxiosResponse<GoNoGoDto> = await firstValueFrom(
         this.httpService.get<GoNoGoDto>(
-          `${this._baseUrl}${this._missionPath}/rocket/${_rocketId}`,
+          `${this._baseUrl}${this._missionPath}/rockets?name=${_rocketName}`,
         ),
       );
       if (response.status == HttpStatus.OK) {

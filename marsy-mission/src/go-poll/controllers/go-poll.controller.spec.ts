@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { GoPollController } from './go-poll.controller';
 import { GoPollService } from '../services/go-poll.service';
-import { GoResponseDto } from '../dto/go.dto'; // Import the DTO
 
 describe('GoPollController', () => {
   let app: INestApplication;

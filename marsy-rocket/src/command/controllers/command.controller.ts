@@ -29,17 +29,15 @@ const logger = new Logger('CommandController');
 export class CommandController {
   constructor(private readonly commandService: CommandService) {}
 
-  @ApiParam({ name: 'rocketId' })
+  @ApiQuery({ name: 'name', required: true })
   @ApiOkResponse({ type: CommandDto })
   @ApiNotFoundResponse({
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Get(':rocketId')
-  async getLaunchCommand(
-    @Param() params: { rocketId: string },
+  @Get()
+  async getLaunchCommand(@Query('name') rocketName: string,
   ): Promise<CommandDto> {
-    const rocketId = params.rocketId; // Access the 'rocketName' property
-    return this.commandService.sendLaunchCommand(rocketId);
+    return this.commandService.sendLaunchCommand(rocketName);
   }
 }
