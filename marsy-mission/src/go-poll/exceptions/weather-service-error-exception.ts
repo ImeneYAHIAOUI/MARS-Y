@@ -2,11 +2,11 @@ import { HttpStatus } from '@nestjs/common';
 
 import { ErrorDto } from '../../shared/dto/error.dto';
 
-export class RocketServiceUnavailableException extends ErrorDto {
+export class WeatherServiceUnavailableException extends ErrorDto {
   constructor(msg : string) {
     super(
       HttpStatus.SERVICE_UNAVAILABLE,
-      'rocket marsy service unavailable',
+      'weather marsy service unavailable',
       msg,
     );
   }
