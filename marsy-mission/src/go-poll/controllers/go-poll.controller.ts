@@ -7,8 +7,6 @@ import { RocketServiceUnavailableException } from '../exceptions/rocket-service-
 
 const logger = new Logger('GoPollController'); 
 
-const logger = new Logger('GoPollController');
-
 @ApiTags('Go')
 @Controller('/go')
 export class GoPollController {
