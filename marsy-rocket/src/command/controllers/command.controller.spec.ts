@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommandController } from './command.controller';
 import { CommandService } from '../services/command.service';
 import { CommandDto } from '../dto/command.dto';
-import { GoNoGoDto } from '../dto/go-no-go.dto';
 import { RocketStatus } from '../../rockets/schemas/rocket-status-enum.schema';
 import { RocketDto } from '../../rockets/dto/rocket.dto';
 
