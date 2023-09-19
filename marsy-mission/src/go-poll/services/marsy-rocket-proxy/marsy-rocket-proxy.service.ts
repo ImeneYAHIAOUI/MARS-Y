@@ -6,6 +6,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { RocketDto } from 'src/go-poll/dto/rocket.dto';
+import { RocketNotFoundException } from 'src/go-poll/exceptions/rocket-not-found.exception';
+import { RocketServiceUnavailableException } from 'src/go-poll/exceptions/rocket-service-error-exception';
 
 const logger = new Logger('MarsyRocketProxyService');
 
@@ -21,12 +23,23 @@ export class MarsyRocketProxyService {
     }
 
     async retrieveRocketStatus(_rocketName : string) : Promise<string> {
-        const response = await this.httpService.get<RocketDto>(
-            `${this._baseUrl}${this._rocketsPath}?name=${_rocketName}`
-          ).toPromise();
-          const status = response.data.status;
-        logger.log( `retrieving rocket status successfully, status is ${status}`)
-        return status;       
+        try {
+            const response: AxiosResponse<RocketDto> = await firstValueFrom(
+              this.httpService.get<RocketDto>(
+                `${this._baseUrl}${this._rocketsPath}?name=${_rocketName}`
+              )
+            );
+            const status = response.data.status;
+            logger.log(`Retrieving rocket status successfully, status is ${status}`);
+            return status;
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+              throw new RocketNotFoundException('Rocket not found');
+            } else {
+                logger.error(`${error}`)
+              throw new RocketServiceUnavailableException(error.message);
+            }
+        }
     }
-
+      
 }
