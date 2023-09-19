@@ -8,6 +8,8 @@ services:
       - 3001:3000
     depends_on:
       - mongo_db_marsy_rocket
+    environment:
+      - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
     networks:
       - nestjs-marsy-network
   mongo_db_marsy_rocket:

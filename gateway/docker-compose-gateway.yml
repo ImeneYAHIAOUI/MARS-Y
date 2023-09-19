@@ -9,9 +9,11 @@ services:
     depends_on:
       - ${MARSY_ROCKET_SERVICE}
       - ${MARSY_WEATHER_SERVICE}
+      - ${MARSY_MISSION_SERVICE}
     environment:
       - MARSY_ROCKET_SERVICE_URL_WITH_PORT=${MARSY_ROCKET_SERVICE}:3000
       - MARSY_WEATHER_SERVICE_URL_WITH_PORT=${MARSY_WEATHER_SERVICE}:3000
+      - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_WEATHER_SERVICE}:3000
     networks:
         - nestjs-marsy-network
 networks:
