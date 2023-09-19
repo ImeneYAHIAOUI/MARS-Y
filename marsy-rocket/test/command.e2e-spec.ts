@@ -13,7 +13,6 @@ import { CommandService } from '../src/command/services/command.service';
 import dependenciesConfig from '../src/shared/config/dependencies.config';
 import { RocketStatus } from '../src/rockets/schemas/rocket-status-enum.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RocketModule } from '../src/rockets/rocket.module';
 
 describe('CommandController (e2e)', () => {
   let app: INestApplication;
