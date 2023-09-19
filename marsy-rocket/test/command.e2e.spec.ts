@@ -64,4 +64,7 @@ describe('CommandController (e2e)', () => {
       .expect(200)
       .expect(commandService.sendLaunchCommand());
   });
+  afterAll(async () => {
+    await app.close();
+  });
 });
