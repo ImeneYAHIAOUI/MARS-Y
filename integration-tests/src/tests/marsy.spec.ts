@@ -43,6 +43,6 @@ describe('Restaurant', () => {
                 .then((res) => {
                     commandDecision = res.json;
                 });
-        }
+        })
     });
 });
