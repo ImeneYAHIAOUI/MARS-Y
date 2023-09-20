@@ -36,8 +36,15 @@ export class CommandController {
     description: 'Rocket not found',
   })
   @Get()
-  async getLaunchCommand(@Query('name') rocketName: string,
-  ): Promise<CommandDto> {
-    return this.commandService.sendLaunchCommand(rocketName);
+  async getLaunchCommand(@Query('name') rocketName: string): Promise<CommandDto> {
+    try {
+      logger.log(`Received request to get launch command for rocket: ${rocketName}`);
+      const launchCommand = await this.commandService.sendLaunchCommand(rocketName);
+      logger.log(`Launch command sent for rocket: ${rocketName}`);
+      return launchCommand;
+    } catch (error) {
+      logger.error(`Error while processing request for rocket ${rocketName} : ${error.message}`);
+      throw error; // You can handle and customize error logging as needed
+    }
   }
 }

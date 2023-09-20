@@ -19,7 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-const logger = new Logger('RocketController');
 
 import { RocketService } from '../services/rocket.service';
 import { RocketDto } from '../dto/rocket.dto';
@@ -29,6 +28,8 @@ import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exist
 import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
 import { SendStatusDto } from '../dto/send-status.dto';
 
+const logger = new Logger('CommandController');
+
 @ApiTags('rockets')
 @Controller('/rockets')
 export class RocketController {
@@ -37,7 +38,15 @@ export class RocketController {
   @ApiOkResponse({ type: RocketDto, isArray: true })
   @Get('all')
   async listAllRockets(): Promise<RocketDto[]> {
-    return this.rocketService.findAll();
+    try {
+      logger.log('Received request to list all rockets');
+      const rockets = await this.rocketService.findAll();
+      logger.log('Successfully retrieved the list of all rockets');
+      return rockets;
+    } catch (error) {
+      logger.error('Error while listing all rockets');
+      throw error;
+    }
   }
 
   @ApiParam({ name: 'rocketId' })
@@ -48,9 +57,10 @@ export class RocketController {
   })
   @Get(':rocketId')
   async getRocketById(
-    @Param() params: { rocketId: string },
+      @Param() params: { rocketId: string },
   ): Promise<RocketDto> {
     const rocketId = params.rocketId; // Access the 'rocketName' property
+    logger.log(`Received request to get rocket by ID: ${rocketId}`);
     return this.rocketService.findRocketById(rocketId);
   }
   @ApiQuery({ name: 'name', required: true })
@@ -61,6 +71,7 @@ export class RocketController {
   })
   @Get()
   async getRocketByName(@Query('name') rocketName: string): Promise<RocketDto> {
+    logger.log(`Received request to get rocket by name: ${rocketName}`);
     return this.rocketService.findRocketByName(rocketName);
   }
 
@@ -71,7 +82,9 @@ export class RocketController {
     @Param() params: { rocketId: string },
   ): Promise<SendStatusDto> {
     const rocketId = params.rocketId; // Access the 'rocketId' property
+    logger.log(`Received request to get rocket status by ID: ${rocketId}`);
     const status = await this.rocketService.getRocketStatusById(rocketId);
+    logger.log(`Successfully retrieved the status of rocket by ID: ${rocketId}`);
     return SendStatusDto.SendStatusDtoFactory(status);
   }
   /* @ApiQuery({ name: 'name', required: true })
@@ -96,6 +109,7 @@ export class RocketController {
   })
   @Post()
   async addRocket(@Body() addRocketDto: AddRocketDto): Promise<RocketDto> {
+    logger.log(`Received request to add rocket: ${addRocketDto.name}`);
     return await this.rocketService.create(addRocketDto);
   }
 
@@ -115,6 +129,7 @@ export class RocketController {
     @Body() updateStatusDto: UpdateRocketStatusDto, // Receive as enum
   ): Promise<RocketDto> {
     const newStatus = updateStatusDto.status; // Use the enum value
+    logger.log(`Received request to update rocket status: ${rocketName}`);
     return await this.rocketService.updateStatus(rocketName, newStatus);
   }
 
@@ -134,6 +149,7 @@ export class RocketController {
     @Body() updateStatusDto: UpdateRocketStatusDto, // Receive as enum
   ): Promise<RocketDto> {
     const rocketId = params.rocketId; // Access the 'rocketId' property
+    logger.log(`Received request to update rocket status by ID: ${rocketId}`);
     const newStatus = updateStatusDto.status; // Use the enum value
     return await this.rocketService.updateStatusById(rocketId, newStatus);
   }

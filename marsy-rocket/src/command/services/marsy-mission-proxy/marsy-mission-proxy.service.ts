@@ -16,28 +16,32 @@ export class MarsyMissionProxyService {
   private _goNoGo: GoNoGoDto = null;
 
   constructor(
-    private configService: ConfigService,
-    private readonly httpService: HttpService,
+      private configService: ConfigService,
+      private readonly httpService: HttpService,
   ) {
     const dependenciesConfig =
-      this.configService.get<DependenciesConfig>('dependencies');
+        this.configService.get<DependenciesConfig>('dependencies');
     this._baseUrl = `http://${dependenciesConfig.marsy_mission_url_with_port}`;
   }
 
   async goOrNoGoPoll(_rocketName: string): Promise<boolean> {
     if (this._goNoGo === null) {
+      logger.log(`Performing goOrNoGoPoll for rocket: ${_rocketName}`);
       const response: AxiosResponse<GoNoGoDto> = await firstValueFrom(
-        this.httpService.get<GoNoGoDto>(
-          `${this._baseUrl}${this._missionPath}/rockets?name=${_rocketName}`,
-        ),
+          this.httpService.get<GoNoGoDto>(
+              `${this._baseUrl}${this._missionPath}/rockets?name=${_rocketName}`,
+          ),
       );
       if (response.status == HttpStatus.OK) {
         this._goNoGo = response.data;
+        logger.log(`goOrNoGoPoll successful for rocket: ${_rocketName}`);
         return this._goNoGo.go;
       } else {
+        logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketName}`);
         throw new HttpException(response.data, response.status);
       }
     }
+    logger.log(`Using cached goNoGo result for rocket: ${_rocketName}`);
     return this._goNoGo.go;
   }
 }
