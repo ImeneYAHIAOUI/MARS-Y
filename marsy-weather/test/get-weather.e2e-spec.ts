@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { WeatherStatus } from '../src/weather/schemas/weather-status.enum';
+
 describe('WeatherController (e2e)', () => {
   let app: INestApplication;
 
@@ -19,13 +20,22 @@ describe('WeatherController (e2e)', () => {
     await app.close();
   });
 
-  it('/weather (GET)', () => {
-    return request(app.getHttpServer())
-      .get('weather/status')
-      .expect(200)
-      .expect((response) => {
-        const status = response.body.status;
-        expect(Object.values(WeatherStatus)).toContain(status);
-      });
+  it('should return a random weather status', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/weather/status')
+      .expect(200);
+
+    const { status } = response.body;
+    expect(Object.values(WeatherStatus)).toContain(status);
+  });
+
+  it('should return a weather status based on provided lat and long', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/weather/status')
+      .query({ lat: 123, long: 456 })
+      .expect(200);
+
+    const { status } = response.body;
+    expect(Object.values(WeatherStatus)).toContain(status);
   });
 });
