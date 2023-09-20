@@ -1,17 +1,33 @@
 @startuml
 left to right direction
 
+class Telemetry {
+    String id
+    Localtime timestamp
+    Double latitude
+    Double longitude
+    Double altitude 
+    Integer speed 
+    Integer fuel 
+    Integer temperature
+    Integer pressure
+    Integer humidity
+    Integer windSpeed
+    Integer windDirection
+}
+
 enum RocketStatus {
     READY
     NOT_READY
     LAUNCHED
+    STAGED
 }
 
 class Rocket {
     String id
     String name
-    Integer fuel
-    RocketStatus status
+    Integer stageOneFuel
+    Integer stageTwoFuel
 }
 
 class Payload {
@@ -21,38 +37,50 @@ class Payload {
 
 class Mission {
     String id 
-    String name
+    String name 
+    String destinationOrbit
+}
+
+enum MissionStatus {
+    SUCCESFUL
+    FAILED
+    IN_PROGRESS
 }
 
 class Site {
     String id
     String name
-    Long latitude
-    Long longitude
-    Long altitude
+    Double latitude
+    Double longitude
+    Double altitude
 }
-Enum Weather {
+Enum WeatherStatus {
     SUNNY
     CLOUDY
     RAINY
     STORMY
 }
-class weatherStatus {
+
+class Weather {
     Site site
-    Weather status
 }
-weatherStatus ..|> Weather : use
-weatherStatus "1"--"1" Site
+
+Weather ..|> WeatherStatus : use
+Weather "1"--"1" Site
 
 class Client {
     String id 
     String name 
 }
 
-Rocket ..|> RocketStatus : use
-Rocket "1"--"1" Payload
-Payload "n"--"1" Client
-Mission "n"--"1" Site
-Mission "n"--"1..n" Rocket
+Rocket ..> RocketStatus : use
+Rocket "1"--"1" Payload : contains
+Payload "n"--"1" Client : concerns
+Mission "1"--"n" Site : launch
+Mission "1"--"1" Rocket : concerns
+Mission ..> MissionStatus : use
+
+
+Telemetry "n"--"1" Mission
 
 @enduml
