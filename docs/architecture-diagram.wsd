@@ -1,0 +1,42 @@
+@startuml
+skinparam componentStyle rectangle
+left to right direction
+
+
+rectangle "Marsy Microservices" as backend {
+
+
+    component "Missions Service" as s_mission     
+    
+    component "Rockets Service" as s_rocket
+    component "Weather Service" as s_weather
+
+    component "Telemetry Service" as s_telemtry
+
+    component "API Gateway" as api_gateway
+
+    database "Rockets DB" as db_rockets
+    database "Missions DB" as db_missions
+    database "Telemetry DB" as db_telemetry
+
+    api_gateway -- s_mission
+    api_gateway -- s_rocket
+    api_gateway -- s_weather
+    api_gateway -- s_telemtry
+
+    s_mission .left. s_rocket
+    s_mission .right. s_weather
+
+    s_mission --> db_missions
+    s_rocket --> db_rockets
+    s_telemtry --> db_telemetry
+}
+
+component "Mock Service" as s_mock
+
+s_mock -- api_gateway
+
+api_gateway -u0)- HTTP
+
+
+@enduml

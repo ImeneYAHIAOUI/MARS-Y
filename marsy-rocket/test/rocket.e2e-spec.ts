@@ -12,12 +12,15 @@ import { MongooseConfigService } from '../src/shared/services/mongoose-config.se
 
 import { RocketModule } from '../src/rockets/rocket.module';
 import { RocketService } from '../src/rockets/services/rocket.service';
+import { RocketStatus } from '../src/rockets/schemas/rocket-status-enum.schema';
+import dependenciesConfig from '../src/shared/config/dependencies.config';
 
 describe('RocketController (e2e)', () => {
   let app: INestApplication;
 
-  const mockRocker = [
+  const mockRocket = [
     {
+      _id: 'mock-id',
       name: 'mockRocket1',
     },
     {
@@ -28,10 +31,21 @@ describe('RocketController (e2e)', () => {
     },
   ];
   const rocketService = {
-    findAll: () => mockRocker,
-    findByNumber: () => mockRocker[0],
+    findAll: () => mockRocket,
+    findRocketByName: () => mockRocket[0],
+    findRocketById: () => mockRocket[0],
     create: () => ({
       name: 'Rocket4',
+    }),
+    getRocketStatus: () => RocketStatus.FUELING,
+    getRocketStatusById: () => RocketStatus.FUELING,
+    updateStatus: () => ({
+      name: 'Rocket4',
+      status: RocketStatus.SUCCESSFUL_LAUNCH,
+    }),
+    updateStatusById: () => ({
+      name: 'Rocket4',
+      status: RocketStatus.SUCCESSFUL_LAUNCH,
     }),
   };
 
@@ -40,7 +54,7 @@ describe('RocketController (e2e)', () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [appConfig, mongodbConfig, swaggeruiConfig],
+          load: [appConfig, mongodbConfig, swaggeruiConfig, dependenciesConfig],
         }),
         MongooseModule.forRootAsync({
           useClass: MongooseConfigService,
@@ -56,11 +70,84 @@ describe('RocketController (e2e)', () => {
     await app.init();
   });
 
-  it('/rockets (GET)', () => {
+  it('/rockets/all (GET)', () => {
     return request(app.getHttpServer())
-      .get('/rockets')
+      .get('/rockets/all')
       .expect(200)
       .expect(rocketService.findAll());
+  });
+
+  it('/rockets?name (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets?name=mockRocket1')
+      .expect(200)
+      .expect(rocketService.findRocketByName());
+  });
+
+  it('/rockets/rocketId (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets/mock-id')
+      .expect(200)
+      .expect(rocketService.findRocketById());
+  });
+
+  it('/rockets (POST) without status', () => {
+    return request(app.getHttpServer())
+      .post('/rockets')
+      .send({
+        name: 'newRocket',
+      })
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect(rocketService.create());
+  });
+
+  /*it('/rockets/status?name (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets/rocketStatus?name=mockRocket1')
+      .expect(200)
+      .expect({ status: 'fueling' });
+  });*/
+
+  it('/rockets/rocketId/status (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/rockets/mock-id/status')
+      .expect(200)
+      .expect({ status: 'fueling' });
+  });
+
+  it('/rockets (POST) with status', () => {
+    return request(app.getHttpServer())
+      .post('/rockets')
+      .send({
+        name: 'newRocket2',
+        status: RocketStatus.LOADING_PAYLOAD,
+      })
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect(rocketService.create());
+  });
+
+  it('/rockets/status?name (PUT)', () => {
+    return request(app.getHttpServer())
+      .put('/rockets/status?name=mockRocket1')
+      .send({
+        status: RocketStatus.SUCCESSFUL_LAUNCH,
+      })
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect(rocketService.updateStatus());
+  });
+
+  it('/rockets/rocketId/status (PUT)', () => {
+    return request(app.getHttpServer())
+      .put('/rockets/mock-id/status')
+      .send({
+        status: RocketStatus.SUCCESSFUL_LAUNCH,
+      })
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect(rocketService.updateStatusById());
   });
 
   afterAll(async () => {

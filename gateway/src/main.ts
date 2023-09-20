@@ -40,6 +40,17 @@ async function bootstrap() {
     }),
   );
 
+  app.use(
+    '/mission',
+    createProxyMiddleware({
+      target: `http://${dependenciesConfig.marsy_mission_service_url_with_port}`,
+      changeOrigin: true,
+      pathRewrite: {
+        [`^/mission`]: '',
+      },
+    }),
+  );
+
   // Run the app
   const appPort = configService.get('app.port');
   await app.listen(appPort);
