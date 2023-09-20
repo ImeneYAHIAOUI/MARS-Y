@@ -31,6 +31,18 @@ class Site {
     Long longitude
     Long altitude
 }
+Enum Weather {
+    SUNNY
+    CLOUDY
+    RAINY
+    STORMY
+}
+class weatherStatus {
+    Site site
+    Weather status
+}
+weatherStatus ..|> Weather : use
+weatherStatus "1"--"1" Site
 
 class Client {
     String id 
