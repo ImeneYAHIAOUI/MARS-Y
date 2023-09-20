@@ -3,11 +3,9 @@
 # List of service names and their docker-compose files
 services=(
     "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
-    "marsy-mission:marsy-mission/docker-compose-marsy-mission.yml"
     "marsy-rocket:marsy-rocket/docker-compose-marsy-rocket.yml"
-
-    "gateway:gateway/docker-compose-gateway.yml"
-
+    "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
+    "gateway:gateway/docker-compose-gateway-alone.yml"
 )
 container_ids=()
 
@@ -37,7 +35,7 @@ show_logs() {
         compose_file=${service_info[1]}
 
         echo "Displaying logs for service $service_name"
-        docker-compose -f $compose_file logs -f &
+        docker-compose  --env-file ./.env.docker  -f $compose_file logs -f &
     done
     wait
 }
