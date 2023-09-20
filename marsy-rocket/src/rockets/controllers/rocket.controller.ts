@@ -141,7 +141,7 @@ export class RocketController {
   })
   @ApiNotFoundResponse({
     type: RocketNameNotFoundException,
-    description: 'Rocket not found',
+    description: 'Rocket not found',c
   })
   @Put(':rocketId/status')
   async updateRocketStatusById(

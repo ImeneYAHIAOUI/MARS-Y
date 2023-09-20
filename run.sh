@@ -2,10 +2,12 @@
 
 # List of service names and their docker-compose files
 services=(
-    "marsy-rocket:marsy-rocket/docker-compose-marsy-rocket.yml"
     "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
-    "gateway:gateway/docker-compose-gateway.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission.yml"
+    "marsy-rocket:marsy-rocket/docker-compose-marsy-rocket.yml"
+
+    "gateway:gateway/docker-compose-gateway.yml"
+
 )
 container_ids=()
 
@@ -14,7 +16,7 @@ start_service() {
     local compose_file=$2
 
     echo "Starting service $service_name..."
-    docker-compose -f $compose_file up -d
+    docker-compose --env-file ./.env.docker -f $compose_file up -d
 
 }
 
