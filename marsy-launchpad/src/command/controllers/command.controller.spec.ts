@@ -45,9 +45,9 @@ describe('CommandController', () => {
   describe('getLaunchCommand()', () => {
     it('should return the launch decision', async () => {
       await expect(
-        controller.getLaunchCommand(mockRocket.name),
+        controller.getLaunchCommand({ rocketId: mockRocket._id }),
       ).resolves.toEqual(mockCommandDto);
-      expect(service.sendLaunchCommand).toHaveBeenCalledWith(mockRocket.name);
+      expect(service.sendLaunchCommand).toHaveBeenCalledWith(mockRocket._id);
     });
   });
 });

@@ -32,21 +32,17 @@ describe('RocketController (e2e)', () => {
   ];
   const rocketService = {
     findAll: () => mockRocket,
-    findRocketByName: () => mockRocket[0],
-    findRocketById: () => mockRocket[0],
-    create: () => ({
+    findRocket: () => mockRocket[0],
+    createRocket: () => ({
       name: 'Rocket4',
     }),
     getRocketStatus: () => RocketStatus.FUELING,
-    getRocketStatusById: () => RocketStatus.FUELING,
-    updateStatus: () => ({
+
+    updateRocketStatus: () => ({
       name: 'Rocket4',
       status: RocketStatus.SUCCESSFUL_LAUNCH,
     }),
-    updateStatusById: () => ({
-      name: 'Rocket4',
-      status: RocketStatus.SUCCESSFUL_LAUNCH,
-    }),
+    rocketPoll: () => true,
   };
 
   beforeAll(async () => {
@@ -77,18 +73,11 @@ describe('RocketController (e2e)', () => {
       .expect(rocketService.findAll());
   });
 
-  it('/rockets?name (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/rockets?name=mockRocket1')
-      .expect(200)
-      .expect(rocketService.findRocketByName());
-  });
-
   it('/rockets/rocketId (GET)', () => {
     return request(app.getHttpServer())
       .get('/rockets/mock-id')
       .expect(200)
-      .expect(rocketService.findRocketById());
+      .expect(rocketService.findRocket());
   });
 
   it('/rockets (POST) without status', () => {
@@ -99,15 +88,8 @@ describe('RocketController (e2e)', () => {
       })
       .set('Accept', 'application/json')
       .expect(201)
-      .expect(rocketService.create());
+      .expect(rocketService.createRocket());
   });
-
-  /*it('/rockets/status?name (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/rockets/rocketStatus?name=mockRocket1')
-      .expect(200)
-      .expect({ status: 'fueling' });
-  });*/
 
   it('/rockets/rocketId/status (GET)', () => {
     return request(app.getHttpServer())
@@ -125,18 +107,7 @@ describe('RocketController (e2e)', () => {
       })
       .set('Accept', 'application/json')
       .expect(201)
-      .expect(rocketService.create());
-  });
-
-  it('/rockets/status?name (PUT)', () => {
-    return request(app.getHttpServer())
-      .put('/rockets/status?name=mockRocket1')
-      .send({
-        status: RocketStatus.SUCCESSFUL_LAUNCH,
-      })
-      .set('Accept', 'application/json')
-      .expect(200)
-      .expect(rocketService.updateStatus());
+      .expect(rocketService.createRocket());
   });
 
   it('/rockets/rocketId/status (PUT)', () => {
@@ -147,7 +118,15 @@ describe('RocketController (e2e)', () => {
       })
       .set('Accept', 'application/json')
       .expect(200)
-      .expect(rocketService.updateStatusById());
+      .expect(rocketService.updateRocketStatus());
+  });
+
+  it('/rockets/rocketId/poll (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/rockets/mock-id/poll')
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect({ go: rocketService.rocketPoll() });
   });
 
   afterAll(async () => {

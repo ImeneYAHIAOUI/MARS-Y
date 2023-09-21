@@ -11,26 +11,26 @@ export class CommandService {
     private readonly rocketService: RocketService,
   ) {}
 
-  async sendLaunchCommand(rocketName: string): Promise<CommandDto> {
-    const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketName);
+  async sendLaunchCommand(rocketd: string): Promise<CommandDto> {
+    const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketd);
     const commandDto: CommandDto = {
       decision: '', // Initialize with default values
       rocket: null, // Initialize with default values
     };
-    await this.rocketService.updateStatus(
-      rocketName,
+    await this.rocketService.updateRocketStatus(
+      rocketd,
       RocketStatus.PRELAUNCH_CHECKS,
     );
     if (goNogo) {
       commandDto.decision = 'starting launch';
-      commandDto.rocket = await this.rocketService.updateStatus(
-        rocketName,
+      commandDto.rocket = await this.rocketService.updateRocketStatus(
+        rocketd,
         RocketStatus.STARTING_LAUNCH,
       );
     } else {
       commandDto.decision = "can't start launch";
-      commandDto.rocket = await this.rocketService.updateStatus(
-        rocketName,
+      commandDto.rocket = await this.rocketService.updateRocketStatus(
+        rocketd,
         RocketStatus.ABORTED,
       );
     }
