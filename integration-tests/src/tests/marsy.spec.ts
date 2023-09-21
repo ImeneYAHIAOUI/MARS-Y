@@ -8,7 +8,7 @@ import {
     getMissionServiceBaseUrl,
     getWeatherServiceBaseUrl,
 } from '../config/config.js';
-import {CommandDecisionValidator} from "../validators/command-decision.validator";
+import {CommandDecisionValidator} from "../validators/command-decision.validator.js";
 
 describe('Restaurant', () => {
     let rocketServiceBaseUrl;

@@ -1,0 +1,6 @@
+export enum MissionStatus {
+  SUCCESSFUL = 'SUCCESSFUL',
+  FAILED = 'FAILED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOT_STARTED = 'NOT_STARTED'
+}
