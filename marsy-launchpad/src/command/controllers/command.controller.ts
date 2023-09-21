@@ -24,26 +24,35 @@ import { CommandDto } from '../dto/command.dto';
 
 const logger = new Logger('CommandController');
 
-@ApiTags('command')
-@Controller('/command')
+@ApiTags('rockets')
+@Controller('/rockets')
 export class CommandController {
   constructor(private readonly commandService: CommandService) {}
 
-  @ApiQuery({ name: 'name', required: true })
-  @ApiOkResponse({ type: CommandDto })
+  @ApiParam({ name: 'rocketId' })
+  @ApiCreatedResponse({ type: CommandDto })
   @ApiNotFoundResponse({
     type: RocketNameNotFoundException,
     description: 'Rocket not found',
   })
-  @Get()
-  async getLaunchCommand(@Query('name') rocketName: string): Promise<CommandDto> {
+  @Post(':rocketId/launch')
+  async getLaunchCommand(
+    @Param() params: { rocketId: string },
+  ): Promise<CommandDto> {
     try {
-      logger.log(`Received request to get launch command for rocket: ${rocketName}`);
-      const launchCommand = await this.commandService.sendLaunchCommand(rocketName);
-      logger.log(`Launch command sent for rocket: ${rocketName}`);
+      const rocketId = params.rocketId;
+      logger.log(
+        `Received request to get launch command for rocket: ${rocketId}`,
+      );
+      const launchCommand = await this.commandService.sendLaunchCommand(
+        rocketId,
+      );
+      logger.log(`Launch command sent for rocket: ${rocketId}`);
       return launchCommand;
     } catch (error) {
-      logger.error(`Error while processing request for rocket ${rocketName} : ${error.message}`);
+      logger.error(
+        `Error while processing request for rocket with id ${params.rocketId} : ${error.message}`,
+      );
       throw error; // You can handle and customize error logging as needed
     }
   }

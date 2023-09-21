@@ -16,15 +16,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 describe('CommandController (e2e)', () => {
   let app: INestApplication;
-  const mockGoNoGo1 = {
-    go: true,
-  };
-
-  const mockGoNoGo2 = {
-    go: false,
-  };
   const mockRocket = {
-    _id: 'rocket id',
+    _id: 'rocket-id',
     name: 'mockRocket',
     status: RocketStatus.UNKNOWN,
   };
@@ -57,10 +50,11 @@ describe('CommandController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
   });
-  it('/command (GET)', () => {
+  it('/rockets/:rocketId/launch (POST)', () => {
     return request(app.getHttpServer())
-      .get('/command?name=mockRocket')
-      .expect(200)
+      .post(`/rockets/${mockRocket._id}/launch`)
+      .set('Accept', 'application/json')
+      .expect(201)
       .expect(commandService.sendLaunchCommand());
   });
   afterAll(async () => {

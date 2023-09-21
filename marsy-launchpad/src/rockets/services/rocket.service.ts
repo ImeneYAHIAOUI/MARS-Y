@@ -18,29 +18,6 @@ export class RocketService {
   constructor(
     @InjectModel(Rocket.name) private rocketModel: Model<RocketDocument>,
   ) {}
-
-  async getRocketStatus(rocketName: string = null): Promise<RocketStatus> {
-    if (!rocketName) {
-      // Handle the case where rocketId is not provided.
-      throw new BadRequestException('Rocket name is required');
-    }
-
-    const rocket: Rocket = await this.findRocketByName(rocketName);
-
-    // If the rocket is found, return its status.
-    return rocket.status;
-  }
-
-  async findRocketByName(rocketName: string): Promise<Rocket> {
-    const foundItem = await this.rocketModel
-      .findOne({ name: rocketName })
-      .lean();
-    if (foundItem === null) {
-      throw new RocketNameNotFoundException(rocketName);
-    }
-    return foundItem;
-  }
-
   async findAll(): Promise<RocketDto[]> {
     const allRockets: Rocket[] = await this.rocketModel.find().lean();
     const allRocketsDto = allRockets.map((rocket) =>
@@ -49,7 +26,7 @@ export class RocketService {
     return Promise.all(allRocketsDto);
   }
 
-  async create(addRocketDto: AddRocketDto): Promise<RocketDto> {
+  async createRocket(addRocketDto: AddRocketDto): Promise<RocketDto> {
     const alreadyExists = await this.rocketModel.find({
       name: addRocketDto.name,
     });
@@ -61,47 +38,27 @@ export class RocketService {
     return RocketDto.RocketDtoFactory(newRocket);
   }
 
-  async updateStatus(
-    rocketName: string,
-    newStatus: RocketStatus,
-  ): Promise<RocketDto> {
-    const rocket = await this.findRocketByName(rocketName);
-
-    // Check if the newStatus is a valid value from the RocketStatus enum
-    if (!Object.values(RocketStatus).includes(newStatus)) {
-      throw new InvalidStatusException(newStatus);
-    }
-
-    rocket.status = newStatus;
-
-    return RocketDto.RocketDtoFactory(
-      await this.rocketModel.findByIdAndUpdate(rocket._id, rocket, {
-        returnDocument: 'after',
-      }),
-    );
-  }
-
-  findRocketById(rocketId: string) {
+  findRocket(rocketId: string) {
     return this.rocketModel.findById(rocketId);
   }
 
-  async getRocketStatusById(rocketId: string = null): Promise<RocketStatus> {
+  async getRocketStatus(rocketId: string = null): Promise<RocketStatus> {
     if (!rocketId) {
       // Handle the case where rocketId is not provided.
       throw new BadRequestException('Rocket name is required');
     }
 
-    const rocket: Rocket = await this.findRocketById(rocketId);
+    const rocket: Rocket = await this.findRocket(rocketId);
 
     // If the rocket is found, return its status.
     return rocket.status;
   }
 
-  async updateStatusById(
+  async updateRocketStatus(
     rocketId: string,
     newStatus: RocketStatus,
   ): Promise<RocketDto> {
-    const rocket = await this.findRocketById(rocketId);
+    const rocket = await this.findRocket(rocketId);
 
     // Check if the newStatus is a valid value from the RocketStatus enum
     if (!Object.values(RocketStatus).includes(newStatus)) {
@@ -115,5 +72,10 @@ export class RocketService {
         returnDocument: 'after',
       }),
     );
+  }
+
+  async rocketPoll(rocketId: string): Promise<boolean> {
+    const rocketStatus = await this.getRocketStatus(rocketId);
+    return rocketStatus === RocketStatus.READY_FOR_LAUNCH;
   }
 }
