@@ -8,6 +8,7 @@ import { DependenciesConfig } from '../../../shared/config/interfaces/dependenci
 import { RocketDto } from 'src/go-poll/dto/rocket.dto';
 import { RocketNotFoundException } from 'src/go-poll/exceptions/rocket-not-found.exception';
 import { RocketServiceUnavailableException } from 'src/go-poll/exceptions/rocket-service-error-exception';
+import { GoResponseDto } from 'src/go-poll/dto/go.dto';
 
 const logger = new Logger('MarsyRocketProxyService');
 
@@ -22,14 +23,14 @@ export class MarsyRocketProxyService {
         this._baseUrl = `http://${dependenciesConfig.marsy_rocket_url_with_port}`;
     }
 
-    async retrieveRocketStatus(_rocketName : string) : Promise<string> {
+    async retrieveRocketStatus(_rocketId : string) : Promise<boolean> {
         try {
-            const response: AxiosResponse<RocketDto> = await firstValueFrom(
-              this.httpService.get<RocketDto>(
-                `${this._baseUrl}${this._rocketsPath}?name=${_rocketName}`
+            const response: AxiosResponse<GoResponseDto> = await firstValueFrom(
+              this.httpService.post<GoResponseDto>(
+                `${this._baseUrl}${this._rocketsPath}/${_rocketId}/poll`
               )
             );
-            const status = response.data.status;
+            const status = response.data.go;
             logger.log(`Retrieving rocket status successfully, status is ${status}`);
             return status;
         } catch (error) {
@@ -41,5 +42,21 @@ export class MarsyRocketProxyService {
             }
         }
     }
+
+    async getAllRocketsFromApi(): Promise<RocketDto[]> {
+      try {
+        const response: AxiosResponse<RocketDto[]> = await firstValueFrom(
+          this.httpService.get<RocketDto[]>(
+            `${this._baseUrl}${this._rocketsPath}/all`
+          ));
+          return response.data;
       
+      } catch (error) {
+        console.error('Error while fetching rockets:', error);
+        throw error;
+      }
+    }
+
 }
+  
+      
