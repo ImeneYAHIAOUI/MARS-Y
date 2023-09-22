@@ -27,6 +27,7 @@ import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exist
 import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
 import { SendStatusDto } from '../dto/send-status.dto';
 import { RocketPollDto } from '../dto/rocket-poll.dto';
+import {StageRocketMidFlightDto} from "../../command/dto/stage-rocket-mid-flight.dto";
 
 const logger = new Logger('CommandController');
 
@@ -162,4 +163,6 @@ export class RocketController {
       throw error;
     }
   }
+
+
 }

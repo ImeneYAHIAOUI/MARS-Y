@@ -3,11 +3,14 @@ import { RocketService } from '../../rockets/services/rocket.service';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { CommandDto } from '../dto/command.dto';
 import { RocketStatus } from '../../rockets/schemas/rocket-status-enum.schema';
+import { StageRocketMidFlightDto } from '../dto/stage-rocket-mid-flight.dto';
+import { HardwareProxyService } from './mock-hardware-proxy.service.ts/hardware-proxy.service';
 
 @Injectable()
 export class CommandService {
   constructor(
     private readonly marsyMissionProxyService: MarsyMissionProxyService,
+    private readonly hardwareProxyService: HardwareProxyService,
     private readonly rocketService: RocketService,
   ) {}
 
@@ -35,5 +38,33 @@ export class CommandService {
       );
     }
     return commandDto;
+  }
+
+  async stageRocketMidFlight(
+    rocketId: string,
+  ): Promise<StageRocketMidFlightDto> {
+    const rocket = await this.rocketService.findRocket(rocketId);
+    const rocketStatus = rocket.status;
+    if (rocketStatus === RocketStatus.IN_FLIGHT) {
+      if (await this.hardwareProxyService.stageMidFlightFlight(rocketId)) {
+        return {
+          midStageSeparationSuccess: true,
+          rocket: await this.rocketService.updateRocketStatus(
+            rocketId,
+            RocketStatus.STAGED,
+          ),
+        };
+      } else {
+        return {
+          midStageSeparationSuccess: false,
+          rocket: await this.rocketService.updateRocketStatus(
+            rocketId,
+            RocketStatus.FAILED_LAUNCH,
+          ),
+        };
+      }
+    } else {
+      throw new Error('Rocket is not in flight');
+    }
   }
 }
