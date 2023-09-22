@@ -11,4 +11,5 @@ export enum RocketStatus {
   RETURNING = 'returning',
   LANDED = 'landed',
   UNKNOWN = 'unknown',
+  STAGED = 'staged',
 }

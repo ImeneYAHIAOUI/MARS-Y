@@ -2,8 +2,8 @@
 
 source ../framework.sh
 
-echo "starting marsy-rocket-service"
+echo "starting marsy-launchpad-service"
 docker-compose --env-file ./.env.docker \
-               --file docker-compose-marsy-rocket.yml up -d
+               --file docker-compose-marsy-launchpad.yml up -d
 
 wait_on_health http://localhost:3001 ${PWD##*/}

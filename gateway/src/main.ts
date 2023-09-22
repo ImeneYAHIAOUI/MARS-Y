@@ -22,7 +22,7 @@ async function bootstrap() {
   app.use(
     '/rocket',
     createProxyMiddleware({
-      target: `http://${dependenciesConfig.marsy_rocket_service_url_with_port}`,
+      target: `http://${dependenciesConfig.marsy_launchpad_service_url_with_port}`,
       changeOrigin: true,
       pathRewrite: {
         [`^/rocket`]: '',

@@ -20,7 +20,7 @@ export class MarsyRocketProxyService {
 
     constructor(private configService: ConfigService, private readonly httpService: HttpService) {
         const dependenciesConfig = this.configService.get<DependenciesConfig>('dependencies');
-        this._baseUrl = `http://${dependenciesConfig.marsy_rocket_url_with_port}`;
+        this._baseUrl = `http://${dependenciesConfig.marsy_launchpad_url_with_port}`;
     }
 
     async retrieveRocketStatus(_rocketId : string) : Promise<boolean> {

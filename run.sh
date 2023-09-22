@@ -3,7 +3,7 @@
 # List of service names and their docker-compose files
 services=(
     "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
-    "marsy-rocket:marsy-rocket/docker-compose-marsy-rocket.yml"
+    "marsy-launchpad:marsy-launchpad/docker-compose-marsy-launchpad.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
     "gateway:gateway/docker-compose-gateway-alone.yml"
 )
