@@ -26,8 +26,14 @@ describe('CommandController (e2e)', () => {
     rocket: mockRocket,
   };
 
+  const mockStageRocketMidFlightDto = {
+    midStageSeparationSuccess: true,
+    rocket: mockRocket,
+  };
+
   const commandService = {
     sendLaunchCommand: () => mockCommandDto,
+    stageRocketMidFlight: () => mockStageRocketMidFlightDto,
   };
 
   beforeAll(async () => {
@@ -56,6 +62,13 @@ describe('CommandController (e2e)', () => {
       .set('Accept', 'application/json')
       .expect(201)
       .expect(commandService.sendLaunchCommand());
+  });
+  it('/rockets/:rocketId/stage (POST)', () => {
+    return request(app.getHttpServer())
+      .post(`/rockets/${mockRocket._id}/stage`)
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect(commandService.stageRocketMidFlight());
   });
   afterAll(async () => {
     await app.close();

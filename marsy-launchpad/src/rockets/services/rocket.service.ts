@@ -78,4 +78,6 @@ export class RocketService {
     const rocketStatus = await this.getRocketStatus(rocketId);
     return rocketStatus === RocketStatus.READY_FOR_LAUNCH;
   }
+
+
 }
