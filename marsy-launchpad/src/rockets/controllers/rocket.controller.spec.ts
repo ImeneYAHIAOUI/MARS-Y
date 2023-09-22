@@ -54,15 +54,10 @@ describe('RocketController', () => {
           provide: RocketService,
           useValue: {
             findAll: jest.fn().mockResolvedValue(mockRocketList),
-            findRocketByName: jest.fn().mockResolvedValue(mockRocket),
-            findRocketById: jest.fn().mockResolvedValue(mockRocket),
-            create: jest.fn(),
+            findRocket: jest.fn().mockResolvedValue(mockRocket),
+            createRocket: jest.fn(),
             getRocketStatus: jest.fn().mockResolvedValue(sendStatusDto.status),
-            getRocketStatusById: jest
-              .fn()
-              .mockResolvedValue(sendStatusDto.status),
-            updateStatus: jest.fn(),
-            updateStatusById: jest.fn(),
+            updateRocketStatus: jest.fn(),
           },
         },
       ],
@@ -85,21 +80,12 @@ describe('RocketController', () => {
     });
   });
 
-  describe('getRocketByName()', () => {
+  describe('getRocket()', () => {
     it('should return the searched rocket', async () => {
       await expect(
-        controller.getRocketByName(mockRocket.name),
+        controller.getRocket({ rocketId: mockRocket._id }),
       ).resolves.toEqual(mockRocket);
-      expect(service.findRocketByName).toHaveBeenCalledWith(mockRocket.name);
-    });
-  });
-
-  describe('getRocketById()', () => {
-    it('should return the searched rocket', async () => {
-      await expect(
-        controller.getRocketById({ rocketId: mockRocket._id }),
-      ).resolves.toEqual(mockRocket);
-      expect(service.findRocketById).toHaveBeenCalledWith(mockRocket._id);
+      expect(service.findRocket).toHaveBeenCalledWith(mockRocket._id);
     });
   });
 
@@ -112,18 +98,18 @@ describe('RocketController', () => {
     });
   });*/
 
-  describe('retrieveRocketStatusById()', () => {
+  describe('retrieveRocketStatus()', () => {
     it('should return the rocket status', async () => {
       await expect(
-        controller.retrieveRocketStatusById({ rocketId: mockRocket._id }),
+        controller.retrieveRocketStatus({ rocketId: mockRocket._id }),
       ).resolves.toEqual(sendStatusDto);
-      expect(service.getRocketStatusById).toHaveBeenCalledWith(mockRocket._id);
+      expect(service.getRocketStatus).toHaveBeenCalledWith(mockRocket._id);
     });
 
     describe('addRocket()', () => {
       it('should create a rocket', async () => {
         const createSpy = jest
-          .spyOn(service, 'create')
+          .spyOn(service, 'createRocket')
           .mockResolvedValueOnce(mockRocket);
 
         await controller.addRocket(addRocketDto);
@@ -135,23 +121,10 @@ describe('RocketController', () => {
   describe('updateRocketStatus()', () => {
     it('should update the rocket status', async () => {
       const updateStatusSpy = jest
-        .spyOn(service, 'updateStatus')
+        .spyOn(service, 'updateRocketStatus')
         .mockResolvedValueOnce(mockRocket);
 
-      await controller.updateRocketStatus(mockRocket.name, updateStatusDto);
-      expect(updateStatusSpy).toHaveBeenCalledWith(
-        mockRocket.name,
-        updateStatusDto.status,
-      );
-    });
-  });
-  describe('updateRocketStatusById()', () => {
-    it('should update the rocket status', async () => {
-      const updateStatusSpy = jest
-        .spyOn(service, 'updateStatusById')
-        .mockResolvedValueOnce(mockRocket);
-
-      await controller.updateRocketStatusById(
+      await controller.updateRocketStatus(
         { rocketId: mockRocket._id },
         updateStatusDto,
       );
