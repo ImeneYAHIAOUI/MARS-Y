@@ -6,7 +6,7 @@ import {
   Query,
   Post,
   Put,
-  Logger,
+  Logger, HttpCode,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -149,6 +149,7 @@ export class RocketController {
     description: 'Rocket not found',
   })
   @Post(':rocketId/poll')
+  @HttpCode(200)
   async rocketPoll(
     @Param() params: { rocketId: string },
   ): Promise<RocketPollDto> {
