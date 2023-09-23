@@ -5,6 +5,8 @@ services=(
     "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
     "marsy-launchpad:marsy-launchpad/docker-compose-marsy-launchpad.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
+    "marsy-telemetry:marsy-telemetry/docker-compose-marsy-telemetry.yml"
+    "marsy-mock:marsy-mock/docker-compose-marsy-mock.yml"
     "gateway:gateway/docker-compose-gateway-alone.yml"
 )
 container_ids=()
