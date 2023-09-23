@@ -125,7 +125,7 @@ describe('RocketController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/rockets/mock-id/poll')
       .set('Accept', 'application/json')
-      .expect(201)
+      .expect(200)
       .expect({ go: rocketService.rocketPoll() });
   });
 
