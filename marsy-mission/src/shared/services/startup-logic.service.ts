@@ -1,13 +1,15 @@
-import { OnApplicationBootstrap } from '@nestjs/common';
+import { Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
-import { AddMissionDto} from 'src/go-poll/dto/add.mission.dto';
-import { AddSiteDto } from 'src/go-poll/dto/add.site.dto';
-import { Mission } from 'src/go-poll/schema/mission.schema';
-import { MissionStatus } from 'src/go-poll/schema/mission.status.schema';
-import { Rocket } from 'src/go-poll/schema/rocket.schema';
-import { Site } from 'src/go-poll/schema/site.schema';
-import { MarsyRocketProxyService } from 'src/go-poll/services/marsy-rocket-proxy/marsy-rocket-proxy.service';
+import { AddMissionDto} from 'src/missions/dto/add.mission.dto';
+import { AddSiteDto } from 'src/missions/dto/add.site.dto';
+import { Mission } from 'src/missions/schema/mission.schema';
+import { MissionStatus } from 'src/missions/schema/mission.status.schema';
+import { Rocket } from 'src/missions/schema/rocket.schema';
+import { Site } from 'src/missions/schema/site.schema';
+import { MarsyRocketProxyService } from 'src/missions/services/marsy-rocket-proxy/marsy-rocket-proxy.service';
+
+const logger = new Logger('StartupLogicService');
 
 export class StartupLogicService implements OnApplicationBootstrap {
 
@@ -28,9 +30,6 @@ export class StartupLogicService implements OnApplicationBootstrap {
       site.latitude = latitude;
       site.longitude = longitude;
       site.altitude = altitude;
-
-      this.sites.push(site);
-
       return siteModel.create(site);
     }
     
@@ -48,8 +47,9 @@ export class StartupLogicService implements OnApplicationBootstrap {
       mission.status = status;
       mission.site = siteId;
       mission.rocket = rocketId;
-
-      return missionModel.create(mission);
+      const m = missionModel.create(mission);
+      this.sites.push(m);
+      return m;
     }
   }
 
@@ -61,6 +61,7 @@ export class StartupLogicService implements OnApplicationBootstrap {
     for (let i = 1; i <= totalNumberOfSites; i++) {
       const site = await this.createSite(`site-${i}`, 100 + i, 50, 70 + i);
     }
+
     if(this.sites.length == totalNumberOfSites) {
     for (let i = 1; i <= totalNumberOfSites; i++) {
       await this.createMission(`mission-${i}`, MissionStatus.NOT_STARTED, this.sites[i-1]._id, listRockets[i-1]._id);

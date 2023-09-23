@@ -5,10 +5,10 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
-import { RocketDto } from 'src/go-poll/dto/rocket.dto';
-import { RocketNotFoundException } from 'src/go-poll/exceptions/rocket-not-found.exception';
-import { RocketServiceUnavailableException } from 'src/go-poll/exceptions/rocket-service-error-exception';
-import { GoResponseDto } from 'src/go-poll/dto/go.dto';
+import { RocketDto } from 'src/missions/dto/rocket.dto';
+import { RocketNotFoundException } from 'src/missions/exceptions/rocket-not-found.exception';
+import { RocketServiceUnavailableException } from 'src/missions/exceptions/rocket-service-error-exception';
+import { GoResponseDto } from 'src/missions/dto/go.dto';
 
 const logger = new Logger('MarsyRocketProxyService');
 

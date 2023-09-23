@@ -6,8 +6,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { WeatherDto } from '../../dto/weather.dto';
-import { WeatherServiceUnavailableException } from 'src/go-poll/exceptions/weather-service-error-exception';
-import { GoResponseDto } from 'src/go-poll/dto/go.dto';
+import { WeatherServiceUnavailableException } from 'src/missions/exceptions/weather-service-error-exception';
+import { GoResponseDto } from 'src/missions/dto/go.dto';
 
 const logger = new Logger('MarsyWeatherProxyService');
 

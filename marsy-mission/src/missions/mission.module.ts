@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { GoPollController } from './controllers/go-poll.controller';
+import { MissionController } from './controllers/mission.controller';
 import { MissionService } from './services/missions.service';
 import { MarsyRocketProxyService } from './services/marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './services/marsy-weather-proxy/marsy-weather-proxy.service';
 import { SiteService } from './services/site.service';
-import { SitesController } from './controllers/sites.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Site, SiteSchema } from './schema/site.schema';
 import { Mission, missionSchema } from './schema/mission.schema';
@@ -18,7 +17,7 @@ import { Mission, missionSchema } from './schema/mission.schema';
     ]),
     HttpModule,
   ],
-  controllers: [GoPollController, SitesController],
+  controllers: [MissionController],
   providers: [MarsyRocketProxyService, MarsyWeatherProxyService, SiteService, MissionService],
 })
-export class GoPollModule {}
+export class MissionModule {}

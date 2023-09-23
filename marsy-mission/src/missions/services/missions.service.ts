@@ -28,7 +28,7 @@ export class MissionService {
     if(!mission) {
       throw new MissionNotFoundException(_missionId);
     }
-
+    logger.log(" mission site id" + mission.site.toString())
     const _site = await this.siteService.getSiteById(mission.site.toString());
     const _weatherStatus = await this.marsyWeatherProxyService.retrieveWeatherStatus(_site.latitude, _site.longitude);
     const _rocketId = mission.rocket.toString();
