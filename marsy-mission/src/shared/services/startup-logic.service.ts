@@ -30,7 +30,9 @@ export class StartupLogicService implements OnApplicationBootstrap {
       site.latitude = latitude;
       site.longitude = longitude;
       site.altitude = altitude;
-      return siteModel.create(site);
+      const s = await siteModel.create(site);
+      this.sites.push(s);
+      return s;
     }
     
   }
@@ -47,9 +49,7 @@ export class StartupLogicService implements OnApplicationBootstrap {
       mission.status = status;
       mission.site = siteId;
       mission.rocket = rocketId;
-      const m = missionModel.create(mission);
-      this.sites.push(m);
-      return m;
+      return missionModel.create(mission);;
     }
   }
 
@@ -64,7 +64,7 @@ export class StartupLogicService implements OnApplicationBootstrap {
 
     if(this.sites.length == totalNumberOfSites) {
     for (let i = 1; i <= totalNumberOfSites; i++) {
-      await this.createMission(`mission-${i}`, MissionStatus.NOT_STARTED, this.sites[i-1]._id, listRockets[i-1]._id);
+      const m = await this.createMission(`mission-${i}`, MissionStatus.NOT_STARTED, this.sites[i-1]._id, listRockets[i-1]._id);
     }
   }
 }

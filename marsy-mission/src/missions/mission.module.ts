@@ -8,6 +8,7 @@ import { SiteService } from './services/site.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Site, SiteSchema } from './schema/site.schema';
 import { Mission, missionSchema } from './schema/mission.schema';
+import { SiteController } from './controllers/site.controller';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { Mission, missionSchema } from './schema/mission.schema';
     ]),
     HttpModule,
   ],
-  controllers: [MissionController],
+  controllers: [MissionController, SiteController],
   providers: [MarsyRocketProxyService, MarsyWeatherProxyService, SiteService, MissionService],
 })
 export class MissionModule {}

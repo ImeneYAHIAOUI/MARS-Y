@@ -1,4 +1,4 @@
-import { Controller, Post, Param, Get, Logger } from '@nestjs/common';
+import { Controller, Post, Param, Get, Logger, Query } from '@nestjs/common';
 import { MissionService } from '../services/missions.service';
 
 import { ApiOkResponse, ApiTags, ApiQuery, ApiNotFoundResponse, ApiServiceUnavailableResponse, ApiCreatedResponse } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { RocketNotFoundException } from '../exceptions/rocket-not-found.exceptio
 import { RocketServiceUnavailableException } from '../exceptions/rocket-service-error-exception';
 import { Mission } from '../schema/mission.schema';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
+import { MissionStatus } from '../schema/mission.status.schema';
 
 const logger = new Logger('MissionController'); 
 
@@ -34,17 +35,33 @@ export class MissionController {
 
     const go = await this.missionService.goOrNoGoPoll(missionId);
     logger.log(`Response for mission ID: ${missionId}, Go: ${go}`);
-    
+    if(go) {
+      logger.log(`Updating mission status to IN_PROGRESS for mission id: ${missionId}`);
+      this.missionService.saveNewStatus(missionId, MissionStatus.IN_PROGRESS);
+    }
     return { go };
   }
 
   @Get()
-  @ApiOkResponse({ type: GoResponseDto, description: 'getting all mission' })
+  @ApiOkResponse({ description: 'getting all mission' })
   async getAllMissions(): Promise<Mission[]> {
     const missions = await this.missionService.getAllMissions();
     return missions;
   }
 
+  @ApiNotFoundResponse({
+    type: MissionNotFoundException,
+    description: 'mission not found',
+  })
+  @Get('search')
+  @ApiOkResponse({ type: Mission, description: 'Getting missions by rocket ID and status' })
+  async findByRocketIdAndStatus(
+    @Query('rocketId') rocketId: string,
+    @Query('status') status: string,
+  ) {
+    const mission = await this.missionService.getMissionByRocketIdAndStatus(rocketId, status);
+    return mission;
+  }
   
   @Get(':id')
   @ApiOkResponse({type : Mission, description: 'getting mission' })
@@ -52,4 +69,5 @@ export class MissionController {
     const mission = await this.missionService.getMissionById(id);
     return mission;
   }
+
 }

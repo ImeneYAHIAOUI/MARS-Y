@@ -25,7 +25,6 @@ export class Mission {
   @ApiProperty({ type: () => Site }) 
   @Prop({ type: Types.ObjectId, ref: 'Site' }) 
   site: Types.ObjectId;
-
   
   @ApiProperty({ type: () => Rocket }) 
   @Prop({ type: Types.ObjectId, ref: 'Rocket' }) 
