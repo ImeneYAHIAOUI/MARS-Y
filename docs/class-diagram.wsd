@@ -1,7 +1,7 @@
 @startuml
 left to right direction
 
-class Telemetry {
+class TelemetryRecord {
     String id
     Localtime timestamp
     Double latitude
@@ -12,8 +12,6 @@ class Telemetry {
     Integer temperature
     Integer pressure
     Integer humidity
-    Integer windSpeed
-    Integer windDirection
 }
 
 enum RocketStatus {
@@ -81,6 +79,6 @@ Mission "1"--"1" Rocket : concerns
 Mission ..> MissionStatus : use
 
 
-Telemetry "n"--"1" Mission
+TelemetryRecord "n"--"1" Mission
 
 @enduml

@@ -60,14 +60,14 @@ describe('CommandController (e2e)', () => {
     return request(app.getHttpServer())
       .post(`/rockets/${mockRocket._id}/launch`)
       .set('Accept', 'application/json')
-      .expect(201)
+      .expect(200)
       .expect(commandService.sendLaunchCommand());
   });
   it('/rockets/:rocketId/stage (POST)', () => {
     return request(app.getHttpServer())
       .post(`/rockets/${mockRocket._id}/stage`)
       .set('Accept', 'application/json')
-      .expect(201)
+      .expect(200)
       .expect(commandService.stageRocketMidFlight());
   });
   afterAll(async () => {

@@ -13,6 +13,8 @@ compile_dir "gateway"
 compile_dir "marsy-launchpad"
 compile_dir "marsy-weather"
 compile_dir "marsy-mission"
+compile_dir "marsy-telemetry"
+compile_dir "marsy-mock"
 
 echo "** Done all"
 

@@ -6,7 +6,7 @@ import {
   Query,
   Post,
   Put,
-  Logger,
+  Logger, HttpCode,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -37,6 +37,7 @@ export class CommandController {
     description: 'Rocket not found',
   })
   @Post(':rocketId/launch')
+  @HttpCode(200)
   async getLaunchCommand(
     @Param() params: { rocketId: string },
   ): Promise<CommandDto> {
@@ -68,6 +69,7 @@ export class CommandController {
     description: 'Rocket not found',
   })
   @Post(':rocketId/stage')
+  @HttpCode(200)
   async stageRocketMidFlight(
     @Param() params: { rocketId: string },
   ): Promise<StageRocketMidFlightDto> {
