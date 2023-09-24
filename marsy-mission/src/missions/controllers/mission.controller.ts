@@ -1,7 +1,22 @@
-import { Controller, Post, Param, Get, Logger, Query, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Param,
+  Get,
+  Logger,
+  Query,
+  Body,
+} from '@nestjs/common';
 import { MissionService } from '../services/missions.service';
 
-import { ApiOkResponse, ApiTags, ApiQuery, ApiNotFoundResponse, ApiServiceUnavailableResponse, ApiCreatedResponse, ApiConflictResponse } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiTags,
+  ApiNotFoundResponse,
+  ApiServiceUnavailableResponse,
+  ApiCreatedResponse,
+  ApiConflictResponse,
+} from '@nestjs/swagger';
 import { GoResponseDto } from '../dto/go.dto';
 import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import { RocketServiceUnavailableException } from '../exceptions/rocket-service-error-exception';
@@ -11,7 +26,7 @@ import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { AddMissionDto } from '../dto/add.mission.dto';
 
-const logger = new Logger('MissionController'); 
+const logger = new Logger('MissionController');
 
 @ApiTags('Missions')
 @Controller('/missions')
@@ -31,14 +46,19 @@ export class MissionController {
     type: MissionNotFoundException,
     description: 'mission not found',
   })
-  @ApiCreatedResponse({ type: GoResponseDto, description: 'Go or Not poll response' })
+  @ApiCreatedResponse({
+    type: GoResponseDto,
+    description: 'Go or Not poll response',
+  })
   async goOrNoGo(@Param('id') missionId: string): Promise<GoResponseDto> {
     logger.log(`Received request for mission ID: ${missionId}`);
 
     const go = await this.missionService.goOrNoGoPoll(missionId);
     logger.log(`Response for mission ID: ${missionId}, Go: ${go}`);
-    if(go) {
-      logger.log(`Updating mission status to IN_PROGRESS for mission id: ${missionId}`);
+    if (go) {
+      logger.log(
+        `Updating mission status to IN_PROGRESS for mission id: ${missionId}`,
+      );
       this.missionService.saveNewStatus(missionId, MissionStatus.IN_PROGRESS);
     }
     return { go };
@@ -56,17 +76,23 @@ export class MissionController {
     description: 'mission not found',
   })
   @Get('search')
-  @ApiOkResponse({ type: Mission, description: 'Getting missions by rocket ID and status' })
+  @ApiOkResponse({
+    type: Mission,
+    description: 'Getting missions by rocket ID and status',
+  })
   async findByRocketIdAndStatus(
     @Query('rocketId') rocketId: string,
     @Query('status') status: string,
   ) {
-    const mission = await this.missionService.getMissionByRocketIdAndStatus(rocketId, status);
+    const mission = await this.missionService.getMissionByRocketIdAndStatus(
+      rocketId,
+      status,
+    );
     return mission;
   }
-  
+
   @Get(':id')
-  @ApiOkResponse({type : Mission, description: 'getting mission' })
+  @ApiOkResponse({ type: Mission, description: 'getting mission' })
   async findById(@Param('id') id: string) {
     const mission = await this.missionService.getMissionById(id);
     return mission;
@@ -85,5 +111,4 @@ export class MissionController {
       addDto.site,
     );
   }
-
 }

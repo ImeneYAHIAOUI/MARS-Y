@@ -1,6 +1,6 @@
 import {
     frisby,
-    getRocketServiceBaseUrl,
+    getLaunchpadServiceBaseUrl,
 } from '../config/config.js';
 
 import { RocketValidator } from '../validators/rocket.validator.js';
@@ -9,8 +9,9 @@ import { RocketValidator } from '../validators/rocket.validator.js';
 describe('Rocket service', () => {
     let baseUrl;
 
-    beforeAll(() => {
-        baseUrl = getRocketServiceBaseUrl();
+    beforeAll( () => {
+        baseUrl =  getLaunchpadServiceBaseUrl();
+
     });
     describe('/rockets routes', () => {
         const routePath = '/rockets';

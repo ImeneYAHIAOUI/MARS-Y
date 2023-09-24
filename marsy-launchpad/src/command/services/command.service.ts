@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { RocketService } from '../../rockets/services/rocket.service';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { CommandDto } from '../dto/command.dto';
 import { RocketStatus } from '../../rockets/schemas/rocket-status-enum.schema';
 import { StageRocketMidFlightDto } from '../dto/stage-rocket-mid-flight.dto';
 import { HardwareProxyService } from './mock-hardware-proxy.service.ts/hardware-proxy.service';
+import { RocketNotInFlightException } from '../exceptions/rocket-not-in-flight.exception';
 
 @Injectable()
 export class CommandService {
@@ -64,7 +65,7 @@ export class CommandService {
         };
       }
     } else {
-      throw new Error('Rocket is not in flight');
+      throw new RocketNotInFlightException(rocketId);
     }
   }
 }

@@ -1,8 +1,7 @@
 {
-  "name": "@fr-univ-cotedazur-restaurant/integration-tests",
+  "name": "@fr-univ-cotedazur-marsy/integration-tests",
   "version": "0.0.1",
-  "description": "Micro-Service Restaurant: Integration Tests",
-  "author": "Christian Brel <ch.brel@gmail.com>",
+  "description": "Micro-Service Marsy: Integration Tests",
   "private": true,
   "license": "SEE LICENSE IN <root>/LICENSE",
   "type": "module",
