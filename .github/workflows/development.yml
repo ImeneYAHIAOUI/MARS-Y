@@ -40,10 +40,9 @@ jobs:
 
       - name: "Run E2E Tests"
         run: |
-            if [ "$SERVICE_NAME" != "integration-tests" ]; then
             cd $SERVICE_NAME
             npm i
-            fi
+            
 
   lint:
     name: Code standards9
