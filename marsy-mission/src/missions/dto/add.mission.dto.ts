@@ -7,10 +7,11 @@ export class AddMissionDto {
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(MissionStatus)
-
+  @IsOptional() 
   @ApiProperty()
-  status: MissionStatus;
+  @IsEnum(MissionStatus)
+  status?: MissionStatus;
+
 
   @ApiProperty()
   site: string;

@@ -8,6 +8,7 @@ import { get } from 'http';
 import { SiteService } from './site.service';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
 import { MissionStatus } from '../schema/mission.status.schema';
+import { MissionExistsException } from '../exceptions/mission-exists.exception';
 
 const logger = new Logger('MissionService');
 
@@ -18,7 +19,7 @@ export class MissionService {
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
     private readonly siteService: SiteService,
-    @InjectModel(Mission.name) private missionodel: Model<Mission>  
+    @InjectModel(Mission.name) private missionModel: Model<Mission>  
   ) {}
 
   async goOrNoGoPoll(_missionId : string): Promise<boolean> {
@@ -42,30 +43,48 @@ export class MissionService {
 
 
   async saveNewStatus(missionId : string, _status : MissionStatus) {
-    const mission = await this.missionodel.findById(missionId).exec();
+    const mission = await this.missionModel.findById(missionId).exec();
     mission.status = _status;
     await mission.save();
     }
 
   async getAllMissions(): Promise<Mission[]> {
-    const missions = await this.missionodel.find().exec();
+    const missions = await this.missionModel.find().exec();
     return missions;
   }
 
   async getMissionById(id: string): Promise<Mission> {
-    const mission = await this.missionodel.findById(id).exec();
+    const mission = await this.missionModel.findById(id).exec();
     return mission;
   }
 
   async getMissionByRocketIdAndStatus(rocketId: string, missionStatus: string): Promise<Mission> {
     logger.log(`Received request for mission with rocketId ${rocketId} and status ${missionStatus}`);
-    const mission = await this.missionodel.findOne({ rocket: rocketId, status: missionStatus}).exec();
+    const mission = await this.missionModel.findOne({ rocket: rocketId, status: missionStatus}).exec();
     if (!mission) {
       throw new MissionNotFoundException(`Mission with rocketId ${rocketId} and status ${missionStatus} not found`);
     }
     logger.log(`Returning mission with rocketId ${mission.name} and status ${missionStatus}`);
     return mission;
   }
+
+  async createMission(name: string, rocketId: string, siteId: string): Promise<Mission> {
+    const existingMission = await this.missionModel.findOne({ name : name }).exec();
+  
+    if (existingMission) {
+      throw new MissionExistsException(name);
+    }
+  
+    const newSite = new this.missionModel({
+      name,
+      status: MissionStatus.NOT_STARTED,
+      site: siteId,
+      rocket: rocketId,
+    });
+
+    return newSite.save();
+  }
+
 
 
 }

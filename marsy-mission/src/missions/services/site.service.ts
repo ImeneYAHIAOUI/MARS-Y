@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SiteExistsException } from '../exceptions/site-exists.exception';
 import { Site } from '../schema/site.schema';
+
+const logger = new Logger('SiteService');
 
 
 @Injectable()
@@ -21,6 +23,7 @@ export class SiteService {
   }
 
   async createSite(name: string, latitude: number, longitude: number, altitude: number): Promise<Site> {
+    logger.log(`Received request for site name : ${name}`);
     const existingSite = await this.siteModel.findOne({ name }).exec();
   
     if (existingSite) {

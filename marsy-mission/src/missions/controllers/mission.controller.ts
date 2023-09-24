@@ -1,13 +1,15 @@
-import { Controller, Post, Param, Get, Logger, Query } from '@nestjs/common';
+import { Controller, Post, Param, Get, Logger, Query, Body } from '@nestjs/common';
 import { MissionService } from '../services/missions.service';
 
-import { ApiOkResponse, ApiTags, ApiQuery, ApiNotFoundResponse, ApiServiceUnavailableResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiQuery, ApiNotFoundResponse, ApiServiceUnavailableResponse, ApiCreatedResponse, ApiConflictResponse } from '@nestjs/swagger';
 import { GoResponseDto } from '../dto/go.dto';
 import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import { RocketServiceUnavailableException } from '../exceptions/rocket-service-error-exception';
 import { Mission } from '../schema/mission.schema';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
 import { MissionStatus } from '../schema/mission.status.schema';
+import { MissionExistsException } from '../exceptions/mission-exists.exception';
+import { AddMissionDto } from '../dto/add.mission.dto';
 
 const logger = new Logger('MissionController'); 
 
@@ -68,6 +70,20 @@ export class MissionController {
   async findById(@Param('id') id: string) {
     const mission = await this.missionService.getMissionById(id);
     return mission;
+  }
+
+  @Post()
+  @ApiCreatedResponse({ type: Mission })
+  @ApiConflictResponse({
+    type: MissionExistsException,
+    description: 'site already exists',
+  })
+  async createSite(@Body() addDto: AddMissionDto): Promise<Mission> {
+    return this.missionService.createMission(
+      addDto.name,
+      addDto.rocket,
+      addDto.site,
+    );
   }
 
 }
