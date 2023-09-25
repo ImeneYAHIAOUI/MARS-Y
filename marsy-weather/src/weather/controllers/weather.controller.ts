@@ -19,8 +19,6 @@ export class WeatherController {
 
     const cacheKey = `weather-status-${lat}-${long}`;
     const cachedStatus = await this.cacheManager.get(cacheKey) as WeatherStatus;
-    this.logger.log(`cachedStatus - ${cachedStatus}`);
-
     if (cachedStatus) {
        this.logger.log(`Response sent from cache: status - ${cachedStatus}`);
       this.logger.log(`Response sent from cache: status - ${cachedStatus}`);
