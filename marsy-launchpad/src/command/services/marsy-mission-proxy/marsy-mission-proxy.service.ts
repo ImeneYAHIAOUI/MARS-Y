@@ -38,8 +38,9 @@ export class MarsyMissionProxyService {
         this._goNoGo = response.data;
         logger.log(`goOrNoGoPoll successful for rocket: ${_rocketId}`);
         return this._goNoGo.go;
-      } else {
+      } else if (response.status == HttpStatus.NOT_FOUND) {
         logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketId}`);
+        logger.error(`Mission not found for rocket: ${_rocketId}`);
         throw new HttpException(response.data, response.status);
       }
     }

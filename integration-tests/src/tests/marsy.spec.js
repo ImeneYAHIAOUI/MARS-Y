@@ -8,13 +8,14 @@ import {
     getMissionServiceBaseUrl,
     getWeatherServiceBaseUrl,
 } from '../config/config.js';
-import {CommandDecisionValidator} from "../validators/command-decision.validator.js";
+import {LaunchCommandDecisionValidator} from "../validators/launch-command-decision.validator.js";
 import {CreateRocketDto} from "../dto/create-rocket.dto.js";
 import {RocketValidator} from "../validators/rocket.validator.js";
 import {CreateSiteDto} from "../dto/create-site.dto.js";
 import {SiteValidator} from "../validators/site.validator.js";
 import {CreateMissionsDto} from "../dto/create-missions.dto.js";
 import {MissionValidator} from "../validators/mission.validator.js";
+import {StageCommandDecisionValidator} from "../validators/stage-command-decision.validator.js";
 function generateRandomName(length) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let result = "";
@@ -46,50 +47,68 @@ describe('Marsy', () => {
     });
 
     describe('set launch command', () => {
-        it("should return the launch command", async () => {
-            let commandDecision;
-            const createRocketDto = new CreateRocketDto(generateRandomName(5), "readyForLaunch");
-            let rocket;
+        const createRocketDto = new CreateRocketDto(generateRandomName(5), "readyForLaunch");
+        let rocket;
 
-            let mission;
-            const createSiteDto = new CreateSiteDto(generateRandomName(5), 1, 1, 1);
-            let site;
-            await frisby
+        let mission;
+        const createSiteDto = new CreateSiteDto(generateRandomName(5), 1, 1, 1);
+        let site;
+        it("should create a rocket", async () => {
+            return  frisby
                 .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}`, createRocketDto)
                 .expect("status", 201)
                 .expect("jsonTypesStrict", RocketValidator)
                 .then((res) => {
                     rocket = res.json;
                 });
+        });
 
-
-            await frisby
-                .post(`${missionServiceBaseUrl}${missionServiceSitesPath}`,createSiteDto)
+            it("should create a site", async () => {
+            return  frisby
+                .post(`${missionServiceBaseUrl}${missionServiceSitesPath}`, createSiteDto)
                 .expect("status", 201)
                 .expect("jsonTypesStrict", SiteValidator)
                 .then((res) => {
                     site = res.json;
                 });
 
-            const createMissionDto = new CreateMissionsDto(generateRandomName(5),"IN_PROGRESS", site._id, rocket._id);
+        });
+            it("should create a mission", async () => {
+                const createMissionDto = new CreateMissionsDto(generateRandomName(5), "IN_PROGRESS", site._id, rocket._id);
+                return  frisby
+                    .post(`${missionServiceBaseUrl}${missionServiceMissionsPath}`, createMissionDto)
+                    .expect("status", 201)
+                    .expect("jsonTypesStrict", MissionValidator)
+                    .then((res) => {
+                        mission = res.json;
+                    });
+            });
+            it("should return the launch command", async () => {
 
-            await frisby
-                .post(`${missionServiceBaseUrl}${missionServiceMissionsPath}`, createMissionDto)
-                .expect("status", 201)
-                .expect("jsonTypesStrict", MissionValidator)
-                .then((res) => {
-                    mission = res.json;
-                });
-
-            console.log(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/launch`)
             return frisby
                 .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/launch`)
                 .expect("status", 200)
-                .expect("jsonTypesStrict", CommandDecisionValidator)
-                .then((res) => {
-                    commandDecision = res.json;
-                });
-        })
-    });
+                .expect("jsonTypesStrict", LaunchCommandDecisionValidator);
+        });
+        it("should return an error", async () => {
+
+            return frisby
+                .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
+                .expect("status", 400);
+        });
+        it("should change the rockets status", async () => {
+            return frisby
+                .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "inFlight"})
+                .expect("status", 200)
+                .expect("jsonTypesStrict", RocketValidator);
+        });
+        it("should return stage result", async () => {
+            return frisby
+                .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
+                .expect("status", 200)
+                .expect("jsonTypesStrict", StageCommandDecisionValidator);
+        });
+
+        });
 
 });
