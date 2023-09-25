@@ -17,7 +17,7 @@ describe('WeatherController', () => {
 
   describe('getWeatherStatus', () => {
     it('should return a random weather status', () => {
-      const spyLoggerLog = jest.spyOn(weatherController['logger'], 'log'); // Espionnez la méthode log du logger
+      const spyLoggerLog = jest.spyOn(weatherController['logger'], 'log');
 
       const result = weatherController.getWeatherStatus(undefined, undefined);
 
