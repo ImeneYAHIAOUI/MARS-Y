@@ -79,5 +79,15 @@ export class RocketService {
     return rocketStatus === RocketStatus.READY_FOR_LAUNCH;
   }
 
-
+  async deleteRocket(rocketId: string) {
+    const rocket = await this.findRocket(rocketId);
+    if (!rocket) {
+      throw new RocketNameNotFoundException(rocketId);
+    }
+    try {
+      await this.rocketModel.findByIdAndDelete(rocketId);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }

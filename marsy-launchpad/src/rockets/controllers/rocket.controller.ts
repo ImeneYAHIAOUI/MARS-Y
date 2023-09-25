@@ -6,7 +6,9 @@ import {
   Query,
   Post,
   Put,
-  Logger, HttpCode,
+  Logger,
+  HttpCode,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -27,7 +29,7 @@ import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exist
 import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
 import { SendStatusDto } from '../dto/send-status.dto';
 import { RocketPollDto } from '../dto/rocket-poll.dto';
-import {StageRocketMidFlightDto} from "../../command/dto/stage-rocket-mid-flight.dto";
+import { StageRocketMidFlightDto } from '../../command/dto/stage-rocket-mid-flight.dto';
 
 const logger = new Logger('CommandController');
 
@@ -165,5 +167,25 @@ export class RocketController {
     }
   }
 
-
+  @Delete(':rocketId')
+  @ApiParam({ name: 'rocketId' })
+  @ApiOkResponse({
+    type: RocketDto,
+    description: 'The rocket has been successfully deleted.',
+  })
+  @ApiNotFoundResponse({
+    type: RocketNameNotFoundException,
+    description: 'Rocket not found',
+  })
+  async deleteRocket(@Param() params: { rocketId: string }): Promise<void> {
+    try {
+      const rocketId = params.rocketId; // Access the 'rocketId' property
+      logger.log(`Received request to delete rocket by ID: ${rocketId}`);
+      await this.rocketService.deleteRocket(rocketId);
+      logger.log(`Successfully deleted the rocket by ID: ${rocketId}`);
+    } catch (error) {
+      logger.error(`Error while deleting rocket by ID: ${error.message}`);
+      throw error;
+    }
+  }
 }

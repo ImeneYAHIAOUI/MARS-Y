@@ -1,18 +1,26 @@
-import { Controller, Post, Param, Get, Logger, Body } from '@nestjs/common';
-import { MissionService } from '../services/missions.service';
+import {
+  Controller,
+  Post,
+  Param,
+  Get,
+  Logger,
+  Body,
+  Delete,
+} from '@nestjs/common';
 
-import { ApiOkResponse, ApiTags, ApiQuery, ApiNotFoundResponse, ApiServiceUnavailableResponse, ApiCreatedResponse, ApiConflictResponse } from '@nestjs/swagger';
-import { GoResponseDto } from '../dto/go.dto';
-import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
-import { RocketServiceUnavailableException } from '../exceptions/rocket-service-error-exception';
-import { Mission } from '../schema/mission.schema';
+import {
+  ApiOkResponse,
+  ApiTags,
+  ApiNotFoundResponse,
+  ApiCreatedResponse,
+  ApiConflictResponse,
+} from '@nestjs/swagger';
+
 import { SiteService } from '../services/site.service';
 import { Site } from '../schema/site.schema';
 import { AddSiteDto } from '../dto/add.site.dto';
 import { SiteExistsException } from '../exceptions/site-exists.exception';
-
-const logger = new Logger('MissionController'); 
-
+new Logger('MissionController');
 @ApiTags('Sites')
 @Controller('/sites')
 export class SiteController {
@@ -40,5 +48,13 @@ export class SiteController {
     );
   }
 
-
+  @Delete(':id')
+  @ApiOkResponse({ type: Site, description: 'Site deleted' })
+  @ApiNotFoundResponse({
+    type: SiteExistsException,
+    description: 'Site not found',
+  })
+  async deleteSite(@Param('id') siteId: string): Promise<Site> {
+    return this.siteService.deleteSite(siteId);
+  }
 }

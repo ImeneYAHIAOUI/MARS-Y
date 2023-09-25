@@ -5,7 +5,9 @@ import {
   Get,
   Logger,
   Query,
-  Body, HttpCode,
+  Body,
+  HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { MissionService } from '../services/missions.service';
 
@@ -110,5 +112,16 @@ export class MissionController {
       addDto.rocket,
       addDto.site,
     );
+  }
+
+  @Delete(':id')
+  @ApiOkResponse({ type: Mission, description: 'deleting mission' })
+  @ApiNotFoundResponse({
+    type: MissionNotFoundException,
+    description: 'mission not found',
+  })
+  async deleteMission(@Param('id') id: string) {
+    const mission = await this.missionService.deleteMission(id);
+    return mission;
   }
 }

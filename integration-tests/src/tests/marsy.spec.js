@@ -16,6 +16,7 @@ import {SiteValidator} from "../validators/site.validator.js";
 import {CreateMissionsDto} from "../dto/create-missions.dto.js";
 import {MissionValidator} from "../validators/mission.validator.js";
 import {StageCommandDecisionValidator} from "../validators/stage-command-decision.validator.js";
+import {GoNoGoValidator} from "../validators/go-no-go.validator.js";
 function generateRandomName(length) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let result = "";
@@ -47,11 +48,11 @@ describe('Marsy', () => {
     });
 
     describe('set launch command', () => {
-        const createRocketDto = new CreateRocketDto(generateRandomName(5), "readyForLaunch");
+        const createRocketDto = new CreateRocketDto("testRocket", "readyForLaunch");
         let rocket;
 
         let mission;
-        const createSiteDto = new CreateSiteDto(generateRandomName(5), 1, 1, 1);
+        const createSiteDto = new CreateSiteDto("testSite", 1, 1, 1);
         let site;
         it("should create a rocket", async () => {
             return  frisby
@@ -74,7 +75,7 @@ describe('Marsy', () => {
 
         });
             it("should create a mission", async () => {
-                const createMissionDto = new CreateMissionsDto(generateRandomName(5), "IN_PROGRESS", site._id, rocket._id);
+                const createMissionDto = new CreateMissionsDto("testMission", site._id, rocket._id);
                 return  frisby
                     .post(`${missionServiceBaseUrl}${missionServiceMissionsPath}`, createMissionDto)
                     .expect("status", 201)
@@ -82,6 +83,13 @@ describe('Marsy', () => {
                     .then((res) => {
                         mission = res.json;
                     });
+            });
+            it("should return the poll result", async () => {
+
+                return frisby
+                    .post(`${missionServiceBaseUrl}${missionServiceMissionsPath}/${mission._id}/poll`)
+                    .expect("status", 200)
+                    .expect("jsonTypesStrict", GoNoGoValidator);
             });
             it("should return the launch command", async () => {
 
@@ -109,6 +117,22 @@ describe('Marsy', () => {
                 .expect("jsonTypesStrict", StageCommandDecisionValidator);
         });
 
+        it("should return delete rocket", async () => {
+            return frisby
+                .delete(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}`)
+                .expect("status", 200)
+        });
+
+        it("should return delete site", async () => {
+            return frisby
+                .delete(`${missionServiceBaseUrl}${missionServiceSitesPath}/${site._id}`)
+                .expect("status", 200)
+        });
+        it("should return delete mission", async () => {
+            return frisby
+                .delete(`${missionServiceBaseUrl}${missionServiceMissionsPath}/${mission._id}`)
+                .expect("status", 200)
+        });
         });
 
 });

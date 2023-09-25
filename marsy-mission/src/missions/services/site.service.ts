@@ -6,7 +6,6 @@ import { Site } from '../schema/site.schema';
 
 const logger = new Logger('SiteService');
 
-
 @Injectable()
 export class SiteService {
   constructor(@InjectModel(Site.name) private siteModel: Model<Site>) {}
@@ -22,14 +21,19 @@ export class SiteService {
     return site;
   }
 
-  async createSite(name: string, latitude: number, longitude: number, altitude: number): Promise<Site> {
+  async createSite(
+    name: string,
+    latitude: number,
+    longitude: number,
+    altitude: number,
+  ): Promise<Site> {
     logger.log(`Received request for site name : ${name}`);
     const existingSite = await this.siteModel.findOne({ name }).exec();
-  
+
     if (existingSite) {
       throw new SiteExistsException(name);
     }
-  
+
     const newSite = new this.siteModel({
       name,
       latitude,
@@ -40,4 +44,11 @@ export class SiteService {
     return newSite.save();
   }
 
+  deleteSite(siteId: string) {
+    try {
+      return this.siteModel.findByIdAndDelete(siteId);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
