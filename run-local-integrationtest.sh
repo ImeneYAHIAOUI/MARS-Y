@@ -23,5 +23,8 @@ echo "## Running IT with direct access to backend microservices"
 run_test_with_profile
 echo "## Running IT through the weather service"
 run_test_with_profile marsy-weather
+echo "## Running IT through the telemetry service"
+run_test_with_profile marsy-telemetry
+echo "## Running IT through the 
 ret_code=$?
 exit $ret_code

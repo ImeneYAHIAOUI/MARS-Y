@@ -25,7 +25,7 @@ async function bootstrap() {
       target: `http://${dependenciesConfig.marsy_launchpad_service_url_with_port}`,
       changeOrigin: true,
       pathRewrite: {
-        [`^/rocket`]: '',
+        [`^/launchpad`]: '',
       },
     }),
   );
