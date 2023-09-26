@@ -30,7 +30,7 @@
 * `marsy-launchpad` (deployed on `http://localhost:3001/rockets` with API doc at `/doc/launchpad`): implements the launchpad context, with rocket management, staging and launch commands.
 * `marsy-mission` (deployed on `http://localhost:3000/missions` with API doc at `/doc/mission`): implements the mission context, with mission and site management and go and no go polling.
 * `marsy-weather` (deployed on `http://localhost:3002/kitchen` with API doc at `doc/weather`): sends weather status.
-* `marsy-telemetry` (deployed on `http://localhost:3003/telemetry` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
+* `marsy-telemetry` (deployed on `http://localhost:3004/telemetry` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
 * `integration-tests`: a specific service that run end to end tests at the API level through frisby after docker-composing the other services.
 * `gateway` sets up a gateway to `http://localhost:9500` with subroutes to the different micro-services
 
