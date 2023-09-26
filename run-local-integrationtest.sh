@@ -21,10 +21,7 @@ function run_test_with_profile() { # $1 the maven profile to run tests with
 echo "Running IT test WITH NO PRIOR BUILD"
 echo "## Running IT with direct access to backend microservices"
 run_test_with_profile
-echo "## Running IT through the weather service"
-run_test_with_profile marsy-weather
-echo "## Running IT through the telemetry service"
-run_test_with_profile marsy-telemetry
-echo "## Running IT through the 
+echo "## Running IT through the gateway"
+run_test_with_profile gateway
 ret_code=$?
 exit $ret_code
