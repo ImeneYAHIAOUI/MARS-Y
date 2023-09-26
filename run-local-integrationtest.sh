@@ -17,7 +17,6 @@ function run_test_with_profile() { # $1 the maven profile to run tests with
   ./stop-all.sh
   return $ret_code
 }
-
 echo "Running IT test WITH NO PRIOR BUILD"
 echo "## Running IT with direct access to backend microservices"
 run_test_with_profile

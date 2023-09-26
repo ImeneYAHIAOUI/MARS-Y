@@ -17,28 +17,39 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   // Proxy endpoints
-  const dependenciesConfig = configService.get<DependenciesConfig>('dependencies');
-  app.use('/menu', createProxyMiddleware({
-    target: `http://${dependenciesConfig.menu_service_url_with_port}`,
-    changeOrigin: true,
-    pathRewrite: {
-      [`^/menu`]: '',
-    }
-  }));
-  app.use('/kitchen', createProxyMiddleware({
-    target: `http://${dependenciesConfig.kitchen_service_url_with_port}`,
-    changeOrigin: true,
-    pathRewrite: {
-      [`^/kitchen`]: '',
-    }
-  }));
-  app.use('/dining', createProxyMiddleware({
-    target: `http://${dependenciesConfig.dining_service_url_with_port}`,
-    changeOrigin: true,
-    pathRewrite: {
-      [`^/dining`]: '',
-    }
-  }));
+  const dependenciesConfig =
+    configService.get<DependenciesConfig>('dependencies');
+  app.use(
+    '/launchpad',
+    createProxyMiddleware({
+      target: `http://${dependenciesConfig.marsy_launchpad_service_url_with_port}`,
+      changeOrigin: true,
+      pathRewrite: {
+        [`^/launchpad`]: '',
+      },
+    }),
+  );
+  app.use(
+    '/weather',
+    createProxyMiddleware({
+      target: `http://${dependenciesConfig.marsy_weather_service_url_with_port}`,
+      changeOrigin: true,
+      pathRewrite: {
+        [`^/weather`]: '',
+      },
+    }),
+  );
+
+  app.use(
+    '/mission',
+    createProxyMiddleware({
+      target: `http://${dependenciesConfig.marsy_mission_service_url_with_port}`,
+      changeOrigin: true,
+      pathRewrite: {
+        [`^/mission`]: '',
+      },
+    }),
+  );
 
   // Run the app
   const appPort = configService.get('app.port');

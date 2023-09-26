@@ -1,0 +1,24 @@
+version: "3.3"
+
+services:
+  marsy-telemetry-service:
+    image: "nestjs-marsy/marsy-telemetry"
+    restart: always
+    ports:
+      - 3004:3000
+    depends_on:
+      - ${MARSY_MOCK_SERVICE}
+    environment:
+      - MARSY_MOCK_SERVICE_URL_WITH_PORT=${MARSY_MOCK_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+  mongo_db_marsy_telemetry:
+    image: "mongo:4.4.15"
+    restart: always
+    ports:
+      - 27020:27017
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

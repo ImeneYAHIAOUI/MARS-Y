@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  marsy-weather-service:
+    image: "marsy/marsy-weather"
+    restart: always
+    ports:
+      - 3002:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

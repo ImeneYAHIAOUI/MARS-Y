@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  marsy-mock-service:
+    image: "nestjs-marsy/marsy-mock"
+    restart: always
+    ports:
+      - 3005:3000
+    environment:
+      - MARSY_TELEMETRY_SERVICE_URL_WITH_PORT=${MARSY_TELEMETRY_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

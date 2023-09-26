@@ -13,6 +13,6 @@ import { HealthModule } from './health/health.module';
       load: [appConfig, dependenciesConfig],
     }),
     HealthModule,
-  ]
+  ],
 })
 export class AppModule {}
