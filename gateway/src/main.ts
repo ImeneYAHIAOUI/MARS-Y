@@ -20,7 +20,7 @@ async function bootstrap() {
   const dependenciesConfig =
     configService.get<DependenciesConfig>('dependencies');
   app.use(
-    '/rocket',
+    '/launchpad',
     createProxyMiddleware({
       target: `http://${dependenciesConfig.marsy_launchpad_service_url_with_port}`,
       changeOrigin: true,
