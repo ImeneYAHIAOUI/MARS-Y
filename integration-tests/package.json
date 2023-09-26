@@ -6,8 +6,8 @@
   "license": "SEE LICENSE IN <root>/LICENSE",
   "type": "module",
   "scripts": {
-    "test:integration": "set NODE_OPTIONS=--experimental-vm-modules && jest -c jest.config.js",
-    "test:integration:watch": "set NODE_OPTIONS=--experimental-vm-modules && jest -c jest.config.js --watch"
+    "test:integration": "NODE_OPTIONS='--experimental-vm-modules' jest -c jest.config.js",
+    "test:integration:watch": "NODE_OPTIONS='--experimental-vm-modules' jest -c jest.config.js --watch"
   },
 
   "devDependencies": {
