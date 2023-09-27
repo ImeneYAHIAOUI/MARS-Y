@@ -22,7 +22,7 @@ export class BoosterService {
         if(boosterTelemetryDto.altitude == altitudeThreshold) {
             logger.log(`Booster has reached the altitude to land`);
             //CALL HARDWARE SERVICE to land the booster
-            const result = true //this.hardwareProxyService.callHardwareToLand(rocketId);
+            const result = this.hardwareProxyService.callHardwareToLand(rocketId);
             if(result){
                 const missionBoosterDto = new MissionBoosterDto();
                 missionBoosterDto._id = boosterTelemetryDto.missionId;

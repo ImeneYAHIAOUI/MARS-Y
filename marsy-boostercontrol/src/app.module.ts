@@ -24,6 +24,5 @@ import { MarsyMissionProxyService } from './booster/services/proxies/mission-pro
   ],
   controllers: [AppController, BoosterController],
   providers: [AppService, BoosterService, HardwareProxyService, MarsyMissionProxyService],
-  providers: [AppService, BoosterService],
 })
 export class AppModule {}

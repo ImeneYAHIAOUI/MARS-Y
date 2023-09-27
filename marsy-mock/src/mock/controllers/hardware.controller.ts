@@ -78,8 +78,8 @@ export class HardwareController {
     description: 'Starts landing booster rocket',
   })
   @HttpCode(200)
-  async landRocketBooster(@Param('idrocket') id: string): Promise<boolean> {
-    this.logger.log(`Received request to start landing booster rocket`);
+  async landRocketBooster(@Param('id') id: string): Promise<boolean> {
+    this.logger.log(`Received request to start landing booster for mission ${id}`);
     return await this.hardwareService.landBooster(id);
   }
 }

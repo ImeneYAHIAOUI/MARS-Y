@@ -43,10 +43,11 @@ export class HardwareService {
     };
   }
 
-  async landBooster(rocketId: string): Promise<boolean> {
-    this.logger.log(`Landing booster rocket ${rocketId}`);
-    return true;
+  async landBooster(id: string): Promise<any> {
+    this.logger.log(`Landing booster for mission id ${id}`);
+    return {_id : id, landed : true };
   }
+
 
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
     this.logger.log(`Retrieving telemetry for the rocket ${rocketId}`);

@@ -9,6 +9,7 @@ docker-compose --env-file ./.env.docker \
                --file marsy-mission/docker-compose-marsy-mission.yml \
                 --file marsy-telemetry/docker-compose-marsy-telemetry.yml \
                  --file marsy-mock/docker-compose-marsy-mock.yml \
+                 --file marsy-boostercontrol/docker-compose-marsy-booster.yml \
                   --file marsy-payload/docker-compose-marsy-payload.yml up -d
 echo "all services started behind gateway"
 
@@ -19,6 +20,7 @@ services=(
     "marsy-launchpad:marsy-launchpad/docker-compose-marsy-launchpad.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
     "marsy-telemetry:marsy-telemetry/docker-compose-marsy-telemetry.yml"
+    "marsy-boostercontrol:marsy-boostercontrol/docker-compose-marsy-booster.yml"
     "marsy-mock:marsy-mock/docker-compose-marsy-mock.yml"
     "gateway:gateway/docker-compose-gateway-alone.yml"
 )

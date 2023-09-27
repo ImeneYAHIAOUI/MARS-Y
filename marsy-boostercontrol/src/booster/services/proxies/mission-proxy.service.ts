@@ -23,7 +23,7 @@ export class MarsyMissionProxyService {
   }
 
   async updateMission(missionBoosterDto : MissionBoosterDto) {
-    logger.log(`Performing updating Mission with id`);
+    logger.log(`Performing updating Mission with id ${missionBoosterDto._id}`);
     const response = await firstValueFrom(
       this.httpService.put<MissionBoosterDto>(
         `${this._baseUrl}${this._missionPath}`, missionBoosterDto
