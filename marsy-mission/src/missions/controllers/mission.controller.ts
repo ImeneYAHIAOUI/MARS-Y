@@ -138,7 +138,7 @@ export class MissionController {
     ): Promise<void> {
         logger.log(`Received telemetry for rocket ID: ${idrocket}`);
         this.missionService.evaluateRocketDestruction(
-          params.idrocket,
+          idrocket,
         );
 
     }
