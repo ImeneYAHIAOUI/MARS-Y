@@ -3,14 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { DeliveryDto } from '../dto/delivery.dto';
 import { StagingDto } from '../dto/staging.dto';
-import * as cron from 'node-cron';
+import * as cron from 'cron';
 import { MarsyTelemetryProxyService } from './marsy-telemetry-proxy/marsy-telemetry-proxy.service';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 
 @Injectable()
 export class HardwareService {
   private readonly logger: Logger = new Logger(HardwareService.name);
-  private cronJob: cron.ScheduledTask;
+  private cronJob: any;
   private rockets: {
     rocketId: string;
     missionId: string;
@@ -45,9 +45,9 @@ export class HardwareService {
 
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
     this.logger.log(`Retrieving telemetry for the rocket ${rocketId}`);
-    const rocketTelemetry = this.rockets.find(
-      (rocket) => rocket.rocketId === rocketId,
-    )[0];
+    let rocketTelemetry = this.rockets.find((rocket) => { 
+      return rocket.rocketId === rocketId;
+    });
     rocketTelemetry.telemetry = {
       timestamp: Date.now(),
       longitude: Math.floor(Math.random() * (255 - 0)) + 0,
@@ -57,8 +57,8 @@ export class HardwareService {
       speed: Math.floor(Math.random() * (100 - 0)) + 0,
       humidity: Math.floor(Math.random() * (30 - 0)) + 0,
       temperature: Math.floor(Math.random() * (70 - 0)) + 0,
-      fuel: rocketTelemetry.fuel - Math.floor(Math.random() * (10 - 0)) + 0,
-      missionId: rocketTelemetry.missionId,
+      fuel: rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * (10 - 0)) + 0,
+      missionId: rocketTelemetry.telemetry.missionId,
       rocketId: rocketId,
       angle: 90,
       staged: false,
@@ -98,17 +98,20 @@ export class HardwareService {
       staged: false,
       telemetry: this._getInitialeTelemetry(missionId, rocketId),
     });
-    // this.cronJob = cron.schedule('2 * * * *', async () => {
-    this.marsyTelemetryProxyService.sendTelemetryToApi(
-      await this.retrieveTelemetry(rocketId),
-    );
-    // });
-    // this.cronJob.start();
+    this.cronJob = new cron.CronJob('*/3 * * * * *',  () => {
+      this.marsyTelemetryProxyService.sendTelemetryToApi(
+        this.retrieveTelemetry(rocketId),
+      );
+    },
+    null,
+    true,
+    'America/Los_Angeles');
+    this.cronJob.start();
     return true;
   }
 
   stopSendingTelemetry(rocketId: string): void {
     this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
-    // this.cronJob.stop();
+    this.cronJob.stop();
   }
 }
