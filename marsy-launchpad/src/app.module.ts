@@ -12,6 +12,7 @@ import { HealthModule } from './health/health.module';
 import mongodbConfig from './shared/config/mongodb.config';
 import { StartupLogicService } from './shared/services/startup-logic.service';
 import dependenciesConfig from './shared/config/dependencies.config';
+import { PayloadModule } from './payload/payload.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import dependenciesConfig from './shared/config/dependencies.config';
     HealthModule,
     RocketModule,
     CommandModule,
+    PayloadModule,
   ],
   providers: [StartupLogicService],
 })

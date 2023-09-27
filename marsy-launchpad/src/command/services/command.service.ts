@@ -4,8 +4,9 @@ import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-pr
 import { CommandDto } from '../dto/command.dto';
 import { RocketStatus } from '../../rockets/schemas/rocket-status-enum.schema';
 import { StageRocketMidFlightDto } from '../dto/stage-rocket-mid-flight.dto';
-import { HardwareProxyService } from './mock-hardware-proxy.service.ts/hardware-proxy.service';
+import { HardwareProxyService } from '../../shared/services/mock-hardware-proxy.service.ts/hardware-proxy.service';
 import { RocketNotInFlightException } from '../exceptions/rocket-not-in-flight.exception';
+
 
 @Injectable()
 export class CommandService {
@@ -29,7 +30,7 @@ export class CommandService {
       commandDto.decision = 'starting launch';
       commandDto.rocket = await this.rocketService.updateRocketStatus(
         rocketd,
-        RocketStatus.STARTING_LAUNCH,
+        RocketStatus.IN_FLIGHT,
       );
     } else {
       commandDto.decision = "can't start launch";

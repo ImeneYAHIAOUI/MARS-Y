@@ -9,13 +9,9 @@ import {
   Logger, HttpCode,
 } from '@nestjs/common';
 import {
-  ApiBody,
-  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { CommandService } from '../services/command.service';

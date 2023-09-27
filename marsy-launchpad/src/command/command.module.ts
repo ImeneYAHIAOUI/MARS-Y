@@ -6,7 +6,7 @@ import { MarsyMissionProxyService } from './services/marsy-mission-proxy/marsy-m
 
 import { CommandController } from './controllers/command.controller';
 import { CommandService } from './services/command.service';
-import { HardwareProxyService } from './services/mock-hardware-proxy.service.ts/hardware-proxy.service';
+import { HardwareProxyService } from '../shared/services/mock-hardware-proxy.service.ts/hardware-proxy.service';
 
 @Module({
   imports: [HttpModule, RocketModule],
