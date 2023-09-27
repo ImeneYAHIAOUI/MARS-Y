@@ -8,6 +8,7 @@ services:
       - 3030:3000
     environment:
       - MARSY_MOCK_SERVICE_URL_WITH_PORT=${MARSY_MOCK_SERVICE}:3000
+      - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
     networks:
       - nestjs-marsy-network
 networks:

@@ -1,6 +1,7 @@
 import {
   Controller,
-  Post,
+  Post, 
+  Put,
   Param,
   Get,
   Logger,
@@ -27,7 +28,9 @@ import { MissionNotFoundException } from '../exceptions/mission-not-found.except
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { AddMissionDto } from '../dto/add.mission.dto';
+import { MissionBoosterDto } from '../dto/mission.booster.dto';
 import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
+
 
 const logger = new Logger('MissionController');
 
@@ -141,5 +144,16 @@ export class MissionController {
   async deleteMission(@Param('id') id: string) {
     const mission = await this.missionService.deleteMission(id);
     return mission;
+  }
+
+  @Put()
+  @ApiOkResponse({ type: Mission, description: 'updating mission' })
+  @ApiNotFoundResponse({
+    type: MissionNotFoundException,
+    description: 'mission not found',
+  })
+  async updateMission(@Body() mission: MissionBoosterDto) {
+    const updatedMission = await this.missionService.saveNewStatusBooster(mission);
+    return updatedMission;
   }
 }

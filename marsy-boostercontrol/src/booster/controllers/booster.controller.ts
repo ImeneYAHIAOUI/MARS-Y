@@ -1,4 +1,5 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Param , Controller, Logger, Post } from '@nestjs/common';
+
 import { BoosterService } from '../services/booster.service';
 
 import {
@@ -17,8 +18,10 @@ export class BoosterController {
 
   @ApiOkResponse({ description: 'Booster data received!' })
   @Post(':rocketId/telemetry')
-  async reveiveBoosterDta(@Body() boosterTelemetryDto: BoosterTelemetryDto ) : Promise<string> {
+  async reveiveBoosterDta(@Body() boosterTelemetryDto: BoosterTelemetryDto,
+   @Param() params: { rocketId: string }) : Promise<string> {
     logger.log(`Received booster data: ${JSON.stringify(boosterTelemetryDto)}`);
-    return this.boosterService.receiveBoosterData(boosterTelemetryDto);
+    return this.boosterService.receiveBoosterData(boosterTelemetryDto, params.rocketId);
+
   }
 }

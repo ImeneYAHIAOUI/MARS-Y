@@ -43,6 +43,11 @@ export class HardwareService {
     };
   }
 
+  async landBooster(rocketId: string): Promise<boolean> {
+    this.logger.log(`Landing booster rocket ${rocketId}`);
+    return true;
+  }
+
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
     this.logger.log(`Retrieving telemetry for the rocket ${rocketId}`);
     const rocketTelemetry = this.rockets.find(

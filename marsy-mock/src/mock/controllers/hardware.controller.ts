@@ -72,4 +72,14 @@ export class HardwareController {
     this.logger.log(`Received request to start telemetry`);
     return await this.hardwareService.startSendingTelemetry(launchDto.rocketId);
   }
+
+  @Post(':idrocket/land')
+  @ApiOkResponse({
+    description: 'Starts landing booster rocket',
+  })
+  @HttpCode(200)
+  async landRocketBooster(@Param('idrocket') id: string): Promise<boolean> {
+    this.logger.log(`Received request to start landing booster rocket`);
+    return await this.hardwareService.landBooster(id);
+  }
 }

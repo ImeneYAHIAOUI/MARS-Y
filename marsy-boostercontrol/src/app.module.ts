@@ -9,6 +9,9 @@ import appConfig from './shared/config/app.config';
 import swaggeruiConfig from './shared/config/swaggerui.config';
 import dependenciesConfig from './shared/config/dependencies.config';
 import { HttpModule } from '@nestjs/axios';
+import { HardwareProxyService } from './booster/services/proxies/hardware-proxy.service';
+import { MarsyMissionProxyService } from './booster/services/proxies/mission-proxy.service';
+
 
 @Module({
   imports: [
@@ -20,6 +23,7 @@ import { HttpModule } from '@nestjs/axios';
     BoosterModule
   ],
   controllers: [AppController, BoosterController],
+  providers: [AppService, BoosterService, HardwareProxyService, MarsyMissionProxyService],
   providers: [AppService, BoosterService],
 })
 export class AppModule {}

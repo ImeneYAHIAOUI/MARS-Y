@@ -8,6 +8,8 @@ import { SiteService } from './site.service';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
+import { BoosterStatus } from '../schema/booster.status.schema';
+import { MissionBoosterDto } from '../dto/mission.booster.dto';
 
 const logger = new Logger('MissionService');
 
@@ -46,6 +48,14 @@ export class MissionService {
   async saveNewStatus(missionId: string, _status: MissionStatus) {
     const mission = await this.missionModel.findById(missionId).exec();
     mission.status = _status;
+    await mission.save();
+  }
+
+  async saveNewStatusBooster(missionBoosterDto : MissionBoosterDto) {
+    const missionId = missionBoosterDto._id;
+    const status = missionBoosterDto.boosterStatus;
+    const mission = await this.missionModel.findById(missionId).exec();
+    mission.boosterStatus = BoosterStatus[status as keyof typeof BoosterStatus];;
     await mission.save();
   }
 
