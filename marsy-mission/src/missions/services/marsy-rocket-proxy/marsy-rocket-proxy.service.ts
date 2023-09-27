@@ -22,24 +22,27 @@ export class MarsyRocketProxyService {
         const dependenciesConfig = this.configService.get<DependenciesConfig>('dependencies');
         this._baseUrl = `http://${dependenciesConfig.marsy_launchpad_url_with_port}`;
     }
-    async destroyRocket(_rocketId: string): Promise<boolean> {
-        try {
-            const response = await this.httpService
+async destroyRocket(_rocketId: string): Promise<boolean> {
+    try {
+        const response = await this.httpService
             .put(`${this._baseUrl}${this._rocketsPath}/${_rocketId}/status`, {
-                            status: 'DESTROYED',
-                        })
+                status: 'DESTROYED',
+            })
             .toPromise();
-            logger.log(`Rocket with ID ${_rocketId} has been successfully destroyed.`);
-            return true;
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                throw new RocketNotFoundException('Rocket not found');
-            } else {
-                logger.error(`${error}`);
+
+        logger.log(`Rocket with ID ${_rocketId} has been successfully destroyed.`);
+        return true;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            throw new RocketNotFoundException('Rocket not found');
+        } else {
+            logger.error(`${error}`);
             throw new RocketServiceUnavailableException(error.message);
         }
     }
 }
+
+
 
 
     async retrieveRocketStatus(_rocketId : string) : Promise<boolean> {
