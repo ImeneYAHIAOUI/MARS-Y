@@ -6,7 +6,7 @@ import swaggeruiConfig from './shared/config/swaggerui.config';
 
 import dependenciesConfig from './shared/config/dependencies.config';
 import { HardwareModule } from './mock/hardware.module';
-
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -14,7 +14,8 @@ import { HardwareModule } from './mock/hardware.module';
       isGlobal: true,
       load: [appConfig, swaggeruiConfig, dependenciesConfig],
     }),
-    HardwareModule
-  ]
+    ScheduleModule.forRoot(),
+    HardwareModule,
+  ],
 })
 export class AppModule {}

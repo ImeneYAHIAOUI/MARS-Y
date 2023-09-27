@@ -39,6 +39,8 @@ export class CommandService {
         RocketStatus.ABORTED,
       );
     }
+    
+    await this.hardwareProxyService.startEmittingTelemetry(rocketd);
     return commandDto;
   }
 

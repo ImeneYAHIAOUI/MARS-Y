@@ -6,8 +6,12 @@ services:
     restart: always
     ports:
       - 3005:3000
+    depends_on:
+      - ${MARSY_TELEMETRY_SERVICE}
+      - ${MARSY_MISSION_SERVICE}
     environment:
       - MARSY_TELEMETRY_SERVICE_URL_WITH_PORT=${MARSY_TELEMETRY_SERVICE}:3000
+      - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
     networks:
       - nestjs-marsy-network
 networks:

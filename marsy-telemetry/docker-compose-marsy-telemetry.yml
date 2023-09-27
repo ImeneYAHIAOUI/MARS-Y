@@ -7,9 +7,12 @@ services:
     ports:
       - 3004:3000
     depends_on:
-      - ${MARSY_MOCK_SERVICE}
+      - mongo_db_marsy_telemetry
     environment:
       - MARSY_MOCK_SERVICE_URL_WITH_PORT=${MARSY_MOCK_SERVICE}:3000
+      - MONGODB_HOST=mongo_db_marsy_telemetry
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=marsy_telemetry
     networks:
       - nestjs-marsy-network
   mongo_db_marsy_telemetry:

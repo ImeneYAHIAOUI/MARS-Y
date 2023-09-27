@@ -58,4 +58,20 @@ export class HardwareProxyService {
       throw new HttpException(response.data, response.status);
     }
   }
+
+  async startEmittingTelemetry(_rocketId: string): Promise<void> {
+    logger.log(`Starting telemetry for rocket: ${_rocketId}`);
+    const response: AxiosResponse = await firstValueFrom(
+      this.httpService.post(
+        `${this._baseUrl}${this._hardwarePath}/launch`,
+        { rocketId: _rocketId }
+      ),
+    );
+    if (response.status == HttpStatus.OK) {
+      logger.log(`Telemetry started for rocket: ${_rocketId}`);
+    } else {
+      logger.error(`Error starting telemetry for rocket: ${_rocketId}`);
+      throw new HttpException(response.data, response.status);
+    }
+  }
 }

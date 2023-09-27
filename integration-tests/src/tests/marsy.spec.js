@@ -91,6 +91,7 @@ describe('Marsy', () => {
                     .expect("status", 200)
                     .expect("jsonTypesStrict", GoNoGoValidator);
             });
+
             it("should return the launch command", async () => {
 
             return frisby
