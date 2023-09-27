@@ -25,16 +25,16 @@ export class MissionService {
   ) {}
  async getTelemetryForMission(_missionId: string): Promise<TelemetryRecordDto[]> {
    try {
-     return await this.marsyTelemetryProxyService.retrieveTelemetry(_missionId); // Added 'await' here
+     return await this.marsyTelemetryProxyService.retrieveTelemetry(_missionId);
    } catch (error) {
-     logger.error(`Error: Telemetry not received for mission id : ${_missionId}`); // Changed to 'error'
+     logger.error(`Error: Telemetry not received for mission id : ${_missionId}`);
      return null;
    }
  }
 
  async destroyRocketForMission(_missionId: string): Promise<boolean> {
    try {
-     const telemetryRecords = await this.getTelemetryForMission(_missionId); // Added 'await' here
+     const telemetryRecords = await this.getTelemetryForMission(_missionId);
 
      if (telemetryRecords !== null) {
        return false;
@@ -44,9 +44,9 @@ export class MissionService {
        logger.log(`Telemetry not received. Decision made: initiate rocket destruction for mission id : ${_missionId}`);
        return true;
      }
-   } catch (error) { // Added catch block
+   } catch (error) {
      logger.error(`Error: ${error.message}`);
-     return false; // Added return statement here
+     return false;
    }
  }
 
