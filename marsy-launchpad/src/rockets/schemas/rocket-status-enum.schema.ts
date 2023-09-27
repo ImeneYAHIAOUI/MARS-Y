@@ -3,6 +3,7 @@ export enum RocketStatus {
   FUELING = 'fueling',
   LOADING_PAYLOAD = 'loadingPayload',
   PRELAUNCH_CHECKS = 'prelaunchChecks',
+  DESTROYED= 'destroyed',
   ABORTED = 'aborted',
   IN_FLIGHT = 'inFlight',
   SUCCESSFUL_LAUNCH = 'successfulLaunch',

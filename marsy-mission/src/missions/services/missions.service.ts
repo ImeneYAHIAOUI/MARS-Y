@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
+import { MarsyTelemetryProxyService } from './marsy-telemetry-proxy/marsy-telemetry-proxy.service';
+import { TelemetryRecordDto } from 'src/missions/dto/telemetry.dto';
+
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Mission } from '../schema/mission.schema';
@@ -16,9 +19,37 @@ export class MissionService {
   constructor(
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
+    private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
     private readonly siteService: SiteService,
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {}
+ async getTelemetryForMission(_missionId: string): Promise<TelemetryRecordDto[]> {
+   try {
+     return await this.marsyTelemetryProxyService.retrieveTelemetry(_missionId); // Added 'await' here
+   } catch (error) {
+     logger.error(`Error: Telemetry not received for mission id : ${_missionId}`); // Changed to 'error'
+     return null;
+   }
+ }
+
+ async destroyRocketForMission(_missionId: string): Promise<boolean> {
+   try {
+     const telemetryRecords = await this.getTelemetryForMission(_missionId); // Added 'await' here
+
+     if (telemetryRecords !== null) {
+       return false;
+     } else {
+       const mission = await this.getMissionById(_missionId) as Mission
+       await this.marsyRocketProxyService.destroyRocket(mission.rocket);
+       logger.log(`Telemetry not received. Decision made: initiate rocket destruction for mission id : ${_missionId}`);
+       return true;
+     }
+   } catch (error) { // Added catch block
+     logger.error(`Error: ${error.message}`);
+     return false; // Added return statement here
+   }
+ }
+
 
   async goOrNoGoPoll(_missionId: string): Promise<boolean> {
     logger.log(`Received request for mission id : ${_missionId}`);
@@ -53,6 +84,7 @@ export class MissionService {
     const missions = await this.missionModel.find().exec();
     return missions;
   }
+
 
   async getMissionById(id: string): Promise<Mission> {
     const mission = await this.missionModel.findById(id).exec();

@@ -22,9 +22,7 @@ import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 @Controller('/mock')
 export class HardwareController {
   private readonly logger: Logger = new Logger(HardwareController.name);
-
   constructor(private readonly hardwareService: HardwareService) {}
-
   @ApiOkResponse({
     type: DeliveryDto,
     description: 'The delivery status of the rocket'

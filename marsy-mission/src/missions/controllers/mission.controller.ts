@@ -113,7 +113,6 @@ export class MissionController {
       addDto.site,
     );
   }
-
   @Delete(':id')
   @ApiOkResponse({ type: Mission, description: 'deleting mission' })
   @ApiNotFoundResponse({
@@ -124,4 +123,9 @@ export class MissionController {
     const mission = await this.missionService.deleteMission(id);
     return mission;
   }
+  @Post()
+  async destroyRocketForMission(@Param('id') missionid: string): Promise<boolean>  {
+      return this.missionService.destroyRocketForMission(missionid);
+  }
+
 }
