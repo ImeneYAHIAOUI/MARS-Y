@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Query,
-  Post,
-  Logger,
-} from '@nestjs/common';
+import { Body, Controller, Get, Query, Post, Logger } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -26,8 +19,12 @@ export class TelemetryController {
 
   @ApiOkResponse({ type: TelemetryRecord, isArray: true })
   @Get()
-  async getMissionTelemetryRecords(@Query("missionId") missionId: string): Promise<TelemetryRecord[]> {
-    this.logger.log(`Received request to get telemetry records for mission ${missionId}`);
+  async getMissionTelemetryRecords(
+    @Query('missionId') missionId: string,
+  ): Promise<TelemetryRecord[]> {
+    this.logger.log(
+      `Received request to get telemetry records for mission ${missionId}`,
+    );
     return await this.rocketService.fetchRocketTelemetryRecords(missionId);
   }
 
@@ -37,8 +34,12 @@ export class TelemetryController {
     description: 'The rocket has been successfully added.',
   })
   @Post()
-  async postMissionTelemetryRecord(@Body() telemetryRecordDto: TelemetryRecordDto): Promise<TelemetryRecord> {
-    this.logger.log(`Received request to add rocket: ${telemetryRecordDto.missionId}`);
+  async postMissionTelemetryRecord(
+    @Body() telemetryRecordDto: TelemetryRecordDto,
+  ): Promise<TelemetryRecord> {
+    this.logger.log(
+      `Received request to add telemetry: ${telemetryRecordDto.missionId}`,
+    );
     return await this.rocketService.storeTelemetryRecord(telemetryRecordDto);
   }
 }

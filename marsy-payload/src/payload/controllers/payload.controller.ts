@@ -4,19 +4,19 @@ import {
   Post,
   Logger,
   HttpCode,
+  Body,
 } from '@nestjs/common';
-import {
-  ApiNotFoundResponse,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
+import { TelemetryDto } from '../dto/telemetry.dto';
+import { PayloadService } from '../services/payload.service';
+import { PayloadDeliveryDto } from '../dto/payload-delivery.dto';
 
-const logger = new Logger('CommandController');
 
 @ApiTags('payload')
 @Controller('/payload')
 export class PayloadController {
+
   @ApiParam({ name: 'rocketId' })
   @ApiNotFoundResponse({
     type: RocketNotFoundException,
@@ -24,7 +24,15 @@ export class PayloadController {
   })
   @Post(':rocketId/telemetry')
   @HttpCode(200)
-  async receiveTelemetry(@Param() params: { rocketId: string }) {
-    logger.log('telemetry received');
+  async receiveTelemetry(
+    @Param() params: { rocketId: string },
+    @Body() telemetry: TelemetryDto,
+  ): Promise<PayloadDeliveryDto | void> {
+    this.logger.log(`Received telemetry for rocket ${params.rocketId}`);
+    return await this.payloadService.receiveTelemetry(
+      params.rocketId,
+      telemetry,
+    );
+
   }
 }

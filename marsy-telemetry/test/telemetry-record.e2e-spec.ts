@@ -30,7 +30,7 @@ describe('PayloadController (e2e)', () => {
     fuel: 100,
     temperature: 100,
     pressure: 100,
-    humidty: 100
+    humidity: 100
   };
 
 

@@ -36,14 +36,14 @@ export class HardwareService {
     const rocket = this.rockets.find(
       (rocket) => rocket.rocketId === rocketId,
     )[0];
-    rocket.staged = rocket.compartmentOnefuel === 0 ? true : false;
+    rocket.staged = rocket.fuel === 0 ? true : false;
     return {
       _id: rocketId,
       staged: rocket.staged,
     };
   }
 
-  async retrieveTelemetry(rocketId: string): Promise<TelemetryRecordDto> {
+  retrieveTelemetry(rocketId: string): TelemetryRecordDto {
     this.logger.log(`Retrieving telemetry for the rocket ${rocketId}`);
     const rocketTelemetry = this.rockets.find(
       (rocket) => rocket.rocketId === rocketId,
@@ -57,20 +57,19 @@ export class HardwareService {
       speed: Math.floor(Math.random() * (100 - 0)) + 0,
       humidity: Math.floor(Math.random() * (30 - 0)) + 0,
       temperature: Math.floor(Math.random() * (70 - 0)) + 0,
-      compartmentOnefuel:
-        rocketTelemetry.compartmentOnefuel -
-        Math.floor(Math.random() * (10 - 0)) +
-        0,
-      compartmentTwofuel:
-        rocketTelemetry.compartmentOnefuel === 0 && !rocketTelemetry.staged
-          ? rocketTelemetry.compartmentTwofuel -
-            Math.floor(Math.random() * (10 - 0))
-          : 100,
+      fuel: rocketTelemetry.fuel - Math.floor(Math.random() * (10 - 0)) + 0,
+      missionId: rocketTelemetry.missionId,
+      rocketId: rocketId,
+      angle: 90,
+      staged: false,
     };
     return rocketTelemetry.telemetry;
   }
 
-  _getInitialeTelemetry(missionId: string): TelemetryRecordDto {
+  _getInitialeTelemetry(
+    missionId: string,
+    rocketId: string,
+  ): TelemetryRecordDto {
     return {
       missionId: missionId,
       timestamp: Date.now(),
@@ -81,8 +80,10 @@ export class HardwareService {
       speed: 100,
       humidity: 30,
       temperature: 70,
-      compartmentOnefuel: 100,
-      compartmentTwofuel: 100,
+      fuel: 100,
+      rocketId: rocketId,
+      angle: 90,
+      staged: false,
     };
   }
 
@@ -95,19 +96,19 @@ export class HardwareService {
       rocketId: rocketId,
       missionId: missionId,
       staged: false,
-      telemetry: this._getInitialeTelemetry(rocketId),
+      telemetry: this._getInitialeTelemetry(missionId, rocketId),
     });
-    this.cronJob = cron.schedule('2 * * * *', async () => {
-      this.marsyTelemetryProxyService.sendTelemetryToApi(
-        await this.retrieveTelemetry(rocketId),
-      );
-    });
-    this.cronJob.start();
+    // this.cronJob = cron.schedule('2 * * * *', async () => {
+    this.marsyTelemetryProxyService.sendTelemetryToApi(
+      await this.retrieveTelemetry(rocketId),
+    );
+    // });
+    // this.cronJob.start();
     return true;
   }
 
   stopSendingTelemetry(rocketId: string): void {
     this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
-    this.cronJob.stop();
+    // this.cronJob.stop();
   }
 }

@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { GoNoGoDto } from 'src/command/dto/go-no-go.dto';
-import {MissionDto} from "../../dto/mission.dto";
+import { MissionDto } from '../../dto/mission.dto';
 
 const logger = new Logger('MarsyMissionProxyService');
 
@@ -52,7 +52,7 @@ export class MarsyMissionProxyService {
     logger.log(`Performing getMission for rocket: ${_rocketId}`);
     const response: AxiosResponse<MissionDto> = await firstValueFrom(
       this.httpService.get<MissionDto>(
-        `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=IN_PROGRESS`,
+        `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=NOT_STARTED`,
       ),
     );
     if (response.status == HttpStatus.OK) {

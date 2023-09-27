@@ -62,10 +62,9 @@ export class HardwareProxyService {
   async startEmittingTelemetry(_rocketId: string): Promise<void> {
     logger.log(`Starting telemetry for rocket: ${_rocketId}`);
     const response: AxiosResponse = await firstValueFrom(
-      this.httpService.post(
-        `${this._baseUrl}${this._hardwarePath}/launch`,
-        { rocketId: _rocketId }
-      ),
+      this.httpService.post(`${this._baseUrl}${this._hardwarePath}/launch`, {
+        rocketId: _rocketId,
+      }),
     );
     if (response.status == HttpStatus.OK) {
       logger.log(`Telemetry started for rocket: ${_rocketId}`);

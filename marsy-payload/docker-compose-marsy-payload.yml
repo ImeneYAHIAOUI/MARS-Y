@@ -6,7 +6,8 @@ services:
     restart: always
     ports:
       - 3006:3000
-
+    environment:
+      - MARSY_LAUNCHPAD_SERVICE_URL_WITH_PORT=${MARSY_LAUNCHPAD_SERVICE}:3000
     networks:
       - nestjs-marsy-network
 

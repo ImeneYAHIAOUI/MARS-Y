@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 @Schema({
   versionKey: false,
 })
-export class TelemetryRecord {
+export class BoosterTelemetryRecord {
   @ApiProperty()
   _id: string;
 
@@ -55,11 +55,8 @@ export class TelemetryRecord {
   @ApiProperty()
   @Prop({ required: true })
   humidity: number;
-
-  @ApiProperty()
-  @Prop({ required: true })
-  staged: boolean;
 }
 
-export const TelemetryRecordSchema =
-  SchemaFactory.createForClass(TelemetryRecord);
+export const BoosterTelemetryRecordSchema = SchemaFactory.createForClass(
+  BoosterTelemetryRecord,
+);

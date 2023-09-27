@@ -6,7 +6,8 @@ import {
   Query,
   Post,
   Put,
-  Logger, HttpCode,
+  Logger,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -18,7 +19,7 @@ import { CommandService } from '../services/command.service';
 import { RocketNotFoundException } from '../../rockets/exceptions/rocket-not-found.exception';
 import { CommandDto } from '../dto/command.dto';
 import { StageRocketMidFlightDto } from '../dto/stage-rocket-mid-flight.dto';
-import {DeliveryResponseDto} from "../dto/delivery-response.dto";
+import { DeliveryResponseDto } from '../dto/delivery-response.dto';
 
 const logger = new Logger('CommandController');
 
@@ -96,15 +97,15 @@ export class CommandController {
   @Post(':rocketId/payload-delivery')
   @HttpCode(200)
   async deliverPayload(
-      @Param() params: { rocketId: string },
+    @Param() params: { rocketId: string },
   ): Promise<DeliveryResponseDto> {
     try {
       const rocketId = params.rocketId;
       logger.log(
-          `Received request to deliver payload rocket with id ${rocketId}`,
+        `Received request to deliver payload rocket with id ${rocketId}`,
       );
       const stage = await this.commandService.sendPayloadDeliveryCommand(
-          rocketId,
+        rocketId,
       );
       logger.log(`${stage}`);
       logger.log(`Successfully delivered payload for rocket: ${rocketId}`);
