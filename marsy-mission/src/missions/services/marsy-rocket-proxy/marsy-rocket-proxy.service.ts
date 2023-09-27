@@ -26,7 +26,7 @@ async destroyRocket(_rocketId: string): Promise<boolean> {
     try {
         const response = await this.httpService
             .put(`${this._baseUrl}${this._rocketsPath}/${_rocketId}/status`, {
-                status: 'DESTROYED',
+                status: 'destroyed',
             })
             .toPromise();
 

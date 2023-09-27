@@ -24,6 +24,8 @@ export class MissionService {
   ) {}
     async evaluateRocketDestruction(rocketId: string): Promise<void>{
       try{
+       logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
+
         const mission = await this.getMissionByRocketId(rocketId) as Mission;
          await this.marsyRocketProxyService.destroyRocket(rocketId);
       }catch(error){

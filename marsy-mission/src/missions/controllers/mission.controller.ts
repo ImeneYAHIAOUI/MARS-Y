@@ -126,22 +126,22 @@ export class MissionController {
   }
 
 
-    @Post(':idrocket/telemetry')
-    @ApiNotFoundResponse({
-        type: RocketNotFoundException,
-        description: 'Rocket not found',
-      })
-    @HttpCode(200)
-    async postTelemetryRecord(
-      @Param('rocket id') idrocket: string ,
-      @Body() telemetryRecordDto: MissionTelemetryDto,
-    ): Promise<void> {
-        logger.log(`Received telemetry for rocket ID: ${idrocket}`);
-        this.missionService.evaluateRocketDestruction(
-          idrocket,
-        );
+@Post(':idrocket/telemetry')
+@HttpCode(200)
+async postTelemetryRecord(
+  @Param('idrocket') rocketId: string, // Correction ici pour utiliser 'rocketId'
+  @Body() telemetryRecordDto: MissionTelemetryDto,
+): Promise<void> {
+  try {
+    logger.log(`Received telemetry for rocket ID: ${rocketId}`);
+    await this.missionService.evaluateRocketDestruction(rocketId);
+  } catch (error) {
+    logger.error(`Error while processing telemetry: ${error.message}`);
+    throw error;
+  }
+}
 
-    }
+
 
 
 
