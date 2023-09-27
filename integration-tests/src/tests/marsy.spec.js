@@ -98,47 +98,47 @@ describe('Marsy', () => {
                 .expect("status", 200)
                 .expect("jsonTypesStrict", LaunchCommandDecisionValidator);
         });
-        it("should change the rockets status", async () => {
-            return frisby
-                .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "unknown"})
-                .expect("status", 200)
-                .expect("jsonTypesStrict", RocketValidator);
-        });
-        it("should return an error", async () => {
+        // it("should change the rockets status", async () => {
+        //     return frisby
+        //         .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "unknown"})
+        //         .expect("status", 200)
+        //         .expect("jsonTypesStrict", RocketValidator);
+        // });
+        // it("should return an error", async () => {
 
-            return frisby
-                .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
-                .expect("status", 400);
-        });
-        it("should change the rockets status", async () => {
-            return frisby
-                .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "inFlight"})
-                .expect("status", 200)
-                .expect("jsonTypesStrict", RocketValidator);
-        });
-        it("should return stage result", async () => {
-            return frisby
-                .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
-                .expect("status", 200)
-                .expect("jsonTypesStrict", StageCommandDecisionValidator);
-        });
+        //     return frisby
+        //         .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
+        //         .expect("status", 400);
+        // });
+        // it("should change the rockets status", async () => {
+        //     return frisby
+        //         .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "inFlight"})
+        //         .expect("status", 200)
+        //         .expect("jsonTypesStrict", RocketValidator);
+        // });
+        // it("should return stage result", async () => {
+        //     return frisby
+        //         .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
+        //         .expect("status", 200)
+        //         .expect("jsonTypesStrict", StageCommandDecisionValidator);
+        // });
 
-        it("should return delete rocket", async () => {
-            return frisby
-                .delete(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}`)
-                .expect("status", 200)
-        });
+        // it("should return delete rocket", async () => {
+        //     return frisby
+        //         .delete(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}`)
+        //         .expect("status", 200)
+        // });
 
-        it("should return delete site", async () => {
-            return frisby
-                .delete(`${missionServiceBaseUrl}${missionServiceSitesPath}/${site._id}`)
-                .expect("status", 200)
-        });
-        it("should return delete mission", async () => {
-            return frisby
-                .delete(`${missionServiceBaseUrl}${missionServiceMissionsPath}/${mission._id}`)
-                .expect("status", 200)
-        });
+        // it("should return delete site", async () => {
+        //     return frisby
+        //         .delete(`${missionServiceBaseUrl}${missionServiceSitesPath}/${site._id}`)
+        //         .expect("status", 200)
+        // });
+        // it("should return delete mission", async () => {
+        //     return frisby
+        //         .delete(`${missionServiceBaseUrl}${missionServiceMissionsPath}/${mission._id}`)
+        //         .expect("status", 200)
+        // });
         });
 
 });

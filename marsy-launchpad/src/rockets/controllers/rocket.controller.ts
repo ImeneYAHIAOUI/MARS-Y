@@ -30,6 +30,7 @@ import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
 import { SendStatusDto } from '../dto/send-status.dto';
 import { RocketPollDto } from '../dto/rocket-poll.dto';
 import { StageRocketMidFlightDto } from '../../command/dto/stage-rocket-mid-flight.dto';
+import { ControlTelemetryDto } from '../dto/control-telemetry.dto';
 
 const logger = new Logger('CommandController');
 
@@ -37,6 +38,16 @@ const logger = new Logger('CommandController');
 @Controller('/rockets')
 export class RocketController {
   constructor(private readonly rocketService: RocketService) {}
+
+  @Post(':idrocket/telemetry')
+  @HttpCode(200)
+  @ApiNotFoundResponse({
+    type: RocketNameNotFoundException,
+    description: 'Rocket not found',
+  })
+  async receiveTelemetry(controlTelemetryDto: ControlTelemetryDto, @Param('idrocket') idrocket: string){
+    logger.log(`Received telemetry for rocket ID: ${idrocket}`);
+  }
 
   @ApiOkResponse({ type: RocketDto, isArray: true })
   @Get('all')

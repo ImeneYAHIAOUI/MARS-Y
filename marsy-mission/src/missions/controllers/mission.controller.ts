@@ -27,6 +27,7 @@ import { MissionNotFoundException } from '../exceptions/mission-not-found.except
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { AddMissionDto } from '../dto/add.mission.dto';
+import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
 
 const logger = new Logger('MissionController');
 
@@ -34,6 +35,23 @@ const logger = new Logger('MissionController');
 @Controller('/missions')
 export class MissionController {
   constructor(private readonly missionService: MissionService) {}
+
+  @Post(':idrocket/telemetry')
+  @HttpCode(200)
+  @ApiNotFoundResponse({
+    type: RocketNotFoundException,
+    description: 'Rocket not found',
+  })
+  @ApiServiceUnavailableResponse({
+    type: RocketServiceUnavailableException,
+    description: 'MarsyRocketService is unavailble',
+  })
+  async receiveTelemetry(
+    missionTelemetryDto: MissionTelemetryDto,
+    @Param('idrocket') idrocket: string,
+  ) {
+    logger.log(`Received telemetry for rocket ID: ${idrocket}`);
+  }
 
   @Post(':id/poll')
   @HttpCode(200)

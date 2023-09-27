@@ -1,6 +1,6 @@
-import { IsNotEmpty } from 'class-validator';
+import {IsNotEmpty} from 'class-validator';
 
-export class TelemetryRecordDto {
+export class MissionTelemetryDto {
   @IsNotEmpty()
   missionId: string;
 
@@ -17,26 +17,14 @@ export class TelemetryRecordDto {
   altitude: number;
 
   @IsNotEmpty()
-  speed: number;
+  angle: number;
 
   @IsNotEmpty()
-  fuel: number;
+  speed: number;
 
   @IsNotEmpty()
   temperature: number;
 
   @IsNotEmpty()
   pressure: number;
-
-  @IsNotEmpty()
-  humidity: number;
-
-  @IsNotEmpty()
-  rocketId: string;
-
-  @IsNotEmpty()
-  angle: number;
-
-  @IsNotEmpty()
-  staged: boolean;
 }
