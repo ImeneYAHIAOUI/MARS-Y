@@ -133,10 +133,10 @@ export class MissionController {
       })
     @HttpCode(200)
     async postTelemetryRecord(
-      @Param() params: { idrocket: string },
+      @Param('rocket id') idrocket: string ,
       @Body() telemetryRecordDto: MissionTelemetryDto,
     ): Promise<void> {
-        logger.log(`Received telemetry for rocket ID: ${params.idrocket}`);
+        logger.log(`Received telemetry for rocket ID: ${idrocket}`);
         this.missionService.evaluateRocketDestruction(
           params.idrocket,
         );

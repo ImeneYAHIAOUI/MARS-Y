@@ -42,7 +42,7 @@ export class RocketController {
   @Post(':idrocket/telemetry')
   @HttpCode(200)
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   async receiveTelemetry(controlTelemetryDto: ControlTelemetryDto, @Param('idrocket') idrocket: string){
