@@ -18,6 +18,7 @@ import { CommandService } from '../services/command.service';
 import { RocketNameNotFoundException } from '../../rockets/exceptions/rocket-name-not-found.exception';
 import { CommandDto } from '../dto/command.dto';
 import { StageRocketMidFlightDto } from '../dto/stage-rocket-mid-flight.dto';
+import {DeliveryResponseDto} from "../dto/delivery-response.dto";
 
 const logger = new Logger('CommandController');
 
@@ -79,6 +80,37 @@ export class CommandController {
       return stage;
     } catch (error) {
       logger.error(`Error while staging rocket mid flight: ${error.message}`);
+      throw error;
+    }
+  }
+
+  @ApiParam({ name: 'rocketId' })
+  @ApiCreatedResponse({
+    type: DeliveryResponseDto,
+    description: 'payload delivery command',
+  })
+  @ApiNotFoundResponse({
+    type: RocketNameNotFoundException,
+    description: 'Rocket not found',
+  })
+  @Post(':rocketId/payload-delivery')
+  @HttpCode(200)
+  async deliverPayload(
+      @Param() params: { rocketId: string },
+  ): Promise<DeliveryResponseDto> {
+    try {
+      const rocketId = params.rocketId;
+      logger.log(
+          `Received request to deliver payload rocket with id ${rocketId}`,
+      );
+      const stage = await this.commandService.sendPayloadDeliveryCommand(
+          rocketId,
+      );
+      logger.log(`${stage}`);
+      logger.log(`Successfully delivered payload for rocket: ${rocketId}`);
+      return stage;
+    } catch (error) {
+      logger.error(`Error while delivering payload : ${error.message}`);
       throw error;
     }
   }

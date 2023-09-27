@@ -91,13 +91,18 @@ describe('Marsy', () => {
                     .expect("status", 200)
                     .expect("jsonTypesStrict", GoNoGoValidator);
             });
-
             it("should return the launch command", async () => {
 
             return frisby
                 .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/launch`)
                 .expect("status", 200)
                 .expect("jsonTypesStrict", LaunchCommandDecisionValidator);
+        });
+        it("should change the rockets status", async () => {
+            return frisby
+                .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "unknown"})
+                .expect("status", 200)
+                .expect("jsonTypesStrict", RocketValidator);
         });
         it("should return an error", async () => {
 
