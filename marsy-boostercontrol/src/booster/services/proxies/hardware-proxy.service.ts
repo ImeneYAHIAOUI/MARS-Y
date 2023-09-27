@@ -1,6 +1,5 @@
 
 
-@Injectable()
 export class HardwareProxyService {
  
 }
