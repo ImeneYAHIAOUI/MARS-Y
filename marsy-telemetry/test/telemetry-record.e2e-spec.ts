@@ -16,7 +16,7 @@ import { TelemetryRecordDto } from '../src/telemetry/dto/telemetry-record.dto';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-describe('TelemetryController (e2e)', () => {
+describe('PayloadController (e2e)', () => {
   let app: INestApplication;
   let mongoServer: MongoMemoryServer;
 

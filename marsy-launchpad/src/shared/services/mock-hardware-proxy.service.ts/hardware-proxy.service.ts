@@ -1,12 +1,13 @@
-import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
-import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
-import { StagingResultDto } from '../../dto/staging-result-dto';
-const logger = new Logger('MarsyMissionProxyService');
+import { DependenciesConfig } from '../../config/interfaces/dependencies-config.interface';
+import { StagingResultDto } from '../../../command/dto/staging-result-dto';
+import { DeliveryDto } from '../../../payload/dto/delivery.dto';
+const logger = new Logger('MarsyMockHardwareProxyService');
 
 @Injectable()
 export class HardwareProxyService {
@@ -27,7 +28,7 @@ export class HardwareProxyService {
     if (StagingResultDto === null) {
       logger.log(`Performing stageMidFlightFlight for rocket: ${_rocketId}`);
       const response: AxiosResponse<StagingResultDto> = await firstValueFrom(
-        this.httpService.get<StagingResultDto>(
+        this.httpService.post<StagingResultDto>(
           `${this._baseUrl}${this._hardwarePath}/${_rocketId}/stage`,
         ),
       );
@@ -40,7 +41,21 @@ export class HardwareProxyService {
         throw new HttpException(response.data, response.status);
       }
     }
-    logger.log('Staging mid-flight');
-    return Math.random() < 0.7;
+  }
+
+  async deliverPayload(_rocketId: string): Promise<boolean> {
+    logger.log(`Performing deliverPayload for rocket: ${_rocketId}`);
+    const response: AxiosResponse<DeliveryDto> = await firstValueFrom(
+      this.httpService.post<DeliveryDto>(
+        `${this._baseUrl}${this._hardwarePath}/${_rocketId}/deliver`,
+      ),
+    );
+    if (response.status == HttpStatus.OK) {
+      logger.log(`deliverPayload successful for rocket: ${_rocketId}`);
+      return response.data.delivered;
+    } else {
+      logger.error(`Error in deliverPayload for rocket: ${_rocketId}`);
+      throw new HttpException(response.data, response.status);
+    }
   }
 }

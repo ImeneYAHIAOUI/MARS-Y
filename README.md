@@ -1,10 +1,10 @@
-# micro-restaurant NestJS implementation
+# Marsy NestJS implementation
 
-* Author: Christian Brel
+* Authors: Team D
 
 ## Principles
 
-* Bounded contexts used for the different context of usage within the restaurant
+* Bounded contexts used for the different context of usage within the Marsy missions
 * Isolated micro-services with own DB
 
 **Not applied:**
@@ -14,24 +14,23 @@
 
 ## Features
 
-* Menu management (with type of entry + image associated)
-* Table management (table numbering)
-* Table order management (start/end order on a table, add items, send them to kitchen, bill)
-* Kitchen management (receiving batches of menu items to be cooked, making them available and tracing when they are taken back to table)
+* Marsy Launchpad (rocket command departement)
+* Marsy Mission (mission departement)
+* Marsy Telemetry (recieve, store and retreive telemetry)
+* Marsy Weather (send wether for site)
 
 **Not yet implemented:**
 
 * Proper logging
-* External Bank system
+* External Hardware system
 * Gateway
 
 ## List of micro-services
 
-* `menu-service` (deployed on `http://localhost:3000/menus` with API doc at `/doc/menus`): implements the content of the menu, which could be used to display it, checks consistency with other services using the menu items.
-* `dining-service` (deployed on `http://localhost:3001/tables and /tableOrders` with API doc at `doc/dining`): implements the dining room context, with table management, and ordering at the table level.
-  This service is coupled to menu to get the menu entries, and to kitchen to send the orders to be prepared one the ordering is done.
-* `kitchen-service` (deployed on `http://localhost:3002/kitchen` with API doc at `doc/kitchen`): implements the kitchen context, receiving batches of items to be cooked and served back.
-
+* `marsy-launchpad` (deployed on `http://localhost:3001/rockets` with API doc at `/doc/launchpad`): implements the launchpad context, with rocket management, staging and launch commands.
+* `marsy-mission` (deployed on `http://localhost:3000/missions` with API doc at `/doc/mission`): implements the mission context, with mission and site management and go and no go polling.
+* `marsy-weather` (deployed on `http://localhost:3002/kitchen` with API doc at `doc/weather`): sends weather status.
+* `marsy-telemetry` (deployed on `http://localhost:3004/telemetry` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
 * `integration-tests`: a specific service that run end to end tests at the API level through frisby after docker-composing the other services.
 * `gateway` sets up a gateway to `http://localhost:9500` with subroutes to the different micro-services
 
@@ -55,5 +54,6 @@ Each service is dockerized with its DB. The following scripts are provided:
 The overall build and run of all services (+ the integration testing service) are managed through the following scripts:
 * `build-all.sh` runs the build in each service (except testing services)
 * `run-local-integrationtest.sh` compiles and runs the integration tests (without prior building of the services), starting and stopping all the services
+* `run.sh` runs all the service with a single docker-compose and logs the output
 * `start-all.sh` runs all the service with a single docker-compose (**and enables to see the swagger doc**)
 * `stop-all.sh` puts down the previous composition
