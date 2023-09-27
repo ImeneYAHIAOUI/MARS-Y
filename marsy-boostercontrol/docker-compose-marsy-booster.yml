@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  marsy-booster-service:
+    image: "nestjs-marsy/marsy-boostercontrol"
+    restart: always
+    ports:
+      - 3030:3000
+    environment:
+      - MARSY_MOCK_SERVICE_URL_WITH_PORT=${MARSY_MOCK_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

@@ -1,0 +1,6 @@
+
+
+@Injectable()
+export class HardwareProxyService {
+ 
+}
