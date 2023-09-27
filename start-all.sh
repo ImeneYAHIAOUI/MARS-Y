@@ -9,8 +9,7 @@ docker-compose --env-file ./.env.docker \
                --file marsy-mission/docker-compose-marsy-mission.yml \
                 --file marsy-telemetry/docker-compose-marsy-telemetry.yml \
                  --file marsy-mock/docker-compose-marsy-mock.yml \
-               --file gateway/docker-compose-gateway.yml up -d         
-wait_on_health http://localhost:9500 gateway
+                  --file marsy-payload/docker-compose-marsy-payload.yml up -d
 echo "all services started behind gateway"
 
 

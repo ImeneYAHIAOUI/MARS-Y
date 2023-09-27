@@ -10,7 +10,7 @@ import { Model } from 'mongoose';
 import { RocketDto } from '../dto/rocket.dto';
 import { AddRocketDto } from '../dto/add-rocket.dto';
 import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exists.exception';
-import { RocketNameNotFoundException } from '../exceptions/rocket-name-not-found.exception';
+import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import { InvalidStatusException } from '../exceptions/invalid-status.exception';
 
 @Injectable()
@@ -82,7 +82,7 @@ export class RocketService {
   async deleteRocket(rocketId: string) {
     const rocket = await this.findRocket(rocketId);
     if (!rocket) {
-      throw new RocketNameNotFoundException(rocketId);
+      throw new RocketNotFoundException(rocketId);
     }
     try {
       await this.rocketModel.findByIdAndDelete(rocketId);
