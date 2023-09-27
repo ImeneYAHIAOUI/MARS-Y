@@ -8,7 +8,7 @@ rectangle "Marsy Microservices" as backend {
 
     component "Missions Service" as s_mission     
     
-    component "Rockets Service" as s_rocket
+    component "Control Service" as s_rocket
     component "Weather Service" as s_weather
 
     component "Telemetry Service" as s_telemtry
@@ -30,11 +30,12 @@ rectangle "Marsy Microservices" as backend {
     s_mission --> db_missions
     s_rocket --> db_rockets
     s_telemtry --> db_telemetry
+
+    component "Mock Service" as s_mock
+
+    s_mock -- s_telemtry
+    s_mock -- s_rocket
 }
-
-component "Mock Service" as s_mock
-
-s_mock -- api_gateway
 
 api_gateway -u0)- HTTP
 

@@ -7,6 +7,7 @@ docker-compose --env-file ./.env.docker \
                --file marsy-telemetry/docker-compose-marsy-telemetry.yml \
                 --file marsy-mock/docker-compose-marsy-mock.yml \
                 --file marsy-mission/docker-compose-marsy-mission.yml \
+                --file marsy-payload/docker-compose-marsy-payload.yml \
                 --file gateway/docker-compose-gateway.yml down 
 
 echo "all services stopped behind gateway"

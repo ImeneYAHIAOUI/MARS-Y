@@ -27,7 +27,7 @@ describe('MockController (e2e)', () => {
     await app.init();
   });
 
-  let id = uuidv4();      
+  const id = uuidv4();
 
   it('/:idrocket/stage (POST)', () => {
     return request(app.getHttpServer())

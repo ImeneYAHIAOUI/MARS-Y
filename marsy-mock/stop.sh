@@ -2,4 +2,4 @@
 
 echo "stopping kitchen-service"
 docker-compose --env-file ./.env.docker \
-               --file docker-compose-marsy-rocket.yml down
+               --file docker-compose-marsy-mock.yml down
