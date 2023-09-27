@@ -1,6 +1,4 @@
-
 export class DeliveryDto {
   _id: string;
-
-  delivered : boolean;
+  delivered: boolean;
 }

@@ -98,6 +98,12 @@ describe('Marsy', () => {
                 .expect("status", 200)
                 .expect("jsonTypesStrict", LaunchCommandDecisionValidator);
         });
+        it("should change the rockets status", async () => {
+            return frisby
+                .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "unknown"})
+                .expect("status", 200)
+                .expect("jsonTypesStrict", RocketValidator);
+        });
         it("should return an error", async () => {
 
             return frisby

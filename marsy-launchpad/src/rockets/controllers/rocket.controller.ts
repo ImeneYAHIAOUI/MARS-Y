@@ -24,7 +24,7 @@ import {
 import { RocketService } from '../services/rocket.service';
 import { RocketDto } from '../dto/rocket.dto';
 import { AddRocketDto } from '../dto/add-rocket.dto';
-import { RocketNameNotFoundException } from '../exceptions/rocket-name-not-found.exception';
+import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exists.exception';
 import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
 import { SendStatusDto } from '../dto/send-status.dto';
@@ -55,7 +55,7 @@ export class RocketController {
   @ApiParam({ name: 'rocketId' })
   @ApiOkResponse({ type: RocketDto })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Get(':rocketId')
@@ -72,7 +72,7 @@ export class RocketController {
   @ApiParam({ name: 'rocketId' })
   @ApiOkResponse({ type: SendStatusDto, description: 'The rockets status.' })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Get(':rocketId/status')
@@ -120,7 +120,7 @@ export class RocketController {
     description: 'The rocket status has been successfully updated.',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Put(':rocketId/status')
@@ -147,7 +147,7 @@ export class RocketController {
     description: 'The rocket poll status.',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Post(':rocketId/poll')
@@ -174,7 +174,7 @@ export class RocketController {
     description: 'The rocket has been successfully deleted.',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   async deleteRocket(@Param() params: { rocketId: string }): Promise<void> {

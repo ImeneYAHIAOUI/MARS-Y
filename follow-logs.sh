@@ -7,4 +7,5 @@ docker-compose --env-file ./.env.docker \
                --file marsy-mock/docker-compose-marsy-mock.yml \
                --file marsy-mission/docker-compose-marsy-mission.yml \
                --file gateway/docker-compose-gateway.yml \
+               --file marsy-payload/docker-compose-marsy-payload.yml \
                logs --follow
