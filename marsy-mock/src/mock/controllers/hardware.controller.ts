@@ -24,9 +24,7 @@ import { LaunchDto } from '../dto/launch.dto';
 @Controller('/mock')
 export class HardwareController {
   private readonly logger: Logger = new Logger(HardwareController.name);
-
   constructor(private readonly hardwareService: HardwareService) {}
-
   @ApiOkResponse({
     type: DeliveryDto,
     description: 'The delivery status of the rocket',

@@ -15,7 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CommandService } from '../services/command.service';
-import { RocketNameNotFoundException } from '../../rockets/exceptions/rocket-name-not-found.exception';
+import { RocketNotFoundException } from '../../rockets/exceptions/rocket-not-found.exception';
 import { CommandDto } from '../dto/command.dto';
 import { StageRocketMidFlightDto } from '../dto/stage-rocket-mid-flight.dto';
 import {DeliveryResponseDto} from "../dto/delivery-response.dto";
@@ -30,7 +30,7 @@ export class CommandController {
   @ApiParam({ name: 'rocketId' })
   @ApiCreatedResponse({ type: CommandDto })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Post(':rocketId/launch')
@@ -62,7 +62,7 @@ export class CommandController {
     description: 'rocket staged mid flight',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Post(':rocketId/stage')
@@ -90,7 +90,7 @@ export class CommandController {
     description: 'payload delivery command',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Post(':rocketId/payload-delivery')
@@ -114,4 +114,7 @@ export class CommandController {
       throw error;
     }
   }
+
+
+
 }

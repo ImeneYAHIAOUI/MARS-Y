@@ -64,7 +64,6 @@ class Weather {
 }
 
 Weather ..|> WeatherStatus : use
-Weather "1"--"1" Site
 
 class Client {
     String id 

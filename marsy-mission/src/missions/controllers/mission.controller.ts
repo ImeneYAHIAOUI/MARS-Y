@@ -36,23 +36,6 @@ const logger = new Logger('MissionController');
 export class MissionController {
   constructor(private readonly missionService: MissionService) {}
 
-  @Post(':idrocket/telemetry')
-  @HttpCode(200)
-  @ApiNotFoundResponse({
-    type: RocketNotFoundException,
-    description: 'Rocket not found',
-  })
-  @ApiServiceUnavailableResponse({
-    type: RocketServiceUnavailableException,
-    description: 'MarsyRocketService is unavailble',
-  })
-  async receiveTelemetry(
-    missionTelemetryDto: MissionTelemetryDto,
-    @Param('idrocket') idrocket: string,
-  ) {
-    logger.log(`Received telemetry for rocket ID: ${idrocket}`);
-  }
-
   @Post(':id/poll')
   @HttpCode(200)
   @ApiNotFoundResponse({
@@ -131,7 +114,6 @@ export class MissionController {
       addDto.site,
     );
   }
-
   @Delete(':id')
   @ApiOkResponse({ type: Mission, description: 'deleting mission' })
   @ApiNotFoundResponse({
@@ -142,4 +124,25 @@ export class MissionController {
     const mission = await this.missionService.deleteMission(id);
     return mission;
   }
+
+
+@Post(':idrocket/telemetry')
+@HttpCode(200)
+async postTelemetryRecord(
+  @Param('idrocket') rocketId: string, // Correction ici pour utiliser 'rocketId'
+  @Body() telemetryRecordDto: MissionTelemetryDto,
+): Promise<void> {
+  try {
+    logger.log(`Received telemetry for rocket ID: ${rocketId}`);
+    await this.missionService.evaluateRocketDestruction(rocketId);
+  } catch (error) {
+    logger.error(`Error while processing telemetry: ${error.message}`);
+    throw error;
+  }
+}
+
+
+
+
+
 }
