@@ -25,18 +25,21 @@ export class MissionService {
  async evaluateRocketDestruction(rocketId: string, telemetryRecord: MissionTelemetryDto): Promise<void> {
    try {
      logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
+
      const mission = await this.getMissionByRocketId(rocketId) as Mission;
-     const { altitude, speed,  temperature, pressure } = telemetryRecord;
-     if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED ) {
-       await this.marsyRocketProxyService.destroyRocket(rocketId);
-       logger.log(`Rocket with ID ${rocketId} destroyed due to critical telemetry.`);
-       return ;
+
+     const { altitude, speed, temperature, pressure } = telemetryRecord;
+
+     if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED) {
+       await this.destroyRocket(rocketId, 'Critical telemetry exceeded');
+       return;
      }
-     if (temperature > Constants.MAX_TEMPERATURE || pressure > Constants.MAX_PRESSURE ) {
-       await this.marsyRocketProxyService.destroyRocket(rocketId);
-       logger.log(`Rocket with ID ${rocketId} destroyed due to environmental conditions.`);
-       return ;
+
+     if (temperature > Constants.MAX_TEMPERATURE || pressure > Constants.MAX_PRESSURE) {
+       await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
+       return;
      }
+
      logger.log(`Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`);
    } catch (error) {
      if (error instanceof MissionNotFoundException) {
@@ -46,6 +49,16 @@ export class MissionService {
      } else {
        logger.error(`Error: ${error.message}`);
      }
+   }
+ }
+
+ async destroyRocket(rocketId: string, reason: string): Promise<void> {
+   try {
+     await this.marsyRocketProxyService.destroyRocket(rocketId);
+     logger.log(`Rocket with ID ${rocketId} destroyed. Reason: ${reason}`);
+   } catch (error) {
+     logger.error(`Error destroying rocket with ID ${rocketId}: ${error.message}`);
+     throw error;
    }
  }
 
