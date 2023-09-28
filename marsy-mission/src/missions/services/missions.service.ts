@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
+import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
+
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Mission } from '../schema/mission.schema';
@@ -11,6 +13,8 @@ import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { BoosterStatus } from '../schema/booster.status.schema';
 import { MissionBoosterDto } from '../dto/mission.booster.dto';
 
+import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
+import * as Constants from '../schema/constants'
 const logger = new Logger('MissionService');
 
 @Injectable()
@@ -21,6 +25,45 @@ export class MissionService {
     private readonly siteService: SiteService,
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {}
+ async evaluateRocketDestruction(rocketId: string, telemetryRecord: MissionTelemetryDto): Promise<void> {
+   try {
+     logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
+
+     const mission = await this.getMissionByRocketId(rocketId) as Mission;
+
+     const { altitude, speed, temperature, pressure } = telemetryRecord;
+
+     if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED) {
+       await this.destroyRocket(rocketId, 'Critical telemetry exceeded');
+       return;
+     }
+
+     if (temperature > Constants.MAX_TEMPERATURE || pressure > Constants.MAX_PRESSURE) {
+       await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
+       return;
+     }
+
+     logger.log(`Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`);
+   } catch (error) {
+     if (error instanceof MissionNotFoundException) {
+       logger.log(`Mission with rocketId ${rocketId} not found`);
+     } else if (error instanceof RocketNotFoundException) {
+       logger.log(`Rocket with ID ${rocketId} not found`);
+     } else {
+       logger.error(`Error: ${error.message}`);
+     }
+   }
+ }
+
+ async destroyRocket(rocketId: string, reason: string): Promise<void> {
+   try {
+     await this.marsyRocketProxyService.destroyRocket(rocketId);
+     logger.log(`Rocket with ID ${rocketId} destroyed. Reason: ${reason}`);
+   } catch (error) {
+     logger.error(`Error destroying rocket with ID ${rocketId}: ${error.message}`);
+     throw error;
+   }
+ }
 
   async goOrNoGoPoll(_missionId: string): Promise<boolean> {
     logger.log(`Received request for mission id : ${_missionId}`);
@@ -64,10 +107,36 @@ export class MissionService {
     return missions;
   }
 
+
+
   async getMissionById(id: string): Promise<Mission> {
     const mission = await this.missionModel.findById(id).exec();
     return mission;
   }
+  async getMissionByRocketId(
+    rocketId: string,
+  ): Promise<Mission> {
+    logger.log(
+      `Received request for mission with rocketId ${rocketId}`,
+    );
+
+    const mission = await this.missionModel
+      .findOne({ rocket: rocketId })
+      .exec();
+
+    if (!mission) {
+      throw new MissionNotFoundException(
+        `Mission with rocketId ${rocketId} not found`,
+      );
+    }
+
+    logger.log(
+      `Returning mission with rocketId ${mission.name}`,
+    );
+
+    return mission;
+  }
+
 
   async getMissionByRocketIdAndStatus(
     rocketId: string,

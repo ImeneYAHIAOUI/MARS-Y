@@ -31,7 +31,7 @@ import { AddMissionDto } from '../dto/add.mission.dto';
 import { MissionBoosterDto } from '../dto/mission.booster.dto';
 import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
 
-
+import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
 const logger = new Logger('MissionController');
 
 @ApiTags('Missions')
@@ -134,7 +134,6 @@ export class MissionController {
       addDto.site,
     );
   }
-
   @Delete(':id')
   @ApiOkResponse({ type: Mission, description: 'deleting mission' })
   @ApiNotFoundResponse({
@@ -156,4 +155,26 @@ export class MissionController {
     const updatedMission = await this.missionService.saveNewStatusBooster(mission);
     return updatedMission;
   }
+}
+
+@Post(':idrocket/telemetry')
+@HttpCode(200)
+async postTelemetryRecord(
+  @Param('idrocket') rocketId: string,
+  @Body() telemetryRecordDto: MissionTelemetryDto,
+): Promise<void> {
+  try {
+    logger.log(`Received telemetry for rocket ID: ${rocketId}`);
+    logger.log(`Telemetry Data: ${JSON.stringify(telemetryRecordDto)}`);
+    await this.missionService.evaluateRocketDestruction(rocketId,telemetryRecordDto);
+  } catch (error) {
+    logger.error(`Error while processing telemetry: ${error.message}`);
+    throw error;
+  }
+}
+
+
+
+
+
 }

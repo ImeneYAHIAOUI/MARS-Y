@@ -6,9 +6,9 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { RocketDto } from 'src/missions/dto/rocket.dto';
-import { RocketNotFoundException } from 'src/missions/exceptions/rocket-not-found.exception';
-import { RocketServiceUnavailableException } from 'src/missions/exceptions/rocket-service-error-exception';
-import { GoResponseDto } from 'src/missions/dto/go.dto';
+import { RocketNotFoundException } from '../../exceptions/rocket-not-found.exception';
+import { RocketServiceUnavailableException } from '../../exceptions/rocket-service-error-exception';
+import { GoResponseDto } from '../../dto/go.dto';
 
 const logger = new Logger('MarsyRocketProxyService');
 
@@ -16,12 +16,31 @@ const logger = new Logger('MarsyRocketProxyService');
 export class MarsyRocketProxyService {
     private _baseUrl: string;
     private _rocketsPath = '/rockets';
-
-
     constructor(private configService: ConfigService, private readonly httpService: HttpService) {
         const dependenciesConfig = this.configService.get<DependenciesConfig>('dependencies');
         this._baseUrl = `http://${dependenciesConfig.marsy_launchpad_url_with_port}`;
     }
+async destroyRocket(_rocketId: string): Promise<boolean> {
+    try {
+        const response = await this.httpService
+            .put(`${this._baseUrl}${this._rocketsPath}/${_rocketId}/status`, {
+                status: 'destroyed',
+            })
+            .toPromise();
+        logger.log(`Rocket with ID ${_rocketId} has been successfully destroyed.`);
+        return true;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            throw new RocketNotFoundException('Rocket not found');
+        } else {
+            logger.error(`${error}`);
+            throw new RocketServiceUnavailableException(error.message);
+        }
+    }
+}
+
+
+
 
     async retrieveRocketStatus(_rocketId : string) : Promise<boolean> {
         try {
