@@ -6,9 +6,9 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { RocketDto } from 'src/missions/dto/rocket.dto';
-import { RocketNotFoundException } from 'src/missions/exceptions/rocket-not-found.exception';
-import { RocketServiceUnavailableException } from 'src/missions/exceptions/rocket-service-error-exception';
-import { GoResponseDto } from 'src/missions/dto/go.dto';
+import { RocketNotFoundException } from '../../exceptions/rocket-not-found.exception';
+import { RocketServiceUnavailableException } from '../../exceptions/rocket-service-error-exception';
+import { GoResponseDto } from '../../dto/go.dto';
 
 const logger = new Logger('MarsyRocketProxyService');
 

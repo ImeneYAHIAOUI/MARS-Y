@@ -10,7 +10,7 @@ import { SiteService } from './site.service';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
-import { RocketNotFoundException } from 'src/missions/exceptions/rocket-not-found.exception';
+import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import * as Constants from '../schema/constants'
 const logger = new Logger('MissionService');
 
