@@ -20,25 +20,41 @@ export class MissionService {
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
     private readonly siteService: SiteService,
+    export const MAX_ALTITUDE = 100000;
+    export const MAX_SPEED = 5000;
+    export const MIN_FUEL = 10;
+    export const MAX_TEMPERATURE = 100;
+    export const MAX_PRESSURE = 200;
+    export const MAX_HUMIDITY = 80;
+
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {}
-    async evaluateRocketDestruction(rocketId: string): Promise<void>{
-      try{
-       logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
+ async evaluateRocketDestruction(rocketId: string, telemetryRecord: TelemetryRecordDto): Promise<void> {
+   try {
+     logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
+     const mission = await this.getMissionByRocketId(rocketId) as Mission;
+     const { altitude, speed, fuel, temperature, pressure, humidity } = telemetryRecord;
 
-        const mission = await this.getMissionByRocketId(rocketId) as Mission;
-         await this.marsyRocketProxyService.destroyRocket(rocketId);
-      }catch(error){
-          if (error instanceof MissionNotFoundException) {
-             logger.log(`Mission with rocketId ${rocketId} not found`);
-          }
-          else if (error instanceof RocketNotFoundException) {
-                       logger.log(`rocket with id ${rocketId} not found`);
-          } else {
-            logger.error(`Error: ${error.message}`);
-          }
-      }
-    }
+     if (altitude > MAX_ALTITUDE || speed > MAX_SPEED || fuel <= MIN_FUEL) {
+       await this.marsyRocketProxyService.destroyRocket(rocketId);
+       logger.log(`Rocket with ID ${rocketId} destroyed due to critical telemetry.`);
+     }
+
+     if (temperature > MAX_TEMPERATURE || pressure > MAX_PRESSURE || humidity > MAX_HUMIDITY) {
+       await this.marsyRocketProxyService.destroyRocket(rocketId);
+       logger.log(`Rocket with ID ${rocketId} destroyed due to environmental conditions.`);
+     }
+   } catch (error) {
+     if (error instanceof MissionNotFoundException) {
+       logger.log(`Mission with rocketId ${rocketId} not found`);
+     } else if (error instanceof RocketNotFoundException) {
+       logger.log(`Rocket with ID ${rocketId} not found`);
+     } else {
+       logger.error(`Error: ${error.message}`);
+     }
+   }
+ }
+
   async goOrNoGoPoll(_missionId: string): Promise<boolean> {
     logger.log(`Received request for mission id : ${_missionId}`);
 

@@ -129,12 +129,13 @@ export class MissionController {
 @Post(':idrocket/telemetry')
 @HttpCode(200)
 async postTelemetryRecord(
-  @Param('idrocket') rocketId: string, // Correction ici pour utiliser 'rocketId'
+  @Param('idrocket') rocketId: string,
   @Body() telemetryRecordDto: MissionTelemetryDto,
 ): Promise<void> {
   try {
     logger.log(`Received telemetry for rocket ID: ${rocketId}`);
-    await this.missionService.evaluateRocketDestruction(rocketId);
+    logger.info(`Telemetry Data: ${JSON.stringify(telemetryRecordDto)}`);
+    await this.missionService.evaluateRocketDestruction(rocketId,telemetryRecordDto);
   } catch (error) {
     logger.error(`Error while processing telemetry: ${error.message}`);
     throw error;

@@ -16,8 +16,6 @@ const logger = new Logger('MarsyRocketProxyService');
 export class MarsyRocketProxyService {
     private _baseUrl: string;
     private _rocketsPath = '/rockets';
-
-
     constructor(private configService: ConfigService, private readonly httpService: HttpService) {
         const dependenciesConfig = this.configService.get<DependenciesConfig>('dependencies');
         this._baseUrl = `http://${dependenciesConfig.marsy_launchpad_url_with_port}`;
@@ -29,7 +27,6 @@ async destroyRocket(_rocketId: string): Promise<boolean> {
                 status: 'destroyed',
             })
             .toPromise();
-
         logger.log(`Rocket with ID ${_rocketId} has been successfully destroyed.`);
         return true;
     } catch (error) {
