@@ -134,7 +134,7 @@ async postTelemetryRecord(
 ): Promise<void> {
   try {
     logger.log(`Received telemetry for rocket ID: ${rocketId}`);
-    logger.info(`Telemetry Data: ${JSON.stringify(telemetryRecordDto)}`);
+    logger.log(`Telemetry Data: ${JSON.stringify(telemetryRecordDto)}`);
     await this.missionService.evaluateRocketDestruction(rocketId,telemetryRecordDto);
   } catch (error) {
     logger.error(`Error while processing telemetry: ${error.message}`);

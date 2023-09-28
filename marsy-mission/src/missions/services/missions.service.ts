@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
-import { TelemetryRecordDto } from 'src/missions/dto/telemetry.dto';
+import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
 
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,7 +11,7 @@ import { MissionNotFoundException } from '../exceptions/mission-not-found.except
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { RocketNotFoundException } from 'src/missions/exceptions/rocket-not-found.exception';
-
+import * as Constants from '../schema/constants'
 const logger = new Logger('MissionService');
 
 @Injectable()
@@ -20,30 +20,24 @@ export class MissionService {
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
     private readonly siteService: SiteService,
-    export const MAX_ALTITUDE = 100000;
-    export const MAX_SPEED = 5000;
-    export const MIN_FUEL = 10;
-    export const MAX_TEMPERATURE = 100;
-    export const MAX_PRESSURE = 200;
-    export const MAX_HUMIDITY = 80;
-
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {}
- async evaluateRocketDestruction(rocketId: string, telemetryRecord: TelemetryRecordDto): Promise<void> {
+ async evaluateRocketDestruction(rocketId: string, telemetryRecord: MissionTelemetryDto): Promise<void> {
    try {
      logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
      const mission = await this.getMissionByRocketId(rocketId) as Mission;
-     const { altitude, speed, fuel, temperature, pressure, humidity } = telemetryRecord;
-
-     if (altitude > MAX_ALTITUDE || speed > MAX_SPEED || fuel <= MIN_FUEL) {
+     const { altitude, speed,  temperature, pressure } = telemetryRecord;
+     if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED ) {
        await this.marsyRocketProxyService.destroyRocket(rocketId);
        logger.log(`Rocket with ID ${rocketId} destroyed due to critical telemetry.`);
+       return ;
      }
-
-     if (temperature > MAX_TEMPERATURE || pressure > MAX_PRESSURE || humidity > MAX_HUMIDITY) {
+     if (temperature > Constants.MAX_TEMPERATURE || pressure > Constants.MAX_PRESSURE ) {
        await this.marsyRocketProxyService.destroyRocket(rocketId);
        logger.log(`Rocket with ID ${rocketId} destroyed due to environmental conditions.`);
+       return ;
      }
+     logger.log(`Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`);
    } catch (error) {
      if (error instanceof MissionNotFoundException) {
        logger.log(`Mission with rocketId ${rocketId} not found`);
