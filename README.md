@@ -24,8 +24,6 @@
 
 **Not yet implemented:**
 
-* Proper logging
-* External Hardware system
 * Gateway
 
 ## List of micro-services
