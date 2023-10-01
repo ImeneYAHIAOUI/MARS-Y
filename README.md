@@ -1,6 +1,6 @@
 # Marsy NestJS implementation
 
-* Authors: Team D
+* Authors: Team D (AL ACHKAR / BEN AISSA / EL GAZZEH / YAHIAOUI)
 
 ## Principles
 
@@ -17,7 +17,10 @@
 * Marsy Launchpad (rocket command departement)
 * Marsy Mission (mission departement)
 * Marsy Telemetry (recieve, store and retreive telemetry)
-* Marsy Weather (send wether for site)
+* Marsy Weather (send weather for site)
+* Marsy Payload (Payload Department)
+* Marsy Booster (controls the booster while landing)
+* Marsy Hardware (Responsible for generating telemetry in each step of the mission)
 
 **Not yet implemented:**
 
@@ -27,10 +30,14 @@
 
 ## List of micro-services
 
-* `marsy-launchpad` (deployed on `http://localhost:3001/rockets` with API doc at `/doc/launchpad`): implements the launchpad context, with rocket management, staging and launch commands.
-* `marsy-mission` (deployed on `http://localhost:3000/missions` with API doc at `/doc/mission`): implements the mission context, with mission and site management and go and no go polling.
-* `marsy-weather` (deployed on `http://localhost:3002/kitchen` with API doc at `doc/weather`): sends weather status.
-* `marsy-telemetry` (deployed on `http://localhost:3004/telemetry` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
+* `marsy-launchpad` (deployed on `http://localhost:3001` with API doc at `/doc/launchpad`): implements the launchpad context, with rocket management, staging and launch commands.
+* `marsy-mission` (deployed on `http://localhost:3000` with API doc at `/doc/mission`): implements the mission context, with mission and site management and go and no go polling.
+* `marsy-weather` (deployed on `http://localhost:3002` with API doc at `doc/weather`): sends weather status.
+* `marsy-telemetry` (deployed on `http://localhost:3004` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
+* `marsy-boostercontrol` (deployed on `http://localhost:3030` with API doc at `/doc/booster`): controls the booster telemetry data and assure the landing.
+* `marsy-payload` (deployed on `http://localhost:3006` with API doc at `/doc/payload`): controls the delivery of the payload.
+* `marsy-mock` (deployed on `http://localhost:3005` with API doc at `/doc/mcok`): represents the primary hardware of the system, responsible for the main actions of the rocket and for generating telemetry data for the rocket's first stage as well as for the booster after staging.
+* `marsy-guidance` (deployed on `http://localhost:3007` with API doc at `/doc/guidance`): responsible for guiding the rocket during the second stage and generating telemetry data.
 * `integration-tests`: a specific service that run end to end tests at the API level through frisby after docker-composing the other services.
 * `gateway` sets up a gateway to `http://localhost:9500` with subroutes to the different micro-services
 
@@ -57,3 +64,10 @@ The overall build and run of all services (+ the integration testing service) ar
 * `run.sh` runs all the service with a single docker-compose and logs the output
 * `start-all.sh` runs all the service with a single docker-compose (**and enables to see the swagger doc**)
 * `stop-all.sh` puts down the previous composition
+
+## Steps to run :
+* Execute script `prepare.sh` to Load dependencies, compile if necessary, prepare the environment and starts the docker images.
+* Execute script `run.sh` to run the acceptance MVP scenario.
+
+ ## Work distribution :
+* At the beginning of each week, we assign tasks through user stories, using GitHub issues to allocate and monitor the progress of each user story. Each team member is individually responsible for completing their user stories while meeting the specified acceptance criteria. Consequently, we attribute a score of (**100**) points to each team member.
