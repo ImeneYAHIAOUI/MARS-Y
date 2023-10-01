@@ -24,14 +24,15 @@ import {
 import { RocketService } from '../services/rocket.service';
 import { RocketDto } from '../dto/rocket.dto';
 import { AddRocketDto } from '../dto/add-rocket.dto';
-import { RocketNameNotFoundException } from '../exceptions/rocket-name-not-found.exception';
+import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import { RocketAlreadyExistsException } from '../exceptions/rocket-already-exists.exception';
 import { UpdateRocketStatusDto } from '../dto/update-rocket.dto';
 import { SendStatusDto } from '../dto/send-status.dto';
 import { RocketPollDto } from '../dto/rocket-poll.dto';
 import { StageRocketMidFlightDto } from '../../command/dto/stage-rocket-mid-flight.dto';
+import { ControlTelemetryDto } from '../dto/control-telemetry.dto';
 
-const logger = new Logger('CommandController');
+const logger = new Logger('ControlPadController');
 
 @ApiTags('rockets')
 @Controller('/rockets')
@@ -42,9 +43,9 @@ export class RocketController {
   @Get('all')
   async listAllRockets(): Promise<RocketDto[]> {
     try {
-      logger.log('Received request to list all rockets');
+      //logger.log('Received request to list all rockets');
       const rockets = await this.rocketService.findAll();
-      logger.log('Successfully retrieved the list of all rockets');
+      //logger.log('Successfully retrieved the list of all rockets');
       return rockets;
     } catch (error) {
       logger.error('Error while listing all rockets: ', error.message);
@@ -55,7 +56,7 @@ export class RocketController {
   @ApiParam({ name: 'rocketId' })
   @ApiOkResponse({ type: RocketDto })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Get(':rocketId')
@@ -72,7 +73,7 @@ export class RocketController {
   @ApiParam({ name: 'rocketId' })
   @ApiOkResponse({ type: SendStatusDto, description: 'The rockets status.' })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Get(':rocketId/status')
@@ -120,7 +121,7 @@ export class RocketController {
     description: 'The rocket status has been successfully updated.',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Put(':rocketId/status')
@@ -128,9 +129,10 @@ export class RocketController {
     @Param() params: { rocketId: string },
     @Body() updateStatusDto: UpdateRocketStatusDto, // Receive as enum
   ): Promise<RocketDto> {
+    
     try {
       const rocketId = params.rocketId; // Access the 'rocketId' property
-      logger.log(`Received request to update rocket status by ID: ${rocketId}`);
+      logger.log(`Rocket ${rocketId.slice(-3).toUpperCase()} is having its status changed to ${updateStatusDto.status}`);
       const newStatus = updateStatusDto.status; // Use the enum value
       return await this.rocketService.updateRocketStatus(rocketId, newStatus);
     } catch (error) {
@@ -147,7 +149,7 @@ export class RocketController {
     description: 'The rocket poll status.',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   @Post(':rocketId/poll')
@@ -157,9 +159,9 @@ export class RocketController {
   ): Promise<RocketPollDto> {
     try {
       const rocketId = params.rocketId; // Access the 'rocketId' property
-      logger.log(`Received request to poll rocket status by ID: ${rocketId}`);
+      logger.debug(`Received request to poll status of rocket ${rocketId.slice(-3).toUpperCase()}`);
       const poll = await this.rocketService.rocketPoll(rocketId);
-      logger.log(`Successfully polled the status of rocket by ID: ${rocketId}`);
+      logger.debug(`Response sent: ready for launch`);
       return RocketPollDto.RocketPollDtoFactory(poll);
     } catch (error) {
       logger.error(`Error while polling rocket status by ID: ${error.message}`);
@@ -174,7 +176,7 @@ export class RocketController {
     description: 'The rocket has been successfully deleted.',
   })
   @ApiNotFoundResponse({
-    type: RocketNameNotFoundException,
+    type: RocketNotFoundException,
     description: 'Rocket not found',
   })
   async deleteRocket(@Param() params: { rocketId: string }): Promise<void> {
@@ -188,4 +190,14 @@ export class RocketController {
       throw error;
     }
   }
+
+  // @Post(':idrocket/telemetry')
+  // @HttpCode(200)
+  // async postTelemetryRecord(
+  //   @Param('idrocket') rocketId: string,
+  //   @Body() telemetryRecordDto: ControlTelemetryDto,
+  // ): Promise<void> {
+  //   logger.log(`Received telemetry for rocket ID: ${rocketId}`);
+  //   this.rocketService.handleRocketTelemetry(rocketId, telemetryRecordDto);
+  // }
 }

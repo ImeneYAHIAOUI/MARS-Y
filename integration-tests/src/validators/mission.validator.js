@@ -6,4 +6,5 @@ export const MissionValidator =  Joi.object({
     status: Joi.string().required(),
     site: Joi.string().required(),
     rocket: Joi.string().required(),
+    boosterStatus: Joi.string().required(),
 });

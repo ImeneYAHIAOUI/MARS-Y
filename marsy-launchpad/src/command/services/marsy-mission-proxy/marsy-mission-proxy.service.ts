@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { GoNoGoDto } from 'src/command/dto/go-no-go.dto';
-import {MissionDto} from "../../dto/mission.dto";
+import { MissionDto } from '../../dto/mission.dto';
 
 const logger = new Logger('MarsyMissionProxyService');
 
@@ -26,37 +26,34 @@ export class MarsyMissionProxyService {
   }
 
   async goOrNoGoPoll(_rocketId: string): Promise<boolean> {
-    if (this._goNoGo === null) {
-      logger.log(`Performing goOrNoGoPoll for rocket: ${_rocketId}`);
-      const mission = await this.getMission(_rocketId);
-      const response: AxiosResponse<GoNoGoDto> = await firstValueFrom(
-        this.httpService.post<GoNoGoDto>(
-          `${this._baseUrl}${this._missionPath}/${mission._id}/poll`,
-        ),
-      );
-      if (response.status == HttpStatus.OK) {
-        this._goNoGo = response.data;
-        logger.log(`goOrNoGoPoll successful for rocket: ${_rocketId}`);
-        return this._goNoGo.go;
-      } else if (response.status == HttpStatus.NOT_FOUND) {
-        logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketId}`);
-        logger.error(`Mission not found for rocket: ${_rocketId}`);
-        throw new HttpException(response.data, response.status);
-      }
-    }
-    logger.log(`Using cached goNoGo result for rocket: ${_rocketId}`);
-    return this._goNoGo.go;
-  }
-
-  async getMission(_rocketId: string): Promise<MissionDto> {
-    logger.log(`Performing getMission for rocket: ${_rocketId}`);
-    const response: AxiosResponse<MissionDto> = await firstValueFrom(
-      this.httpService.get<MissionDto>(
-        `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=IN_PROGRESS`,
+    logger.debug(`Performing goOrNoGoPoll for rocket ${_rocketId.slice(-3).toUpperCase()}`);
+    const mission = await this.getMission(_rocketId);
+    //logger.debug(`Mission POLLED : ${JSON.stringify(mission)}`);
+    const response: AxiosResponse<GoNoGoDto> = await firstValueFrom(
+      this.httpService.post<GoNoGoDto>(
+        `${this._baseUrl}${this._missionPath}/${mission._id}/poll`,
       ),
     );
     if (response.status == HttpStatus.OK) {
-      logger.log(`getMission successful for rocket: ${_rocketId}`);
+      this._goNoGo = response.data;
+      logger.log(`goOrNoGoPoll successful for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+      return this._goNoGo.go;
+    } else if (response.status == HttpStatus.NOT_FOUND) {
+      logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketId}`);
+      logger.error(`Mission not found for rocket: ${_rocketId}`);
+      throw new HttpException(response.data, response.status);
+    }
+  }
+
+  async getMission(_rocketId: string): Promise<MissionDto> {
+    //logger.log(`Performing getMission for rocket: ${_rocketId}`);
+    const response: AxiosResponse<MissionDto> = await firstValueFrom(
+      this.httpService.get<MissionDto>(
+        `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=NOT_STARTED`,
+      ),
+    );
+    if (response.status == HttpStatus.OK) {
+      //logger.log(`getMission successful for rocket: ${_rocketId}`);
       return response.data;
     } else {
       logger.error(`Error in getMission for rocket: ${_rocketId}`);

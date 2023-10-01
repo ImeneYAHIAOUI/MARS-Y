@@ -7,9 +7,13 @@ services:
     ports:
       - 3004:3000
     depends_on:
-      - ${MARSY_MOCK_SERVICE}
+      - mongo_db_marsy_telemetry
     environment:
       - MARSY_MOCK_SERVICE_URL_WITH_PORT=${MARSY_MOCK_SERVICE}:3000
+      - MARSY_LAUNCHPAD_SERVICE_URL_WITH_PORT=${MARSY_LAUNCHPAD_SERVICE}:3000
+      - MARSY_BOOSTER_SERVICE_URL_WITH_PORT=${MARSY_BOOSTER_SERVICE}:3000
+      - MARSY_PAYLOAD_SERVICE_URL_WITH_PORT=${MARSY_PAYLOAD_SERVICE}:3000
+      - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
     networks:
       - nestjs-marsy-network
   mongo_db_marsy_telemetry:
@@ -19,6 +23,8 @@ services:
       - 27020:27017
     networks:
       - nestjs-marsy-network
+    logging:
+      driver: none
 networks:
   nestjs-marsy-network:
     driver: bridge

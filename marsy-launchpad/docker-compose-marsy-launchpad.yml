@@ -11,6 +11,7 @@ services:
     environment:
       - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
       - MARSY_MOCK_SERVICE_URL_WITH_PORT=${MARSY_MOCK_SERVICE}:3000
+      - MARSY_GUIDANCE_SERVICE_URL_WITH_PORT=${MARSY_GUIDANCE_SERVICE}:3000
     networks:
       - nestjs-marsy-network
   mongo_db_marsy_launchpad:
@@ -20,6 +21,8 @@ services:
       - 27019:27017
     networks:
       - nestjs-marsy-network
+    logging:
+      driver: none
 networks:
   nestjs-marsy-network:
     driver: bridge

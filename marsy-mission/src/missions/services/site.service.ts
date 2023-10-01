@@ -27,7 +27,7 @@ export class SiteService {
     longitude: number,
     altitude: number,
   ): Promise<Site> {
-    logger.log(`Received request for site name : ${name}`);
+    logger.log(`Received request to add site name : ${name}`);
     const existingSite = await this.siteModel.findOne({ name }).exec();
 
     if (existingSite) {

@@ -10,6 +10,10 @@ export class TelemetryRecord {
 
   @ApiProperty()
   @Prop({ required: true })
+  rocketId: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
   missionId: string;
 
   @ApiProperty()
@@ -29,19 +33,33 @@ export class TelemetryRecord {
   altitude: number;
 
   @ApiProperty()
+  @Prop({ required: true })
+  angle: number;
+
+  @ApiProperty()
+  @Prop({ required: true })
   speed: number;
 
   @ApiProperty()
+  @Prop({ required: true })
   fuel: number;
 
   @ApiProperty()
+  @Prop({ required: true })
   temperature: number;
 
   @ApiProperty()
+  @Prop({ required: true })
   pressure: number;
 
   @ApiProperty()
-  humidty: number;
+  @Prop({ required: true })
+  humidity: number;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  staged: boolean;
 }
 
-export const TelemetryRecordSchema = SchemaFactory.createForClass(TelemetryRecord);
+export const TelemetryRecordSchema =
+  SchemaFactory.createForClass(TelemetryRecord);

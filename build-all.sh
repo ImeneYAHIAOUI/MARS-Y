@@ -15,6 +15,9 @@ compile_dir "marsy-weather"
 compile_dir "marsy-mission"
 compile_dir "marsy-telemetry"
 compile_dir "marsy-mock"
+compile_dir "marsy-payload"
+compile_dir "marsy-boostercontrol"
+compile_dir "marsy-guidance"
 
 echo "** Done all"
 

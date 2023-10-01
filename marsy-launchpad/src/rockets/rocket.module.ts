@@ -6,6 +6,7 @@ import { Rocket, RocketSchema } from './schemas/rocket.schema';
 import { RocketController } from './controllers/rocket.controller';
 import { RocketService } from './services/rocket.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { HardwareProxyService } from './services/mock-hardware-proxy.service.ts/hardware-proxy.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     HttpModule,
   ],
   controllers: [RocketController],
-  providers: [RocketService],
+  providers: [HardwareProxyService,RocketService],
   exports: [RocketService],
 })
 export class RocketModule {}

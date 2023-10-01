@@ -22,6 +22,8 @@ services:
       - 27017:27017
     networks:
       - nestjs-marsy-network
+    logging:
+      driver: none
 networks:
   nestjs-marsy-network:
     driver: bridge

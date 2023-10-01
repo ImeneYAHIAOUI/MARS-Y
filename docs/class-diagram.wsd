@@ -60,11 +60,10 @@ Enum WeatherStatus {
 }
 
 class Weather {
-    Site site
+    String id
 }
 
 Weather ..|> WeatherStatus : use
-Weather "1"--"1" Site
 
 class Client {
     String id 
@@ -72,6 +71,7 @@ class Client {
 }
 
 Rocket ..> RocketStatus : use
+Weather "1"--"1" Site : concerns
 Rocket "1"--"1" Payload : contains
 Payload "n"--"1" Client : concerns
 Mission "1"--"n" Site : launch

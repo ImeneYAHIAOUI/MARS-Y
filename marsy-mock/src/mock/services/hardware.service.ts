@@ -1,46 +1,214 @@
-import {
-  Injectable, Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
-import { DeliveryDto } from '../dto/delivery.dto';
 import { StagingDto } from '../dto/staging.dto';
-
+import * as cron from 'cron';
+import { MarsyTelemetryProxyService } from './marsy-telemetry-proxy/marsy-telemetry-proxy.service';
+import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
+import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
+import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
 
 @Injectable()
 export class HardwareService {
-  private readonly logger : Logger = new Logger(HardwareService.name);
+  private readonly logger: Logger = new Logger(HardwareService.name);
+  private readonly MAX_Q_ALTITUDE: number = 2000;
+  private rocketCronJob: any;
+  private boosterCronJob: any;
+  private rockets: {
+    rocketId: string;
+    missionId: string;
+    staged: boolean;
+    telemetry: TelemetryRecordDto;
+  }[] = [];
 
-  constructor() {}
+  private boosters: {
+    rocketId: string;
+    missionId: string;
+    landing: boolean;
+    telemetry: BoosterTelemetryRecordDto;
+  }[] = [];
 
-  async deliverRocket(rocketId : string) : Promise<DeliveryDto> {
-    this.logger.log(`Delivering rocket ${rocketId}`);
+  constructor(
+    private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
+    private readonly marssyMissionProxyService: MarsyMissionProxyService,
+    private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
+  ) { }
+  async stageRocket(rocketId: string): Promise<StagingDto> {
+    this.logger.log(`Staging rocket ${rocketId.slice(-3).toUpperCase()}`);
+    let rocketTelemetry = this.rockets.find((rocket) => {
+      return rocket.rocketId === rocketId;
+    });
+    rocketTelemetry.staged = true;
+    this.stopSendingTelemetry(rocketId);
+    this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(rocketTelemetry.telemetry);
+
+    this.boosters.push({
+      rocketId: rocketId,
+      missionId: rocketTelemetry.missionId,
+      landing: false,
+      telemetry: this._getDecentInitialeBoosterTelemetry(
+        rocketTelemetry.missionId,
+        rocketId,
+      ),
+    });
+
+    this.logger.debug(`Attempting to stage rocket ${rocketId.slice(-3).toUpperCase()} and starting to send booster telemetry`);
+
+    this.marsyTelemetryProxyService.sendBoosterTelemetryToApi(
+      this.boosters.find((booster) => {
+        return booster.rocketId === rocketId;
+      }).telemetry,
+      rocketId,
+    );
+
+    this.boosterCronJob = new cron.CronJob('*/3 * * * * *', () => {
+      this.marsyTelemetryProxyService.sendBoosterTelemetryToApi(
+        this.retrieveBoosterTelemetry(rocketId),
+        rocketId,
+      );
+    },
+      null,
+      true,
+      'America/Los_Angeles');
     return {
       _id: rocketId,
-      delivered: true,
+      staged: rocketTelemetry.staged,
     };
   }
 
-  async stageRocket(rocketId : string) : Promise<StagingDto> {
-    this.logger.log(`Staging rocket ${rocketId}`);
-    return {
-      _id: rocketId,
-      staged: true
-    };
+  async landBooster(rocketId: string): Promise<any> {
+    //this.logger.log(`Started landing process of the booster of the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    const booster = this.boosters.find((booster) => {
+      return booster.rocketId === rocketId;
+    });
+    booster.landing = true;
+    return {_id : rocketId, landed : true };
   }
 
-  async retrieveTelemetry(rocketId : string) : Promise<TelemetryRecordDto> {
-    this.logger.log(`Retrieving telemetry for the rocket ${rocketId}`);
-    return {
+  // before landing speed is zero and we are falling in altitude free fall
+  retrieveBoosterTelemetry(rocketId: string): BoosterTelemetryRecordDto {
+    this.logger.log(`Retrieving telemetry from the booster of the staged rocket ${rocketId.slice(-3).toUpperCase()}`);
+    let boosterTelemetry = this.boosters.find((booster) => {
+      return booster.rocketId === rocketId;
+    });
+
+    const newFuel = boosterTelemetry.telemetry.fuel - 15 > 0 ? boosterTelemetry.telemetry.fuel - 15 : 0;
+
+    boosterTelemetry.telemetry = {
       timestamp: Date.now(),
-      longitude: Math.floor(Math.random() * (255 - 0)) + 0,
-      altitude: Math.floor(Math.random() * (255 - 0)) + 0,
-      latitude: Math.floor(Math.random() * (255 - 0)) + 0,
-      pressure: Math.floor(Math.random() * (255 - 0)) + 0,
-      speed: Math.floor(Math.random() * (255 - 0)) + 0,
-      humidity: Math.floor(Math.random() * (255 - 0)) + 0,
-      temperature: Math.floor(Math.random() * (255 - 0)) + 0,
-      fuel: Math.floor(Math.random() * (255 - 0)) + 0,
+      longitude: boosterTelemetry.telemetry.longitude + Math.floor(Math.random() * (5 - 0)),
+      altitude: boosterTelemetry.telemetry.altitude - Math.floor(Math.random() * (20 - 0)) - 300,
+      latitude: boosterTelemetry.telemetry.latitude + Math.floor(Math.random() * (5 - 0)),
+      pressure: boosterTelemetry.telemetry.pressure,
+      speed: boosterTelemetry.telemetry.speed,
+      humidity: boosterTelemetry.telemetry.humidity,
+      temperature: boosterTelemetry.telemetry.temperature,
+      fuel: boosterTelemetry.landing ? newFuel : boosterTelemetry.telemetry.fuel,
+      missionId: boosterTelemetry.telemetry.missionId,
     };
+
+    if (boosterTelemetry.telemetry.altitude <= 300) {
+      this.boosterCronJob.stop();
+      this.logger.log(`Booster landed for mission id ${rocketId}`);
+    }
+
+    return boosterTelemetry.telemetry;
+  }
+
+  retrieveTelemetry(rocketId: string): TelemetryRecordDto {
+    this.logger.log(`Sending telemetry from the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    let rocketTelemetry = this.rockets.find((rocket) => {
+      return rocket.rocketId === rocketId;
+    });
+    const newFuel = rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * 5) - 50 > 0 ?
+      rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * 5) - 30 :
+      0;
+    rocketTelemetry.telemetry = {
+      timestamp: Date.now(),
+      longitude: rocketTelemetry.telemetry.longitude + (Math.random() > 0.5 ? Math.floor(Math.random() * (2 - 0)) : -Math.floor(Math.random() * (2 - 0))),
+      altitude: rocketTelemetry.telemetry.altitude + Math.floor(Math.random() * (20 - 0)) + 400,
+      latitude: rocketTelemetry.telemetry.latitude + (Math.random() > 0.5 ? Math.floor(Math.random() * (2 - 0)) : -Math.floor(Math.random() * (2 - 0))),
+      pressure: rocketTelemetry.telemetry.pressure,
+      speed: rocketTelemetry.telemetry.speed + Math.floor(Math.random() * (5 - 0)),
+      humidity: rocketTelemetry.telemetry.humidity,
+      temperature: rocketTelemetry.telemetry.temperature,
+      fuel: newFuel,
+      missionId: rocketTelemetry.telemetry.missionId,
+      rocketId: rocketId,
+      angle: rocketTelemetry.telemetry.angle - 1,
+      staged: rocketTelemetry.staged,
+    };
+    return rocketTelemetry.telemetry;
+  }
+
+  _getDecentInitialeBoosterTelemetry(
+    missionId: string,
+    rocketId: string,
+  ): BoosterTelemetryRecordDto {
+    const originalRocketTelemetry = this.rockets.find((rocket) => {
+      return rocket.rocketId === rocketId;
+    });
+    return {
+      missionId: missionId,
+      timestamp: Date.now(),
+      longitude: originalRocketTelemetry.telemetry.longitude,
+      altitude: originalRocketTelemetry.telemetry.altitude,
+      latitude: originalRocketTelemetry.telemetry.latitude,
+      pressure: 50,
+      speed: 0,
+      humidity: 30,
+      temperature: 70,
+      fuel: 30,
+    };
+  }
+
+  _getDecentInitialeRocketTelemetry(
+    missionId: string,
+    rocketId: string,
+  ): TelemetryRecordDto {
+    return {
+      missionId: missionId,
+      timestamp: Date.now(),
+      longitude: Math.floor(Math.random() * 2) + 80,
+      altitude: Math.floor(Math.random() * 50) + 50,
+      latitude: Math.floor(Math.random() * 5) + 280,
+      pressure: 50,
+      speed: 100,
+      humidity: 30,
+      temperature: 70,
+      fuel: 100,
+      rocketId: rocketId,
+      angle: 90,
+      
+      staged: false,
+    };
+  }
+
+  async startSendingTelemetry(rocketId: string) {
+    this.logger.log(`Started sending telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    const missionId: string = (
+      await this.marssyMissionProxyService.getMission(rocketId)
+    )._id;
+    this.rockets.push({
+      rocketId: rocketId,
+      missionId: missionId,
+      staged: false,
+      telemetry: this._getDecentInitialeRocketTelemetry(missionId, rocketId),
+    });
+    this.rocketCronJob = new cron.CronJob('*/3 * * * * *', () => {
+      this.marsyTelemetryProxyService.sendTelemetryToApi(
+        this.retrieveTelemetry(rocketId),
+      );
+    },
+      null,
+      true,
+      'America/Los_Angeles');
+    this.rocketCronJob.start();
+    return true;
+  }
+
+  stopSendingTelemetry(rocketId: string): void {
+    //this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
+    this.rocketCronJob.stop();
   }
 }

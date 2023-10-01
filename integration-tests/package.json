@@ -6,7 +6,7 @@
   "license": "SEE LICENSE IN <root>/LICENSE",
   "type": "module",
   "scripts": {
-    "test:integration": "NODE_OPTIONS='--experimental-vm-modules' jest -c jest.config.js",
+    "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js -c jest.config.js",
     "test:integration:watch": "NODE_OPTIONS='--experimental-vm-modules' jest -c jest.config.js --watch"
   },
 

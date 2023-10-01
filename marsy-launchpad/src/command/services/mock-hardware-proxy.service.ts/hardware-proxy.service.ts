@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
@@ -6,7 +6,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { StagingResultDto } from '../../dto/staging-result-dto';
-const logger = new Logger('MarsyMissionProxyService');
+import { DeliveryDto } from '../../dto/delivery.dto';
+const logger = new Logger('MarsyMockHardwareProxyService');
 
 @Injectable()
 export class HardwareProxyService {
@@ -24,23 +25,36 @@ export class HardwareProxyService {
   }
 
   async stageMidFlightFlight(_rocketId: string): Promise<boolean> {
-    if (StagingResultDto === null) {
-      logger.log(`Performing stageMidFlightFlight for rocket: ${_rocketId}`);
+    
+      //logger.log(`Performing staging for rocket: ${_rocketId}`);
       const response: AxiosResponse<StagingResultDto> = await firstValueFrom(
-        this.httpService.get<StagingResultDto>(
+        this.httpService.post<StagingResultDto>(
           `${this._baseUrl}${this._hardwarePath}/${_rocketId}/stage`,
         ),
       );
       if (response.status == HttpStatus.OK) {
         this.StagingResultDto = response.data;
-        logger.log(`stageMidFlightFlight successful for rocket: ${_rocketId}`);
+        //logger.log(`Staging was successful for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
         return this.StagingResultDto.staged;
       } else {
-        logger.error(`Error in stageMidFlightFlight for rocket: ${_rocketId}`);
+        logger.error(`Error in staging for rocket: ${_rocketId}`);
         throw new HttpException(response.data, response.status);
       }
+    
+  }
+
+  async startEmittingTelemetry(_rocketId: string): Promise<void> {
+    logger.log(`Request to start sending telemetry for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+    const response: AxiosResponse = await firstValueFrom(
+      this.httpService.post(`${this._baseUrl}${this._hardwarePath}/launch`, {
+        rocketId: _rocketId,
+      }),
+    );
+    if (response.status == HttpStatus.OK) {
+      //logger.log(`Telemetry started for rocket: ${_rocketId}`);
+    } else {
+      logger.error(`Error starting telemetry for rocket: ${_rocketId}`);
+      throw new HttpException(response.data, response.status);
     }
-    logger.log('Staging mid-flight');
-    return Math.random() < 0.7;
   }
 }

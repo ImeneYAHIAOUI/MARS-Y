@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
+
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Mission } from '../schema/mission.schema';
@@ -8,7 +9,12 @@ import { SiteService } from './site.service';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
+import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
+import { BoosterStatus } from '../schema/booster.status.schema';
+import { MissionBoosterDto } from '../dto/mission.booster.dto';
 
+import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
+import * as Constants from '../schema/constants'
 const logger = new Logger('MissionService');
 
 @Injectable()
@@ -19,16 +25,65 @@ export class MissionService {
     private readonly siteService: SiteService,
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {}
+ async evaluateRocketDestruction(rocketId: string, telemetryRecord: MissionTelemetryDto): Promise<void> {
+   try {
+     //logger.log(`Evaluating destruction for rocket with ID: ${rocketId}`);
+
+     const mission = await this.getMissionByRocketId(rocketId) as Mission;
+
+     const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
+
+     if ( angle > Constants.MAX_ANGLE || angle < Constants.MIN_ANGLE) {
+        logger.debug(`Angle exceeded for rocket ${rocketId.slice(-3).toUpperCase()}. Angle: ${angle}`);
+        await this.destroyRocket(rocketId, 'Angle exceeded');
+        return;
+      }
+
+     if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED) {
+       logger.debug(`Critical telemetry exceeded for rocket ${rocketId.slice(-3).toUpperCase()}. Altitude: ${altitude}, Speed: ${speed}`);
+       await this.destroyRocket(rocketId, 'Critical telemetry exceeded');
+       return;
+     }
+
+     if (temperature > Constants.MAX_TEMPERATURE || pressure > Constants.MAX_PRESSURE) {
+        logger.debug(`Environmental conditions exceeded for rocket ${rocketId.slice(-3).toUpperCase()}. Temperature: ${temperature}, Pressure: ${pressure}`);
+       await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
+       return;
+     }
+
+     //logger.log(`Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`);
+   } catch (error) {
+     if (error instanceof MissionNotFoundException) {
+       logger.log(`Mission with rocketId ${rocketId} not found`);
+     } else if (error instanceof RocketNotFoundException) {
+       logger.log(`Rocket with ID ${rocketId} not found`);
+     } else {
+       logger.error(`Error: ${error.message}`);
+     }
+   }
+ }
+
+ async destroyRocket(rocketId: string, reason: string): Promise<void> {
+   try {
+     logger.debug(`Issuing order to destroy rocket ${rocketId.slice(-3).toUpperCase()}. Reason: ${reason}`);
+     this.marsyRocketProxyService.destroyRocket(rocketId).then((res) => {
+      //logger.log(`Rocket with ID ${rocketId.slice(-3).toUpperCase()} destroyed. Reason: ${reason}`);
+      });
+    } catch (error) {
+     logger.error(`Error destroying rocket with ID ${rocketId}: ${error.message}`);
+     throw error;
+   }
+ }
 
   async goOrNoGoPoll(_missionId: string): Promise<boolean> {
-    logger.log(`Received request for mission id : ${_missionId}`);
+    logger.debug(`Received request to perform a go/no go for mission ${_missionId.slice(-3).toUpperCase()}`);
 
     const mission = await this.getMissionById(_missionId);
 
     if (!mission) {
       throw new MissionNotFoundException(_missionId);
     }
-    console.log('mission' + mission);
+
     const _site = await this.siteService.getSiteById(mission.site.toString());
     const _weatherStatus =
       await this.marsyWeatherProxyService.retrieveWeatherStatus(
@@ -49,23 +104,57 @@ export class MissionService {
     await mission.save();
   }
 
+  async saveNewStatusBooster(missionBoosterDto : MissionBoosterDto) {
+    const missionId = missionBoosterDto._id;
+    const status = missionBoosterDto.boosterStatus;
+    const mission = await this.missionModel.findById(missionId).exec();
+    mission.boosterStatus = BoosterStatus[status as keyof typeof BoosterStatus];;
+    await mission.save();
+  }
+
   async getAllMissions(): Promise<Mission[]> {
     const missions = await this.missionModel.find().exec();
     return missions;
   }
 
+
+
   async getMissionById(id: string): Promise<Mission> {
     const mission = await this.missionModel.findById(id).exec();
     return mission;
   }
+  async getMissionByRocketId(
+    rocketId: string,
+  ): Promise<Mission> {
+    // logger.log(
+    //   `Received request to get retrieve mission for the rocket ${rocketId.slice(-3).toUpperCase()}`,
+    // );
+
+    const mission = await this.missionModel
+      .findOne({ rocket: rocketId })
+      .exec();
+
+    if (!mission) {
+      throw new MissionNotFoundException(
+        `Mission with rocketId ${rocketId} not found`,
+      );
+    }
+
+    // logger.log(
+    //   `Returning mission with rocketId ${mission.name}`,
+    // );
+
+    return mission;
+  }
+
 
   async getMissionByRocketIdAndStatus(
     rocketId: string,
     missionStatus: string,
   ): Promise<Mission> {
-    logger.log(
-      `Received request for mission with rocketId ${rocketId} and status ${missionStatus}`,
-    );
+    // logger.log(
+    //   `Received request for mission with rocketId ${rocketId} and status ${missionStatus}`,
+    // );
     const mission = await this.missionModel
       .findOne({ rocket: rocketId, status: missionStatus })
       .exec();
@@ -74,9 +163,9 @@ export class MissionService {
         `Mission with rocketId ${rocketId} and status ${missionStatus} not found`,
       );
     }
-    logger.log(
-      `Returning mission with rocketId ${mission.name} and status ${missionStatus}`,
-    );
+    // logger.log(
+    //   `Returning mission with rocketId ${mission.name} and status ${missionStatus}`,
+    // );
     return mission;
   }
 
@@ -85,6 +174,7 @@ export class MissionService {
     rocketId: string,
     siteId: string,
   ): Promise<Mission> {
+    logger.log(`Received request to add mission name : ${name}`);
     const existingMission = await this.missionModel
       .findOne({ name: name })
       .exec();

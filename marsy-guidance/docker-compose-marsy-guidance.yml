@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+  marsy-guidance-service:
+    image: "nestjs-marsy/marsy-guidance"
+    restart: always
+    ports:
+      - 3007:3000
+    environment:
+      - MARSY_TELEMETRY_SERVICE_URL_WITH_PORT=${MARSY_TELEMETRY_SERVICE}:3000
+      - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

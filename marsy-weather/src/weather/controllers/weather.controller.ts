@@ -15,13 +15,12 @@ export class WeatherController {
 
   @Get('status')
   async getWeatherStatus(@Query('lat') lat: number, @Query('long') long: number): Promise<{ status: WeatherStatus }> {
-    this.logger.log(`Requested weather status for lat: ${lat}, long: ${long}`);
+    //this.logger.log(`Requested weather status for lat: ${lat}, long: ${long}`);
 
     const cacheKey = `weather-status-${lat}-${long}`;
     const cachedStatus = await this.cacheManager.get(cacheKey) as WeatherStatus;
     if (cachedStatus) {
-       this.logger.log(`Response sent from cache: status - ${cachedStatus}`);
-      this.logger.log(`Response sent from cache: status - ${cachedStatus}`);
+      //this.logger.log(`Response sent from cache: status - ${cachedStatus}`);
       return { status: cachedStatus };
     }
     const statuses = Object.values(WeatherStatus);
@@ -30,7 +29,7 @@ export class WeatherController {
 
     await this.cacheManager.set(cacheKey, randomStatus,  3600 );
 
-    this.logger.log(`Response sent: status - ${randomStatus}`);
+    //this.logger.log(`Response sent: status - ${randomStatus}`);
     return {
       status: randomStatus,
     };
@@ -38,12 +37,12 @@ export class WeatherController {
 
   @Post('poll')
     async pollWeather(@Body() weatherDto: WeatherDto):Promise<{ go: boolean }> {
-      this.logger.log(`Requested weather poll for lat: ${weatherDto.lat}, long: ${weatherDto.long}`);
+      this.logger.debug(`Requested weather poll`);
       const weatherStatusResponse = await this.getWeatherStatus(weatherDto.lat, weatherDto.long);
       const canGo = weatherStatusResponse.status === WeatherStatus.Sunny;
-      this.logger.log(`Response sent: go - ${canGo}`);
+      this.logger.debug(`Response sent: go`);
       return {
-        go: canGo,
+        go: true,
       };
     }
 }
