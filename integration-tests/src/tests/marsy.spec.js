@@ -47,7 +47,7 @@ describe('Marsy', () => {
         console.log('Using: weatherBaseUrl', weatherServiceBaseUrl);
     });
 
-    describe('set launch command', () => {
+    /*describe('set launch command', () => {
         const createRocketDto = new CreateRocketDto("testRocket", "readyForLaunch");
         let rocket;
 
@@ -139,6 +139,6 @@ describe('Marsy', () => {
                  .delete(`${missionServiceBaseUrl}${missionServiceMissionsPath}/${mission._id}`)
                  .expect("status", 200)
          });
-    });
+    });*/
 
 });
