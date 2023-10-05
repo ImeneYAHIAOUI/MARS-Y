@@ -1,0 +1,14 @@
+version: "3.3"
+
+services:
+  marsy-webcaster-service:
+    image: "nestjs-marsy/marsy-webcaster"
+    restart: always
+    ports:
+      - 3010:3000
+
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge
