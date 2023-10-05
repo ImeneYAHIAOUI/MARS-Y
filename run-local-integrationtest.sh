@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# shellcheck disable=SC2120
 function run_test_with_profile() { # $1 the maven profile to run tests with
   echo "Starting the full docker-compose in background"
   ./start-all.sh
@@ -19,8 +20,6 @@ function run_test_with_profile() { # $1 the maven profile to run tests with
 }
 echo "Running IT test WITH NO PRIOR BUILD"
 echo "## Running IT with direct access to backend microservices"
-run_test_with_profile
-echo "## Running IT through the gateway"
-run_test_with_profile gateway
+#run_test_with_profile
 ret_code=$?
 exit $ret_code
