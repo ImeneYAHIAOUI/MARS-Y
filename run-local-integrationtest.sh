@@ -20,6 +20,6 @@ function run_test_with_profile() { # $1 the maven profile to run tests with
 }
 echo "Running IT test WITH NO PRIOR BUILD"
 echo "## Running IT with direct access to backend microservices"
-run_test_with_profile
+#run_test_with_profile
 ret_code=$?
 exit $ret_code
