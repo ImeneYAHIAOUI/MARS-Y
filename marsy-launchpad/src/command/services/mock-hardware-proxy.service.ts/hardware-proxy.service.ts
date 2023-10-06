@@ -57,4 +57,87 @@ export class HardwareProxyService {
       throw new HttpException(response.data, response.status);
     }
   }
+   async prepareRocket(rocketId: string): Promise<boolean> {
+      try {
+        const response: AxiosResponse<any> = await firstValueFrom(
+          this.httpService.post(
+            `${this._baseUrl}${this._hardwarePath}/${rocketId}/prepare`,
+          ),
+        );
+        return response.status === 200;
+      } catch (error) {
+        logger.error(`Error while preparing rocket id ${rocketId}: ${error.message}`);
+        throw error;
+      }
+    }
+
+    async startupRocket(rocketId: string): Promise<boolean> {
+      try {
+        const response: AxiosResponse<any> = await firstValueFrom(
+          this.httpService.post(
+            `${this._baseUrl}${this._hardwarePath}/${rocketId}/startup`,
+          ),
+        );
+        return response.status === 200;
+      } catch (error) {
+        logger.error(`Error while starting up rocket ${rocketId}: ${error.message}`);
+        throw error;
+      }
+    }
+
+    async powerOnRocket(rocketId: string): Promise<boolean> {
+      try {
+        const response: AxiosResponse<any> = await firstValueFrom(
+          this.httpService.post(
+            `${this._baseUrl}${this._hardwarePath}/${rocketId}/power-on`
+          )
+        );
+        return response.status === 200;
+      } catch (error) {
+        logger.error(`Error while powering on rocket ${rocketId}: ${error.message}`);
+        throw error;
+      }
+    }
+
+    async startMainEngine(rocketId: string): Promise<boolean> {
+      try {
+        const response: AxiosResponse<any> = await firstValueFrom(
+          this.httpService.post(
+            `${this._baseUrl}${this._hardwarePath}/${rocketId}/start-main-engine`
+          )
+        );
+        return response.status === 200;
+      } catch (error) {
+        logger.error(`Error while starting the main engine of rocket ${rocketId}: ${error.message}`);
+        throw error;
+      }
+    }
+
+    async startSecondEngine(rocketId: string): Promise<boolean> {
+      try {
+        const response: AxiosResponse<any> = await firstValueFrom(
+          this.httpService.post(
+            `${this._baseUrl}${this._hardwarePath}/${rocketId}/start-second-engine`
+          )
+        );
+        return response.status === 200;
+      } catch (error) {
+        logger.error(`Error while starting the second engine of rocket ${rocketId}: ${error.message}`);
+        throw error;
+      }
+    }
+
+    async secondEngineCutoff(rocketId: string): Promise<boolean> {
+      try {
+        const response: AxiosResponse<any> = await firstValueFrom(
+          this.httpService.post(
+            `${this._baseUrl}${this._hardwarePath}/${rocketId}/second-engine-cutoff`
+          )
+        );
+        return response.status === 200;
+      } catch (error) {
+        logger.error(`Error while cutting off the second engine of rocket ${rocketId}: ${error.message}`);
+        throw error;
+      }
+    }
 }

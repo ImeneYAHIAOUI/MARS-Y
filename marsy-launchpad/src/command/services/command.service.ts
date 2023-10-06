@@ -10,6 +10,7 @@ import { DeliveryResponseDto } from '../dto/delivery-response.dto';
 import { ControlTelemetryDto } from 'src/rockets/dto/control-telemetry.dto';
 import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
 import { RocketNotStagedException } from '../exceptions/rocket-not(staged.exception';
+import { Post, Param } from '@nestjs/common';
 
 const logger = new Logger('ControlPadService');
 
@@ -21,18 +22,18 @@ export class CommandService {
     private readonly guidanceHardwareProxyService: GuidanceHardwareProxyService,
     private readonly rocketService: RocketService,
   ) {}
+
   // 6) MaxQ
   async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     try {
       const rocket = await this.rocketService.findRocket(rocketId);
-      logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()} - fuel: ${telemetry.fuel}`);
+      logger.log(
+        `Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()} - fuel: ${telemetry.fuel}`,
+      );
       if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
         logger.debug(`Issuing staging order to rocket ${rocketId.slice(-3).toUpperCase()}`);
         await this.hardwareProxyService.stageMidFlightFlight(rocketId);
-        await this.rocketService.updateRocketStatus(
-          rocketId,
-          RocketStatus.STAGED,
-        );
+        await this.rocketService.updateRocketStatus(rocketId, RocketStatus.STAGED);
         logger.debug(`Staged rocket successfully: ${rocketId.slice(-3).toUpperCase()}`);
       }
     } catch (error) {
@@ -51,75 +52,91 @@ export class CommandService {
       logger.error('Failed to issue throttling order', error.message);
     }
   }
-
   async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
-    await this.rocketService.updateRocketStatus(
-      rocketId,
-      RocketStatus.READY_FOR_LAUNCH,
-    );
-    const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
-    const commandDto: CommandDto = {
-      decision: '', // Initialize with default values
-      rocket: null, // Initialize with default values
-    };
-    await this.rocketService.updateRocketStatus(
-      rocketId,
-      RocketStatus.PRELAUNCH_CHECKS,
-    );
-    if (goNogo) {
-      commandDto.decision = 'starting launch';
-      commandDto.rocket = await this.rocketService.updateRocketStatus(
+      await this.rocketService.updateRocketStatus(
         rocketId,
-        RocketStatus.IN_FLIGHT,
+        RocketStatus.READY_FOR_LAUNCH,
       );
-    } else {
-      commandDto.decision = "can't start launch";
-      commandDto.rocket = await this.rocketService.updateRocketStatus(
+      const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
+      const commandDto: CommandDto = {
+        decision: '', // Initialize with default values
+        rocket: null, // Initialize with default values
+      };
+      await this.rocketService.updateRocketStatus(
         rocketId,
-        RocketStatus.ABORTED,
+        RocketStatus.PRELAUNCH_CHECKS,
       );
-    }
-
-    await this.hardwareProxyService.startEmittingTelemetry(rocketId);
-    return commandDto;
-  }
-
-  async stageRocketMidFlight(
-    rocketId: string,
-  ): Promise<StageRocketMidFlightDto> {
-    const rocket = await this.rocketService.findRocket(rocketId);
-    const rocketStatus = rocket.status;
-    if (rocketStatus === RocketStatus.IN_FLIGHT) {
-      if (await this.hardwareProxyService.stageMidFlightFlight(rocketId)) {
-        logger.debug(`Sending order to stage rocket mid flight`);
-        return {
-          midStageSeparationSuccess: true,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.STAGED,
-          ),
-        };
+      if (goNogo) {
+        commandDto.decision = 'starting launch';
+        commandDto.rocket = await this.rocketService.updateRocketStatus(
+          rocketId,
+          RocketStatus.IN_FLIGHT,
+        );
       } else {
-        return {
-          midStageSeparationSuccess: false,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.FAILED_LAUNCH,
-          ),
-        };
+        commandDto.decision = "can't start launch";
+        commandDto.rocket = await this.rocketService.updateRocketStatus(
+          rocketId,
+          RocketStatus.ABORTED,
+        );
       }
-    } else {
-      throw new RocketNotInFlightException(rocketId);
+
+      await this.hardwareProxyService.startEmittingTelemetry(rocketId);
+      return commandDto;
+    }
+
+    async stageRocketMidFlight(
+      rocketId: string,
+    ): Promise<StageRocketMidFlightDto> {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const rocketStatus = rocket.status;
+      if (rocketStatus === RocketStatus.IN_FLIGHT) {
+        if (await this.hardwareProxyService.stageMidFlightFlight(rocketId)) {
+          logger.debug(`Sending order to stage rocket mid flight`);
+          return {
+            midStageSeparationSuccess: true,
+            rocket: await this.rocketService.updateRocketStatus(
+              rocketId,
+              RocketStatus.STAGED,
+            ),
+          };
+        } else {
+          return {
+            midStageSeparationSuccess: false,
+            rocket: await this.rocketService.updateRocketStatus(
+              rocketId,
+              RocketStatus.FAILED_LAUNCH,
+            ),
+          };
+        }
+      } else {
+        throw new RocketNotInFlightException(rocketId);
+      }
+    }
+
+  @Post(':rocketId/powerOn')
+  async powerOnRocket(@Param('rocketId') rocketId: string): Promise<void> {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const powerOnSuccess = await this.hardwareProxyService.powerOnRocket(rocketId);
+
+      if (powerOnSuccess) {
+        logger.log(`Rocket ${rocketId} is powered on.`);
+      } else {
+        logger.error(`An error occurred while powering on rocket ${rocketId}.`);
+      }
+    } catch (error) {
+      logger.error(`An error occurred while powering on rocket ${rocketId}: ${error.message}`);
     }
   }
-  // 1) preparation
-  async prepareRocket(rocketId: string): Promise<void> {
+
+  @Post(':rocketId/prepare')
+  async prepareRocket(@Param('rocketId') rocketId: string): Promise<void> {
     try {
       const rocket = await this.rocketService.findRocket(rocketId);
       const preparationSuccess = await this.hardwareProxyService.prepareRocket(rocketId);
 
       if (preparationSuccess) {
-        logger.info(`Rocket ${rocketId} is prepared.`);
+        logger.log(`Rocket ${rocketId} is prepared.`);
       } else {
         logger.error(`Error occurred while preparing rocket ${rocketId}.`);
       }
@@ -127,105 +144,88 @@ export class CommandService {
       logger.error(`An error occurred while preparing rocket ${rocketId}: ${error.message}`);
     }
   }
- // 3) Startup (T-00:01:00)
- async startup( rocketId: string):Promise<void>{
-      try {
-          const rocket = await this.rocketService.findRocket(rocketId);
-          const startupSuccess = await this.hardwareProxyService.startupRocket(rocketId);
 
-          if (startupSuccess) {
-            logger.info(`Rocket ${rocketId} has started successfully.`);
-          } else {
-            logger.error(`Error occurred while starting up rocket ${rocketId}.`);
-          }
-        } catch (error) {
-          logger.error(`An error occurred while starting up rocket ${rocketId}: ${error.message}`);
-        }
+  @Post(':rocketId/startup')
+  async startup(@Param('rocketId') rocketId: string): Promise<void> {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const startupSuccess = await this.hardwareProxyService.startupRocket(rocketId);
 
-     }
-
-    // 2) Power on rocket
- async powerOnRocket(rocketId: string): Promise<void> {
-   try {
-     const rocket = await this.rocketService.findRocket(rocketId);
-        const powerOnSucces = await this.hardwareProxyService.startupRocket(rocketId);
-        if (powerOnSucces) {
-            logger.info(`Rocket ${rocketId} is powered on.`);
-        } else {
-            logger.error(`An error occurred while powering on rocket ${rocketId}.`);
-        }
-   } catch (error) {
-     logger.error(`An error occurred while powering on rocket ${rocketId}: ${error.message}`);
-   }
- }
-
-   // 4) Main engine start (T-00:00:03)
-    @Post(':rocketId/engineStart')
-    async startMainEngine(@Param('rocketId') rocketId: string): Promise<void> {
-      try {
-        const rocket = await this.rocketService.findRocket(rocketId);
-        const startMainEngineSuccess = await this.hardwareProxyService.startMainEngine(rocketId);
-        if(startMainEngineSuccess){
-          logger.info(`Main engine of rocket ${rocketId} has started.`);
-        }else{
-          .logger.error(`An error occurred while starting the main engine of rocket ${rocketId}.`);
-        }
-      } catch (error) {
-        logger.error(`An error occurred while starting the main engine of rocket ${rocketId}: ${error.message}`);
+      if (startupSuccess) {
+        logger.log(`Rocket ${rocketId} has started successfully.`);
+      } else {
+        logger.error(`Error occurred while starting up rocket ${rocketId}.`);
       }
+    } catch (error) {
+      logger.error(`An error occurred while starting up rocket ${rocketId}: ${error.message}`);
     }
-    // 7) Main engine cut-off
-      @Post(':rocketId/engineCutoff')
-      async mainEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
-        try {
-          const rocket = await this.rocketService.findRocket(rocketId);
-        const mainEngineCutoffSuccess = await this.hardwareProxyService.mainEngineCutoff(rocketId);
-        if(startMainEngineSuccess){
-          logger.info(`Main engine of rocket ${rocketId} has been cut off.`);
-        }else{
-            logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}.`);
-        }
-        } catch (error) {
-          logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}: ${error.message}`);
-        }
-      }
-      // 9) Second engine start
-       @Post(':rocketId/secondEngineStart')
-       async startSecondEngine(@Param('rocketId') rocketId: string): Promise<void> {
-         try {
-           const rocket = await this.rocketService.findRocket(rocketId);
-           const mainEngineCutoffSuccess = await this.hardwareProxyService.startSecondEngine(rocketId);
-           if(startSecondEngineSuccess){
-             logger.info(`Second engine of rocket ${rocketId} has started.`);
-             }else{
-                logger.error(`An error occurred while starting the second engine of rocket ${rocketId}.`);
-                 }
-         } catch (error) {
-           logger.error(`An error occurred while starting the second engine of rocket ${rocketId}: ${error.message}`);
-         }
-       }
-    // 11) Second engine cut-off
-      @Post(':rocketId/secondEngineCutoff')
-      async secondEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
-        try {
-          const rocket = await this.rocketService.findRocket(rocketId);
-          const secondEngineCutoffSuccess = await this.hardwareProxyService.secondEngineCutoff(rocketId);
-          if(secondEngineCutoffSuccess){
-            logger.info(`Second engine of rocket ${rocketId} has been cut off.`);}
-            else{
-              logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}.`);
-            }
-        } catch (error) {
-          logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}: ${error.message}`);
-        }
-      }
+  }
 
- async fairingSeparation(rocketId: string): Promise<void> {
-    //TODO: Implement fairing separation
- }
-  async sendPayloadDeliveryCommand(
-    rocketId: string,
-  ): Promise<DeliveryResponseDto> {
+  @Post(':rocketId/engineStart')
+  async startMainEngine(@Param('rocketId') rocketId: string): Promise<void> {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const startMainEngineSuccess = await this.hardwareProxyService.startMainEngine(rocketId);
+      if (startMainEngineSuccess) {
+        logger.log(`Main engine of rocket ${rocketId} has started.`);
+      } else {
+        logger.error(`An error occurred while starting the main engine of rocket ${rocketId}.`);
+      }
+    } catch (error) {
+      logger.error(`An error occurred while starting the main engine of rocket ${rocketId}: ${error.message}`);
+    }
+  }
+
+  @Post(':rocketId/secondEngineStart')
+  async startSecondEngine(@Param('rocketId') rocketId: string): Promise<void> {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const startSecondEngineSuccess = await this.hardwareProxyService.startSecondEngine(rocketId);
+      if (startSecondEngineSuccess) {
+        logger.log(`Second engine of rocket ${rocketId} has started.`);
+      } else {
+        logger.error(`An error occurred while starting the second engine of rocket ${rocketId}.`);
+      }
+    } catch (error) {
+      logger.error(`An error occurred while starting the second engine of rocket ${rocketId}: ${error.message}`);
+    }
+  }
+
+  @Post(':rocketId/engineCutoff')
+  async mainEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const mainEngineCutoffSuccess = await this.hardwareProxyService.mainEngineCutoff(rocketId);
+      if (mainEngineCutoffSuccess) {
+        logger.log(`Main engine of rocket ${rocketId} has been cut off.`);
+      } else {
+        logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}.`);
+      }
+    } catch (error) {
+      logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}: ${error.message}`);
+    }
+  }
+
+  @Post(':rocketId/secondEngineCutoff')
+  async secondEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const secondEngineCutoffSuccess = await this.hardwareProxyService.secondEngineCutoff(rocketId);
+      if (secondEngineCutoffSuccess) {
+        logger.log(`Second engine of rocket ${rocketId} has been cut off.`);
+      } else {
+        logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}.`);
+      }
+    } catch (error) {
+      logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}: ${error.message}`);
+    }
+  }
+
+  async fairingSeparation(rocketId: string): Promise<void> {
+    // TODO: Implement fairing separation
+  }
+
+  async sendPayloadDeliveryCommand(rocketId: string): Promise<DeliveryResponseDto> {
     const rocket = await this.rocketService.findRocket(rocketId);
     logger.debug(`Sending payload delivery command for rocket ${rocketId} - JSON: ${JSON.stringify(rocket)}`);
     const rocketStatus = rocket.status;
@@ -233,18 +233,12 @@ export class CommandService {
       if (await this.guidanceHardwareProxyService.deliverPayload(rocketId)) {
         return {
           delivered: true,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.PAYLOAD_DELIVERED,
-          ),
+          rocket: await this.rocketService.updateRocketStatus(rocketId, RocketStatus.PAYLOAD_DELIVERED),
         };
       } else {
         return {
           delivered: false,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.PAYLOAD_DELIVERY_FAILED,
-          ),
+          rocket: await this.rocketService.updateRocketStatus(rocketId, RocketStatus.PAYLOAD_DELIVERY_FAILED),
         };
       }
     } else {
