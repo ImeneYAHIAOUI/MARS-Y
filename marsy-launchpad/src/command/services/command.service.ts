@@ -119,27 +119,27 @@ export class CommandService {
       const preparationSuccess = await this.hardwareProxyService.prepareRocket(rocketId);
 
       if (preparationSuccess) {
-        this.logger.info(`Rocket ${rocketId} is prepared.`);
+        logger.info(`Rocket ${rocketId} is prepared.`);
       } else {
-        this.logger.error(`Error occurred while preparing rocket ${rocketId}.`);
+        logger.error(`Error occurred while preparing rocket ${rocketId}.`);
       }
     } catch (error) {
-      this.logger.error(`An error occurred while preparing rocket ${rocketId}: ${error.message}`);
+      logger.error(`An error occurred while preparing rocket ${rocketId}: ${error.message}`);
     }
   }
  // 3) Startup (T-00:01:00)
- async startup( rocketId: string,):Promise<void>{
+ async startup( rocketId: string):Promise<void>{
       try {
           const rocket = await this.rocketService.findRocket(rocketId);
           const startupSuccess = await this.hardwareProxyService.startupRocket(rocketId);
 
           if (startupSuccess) {
-            this.logger.info(`Rocket ${rocketId} has started successfully.`);
+            logger.info(`Rocket ${rocketId} has started successfully.`);
           } else {
-            this.logger.error(`Error occurred while starting up rocket ${rocketId}.`);
+            logger.error(`Error occurred while starting up rocket ${rocketId}.`);
           }
         } catch (error) {
-          this.logger.error(`An error occurred while starting up rocket ${rocketId}: ${error.message}`);
+          logger.error(`An error occurred while starting up rocket ${rocketId}: ${error.message}`);
         }
 
      }
@@ -150,12 +150,12 @@ export class CommandService {
      const rocket = await this.rocketService.findRocket(rocketId);
         const powerOnSucces = await this.hardwareProxyService.startupRocket(rocketId);
         if (powerOnSucces) {
-            this.logger.info(`Rocket ${rocketId} is powered on.`);
+            logger.info(`Rocket ${rocketId} is powered on.`);
         } else {
-            this.logger.error(`An error occurred while powering on rocket ${rocketId}.`);
+            logger.error(`An error occurred while powering on rocket ${rocketId}.`);
         }
    } catch (error) {
-     this.logger.error(`An error occurred while powering on rocket ${rocketId}: ${error.message}`);
+     logger.error(`An error occurred while powering on rocket ${rocketId}: ${error.message}`);
    }
  }
 
@@ -166,12 +166,12 @@ export class CommandService {
         const rocket = await this.rocketService.findRocket(rocketId);
         const startMainEngineSuccess = await this.hardwareProxyService.startMainEngine(rocketId);
         if(startMainEngineSuccess){
-          this.logger.info(`Main engine of rocket ${rocketId} has started.`);
+          logger.info(`Main engine of rocket ${rocketId} has started.`);
         }else{
-          this.logger.error(`An error occurred while starting the main engine of rocket ${rocketId}.`);
+          .logger.error(`An error occurred while starting the main engine of rocket ${rocketId}.`);
         }
       } catch (error) {
-        this.logger.error(`An error occurred while starting the main engine of rocket ${rocketId}: ${error.message}`);
+        logger.error(`An error occurred while starting the main engine of rocket ${rocketId}: ${error.message}`);
       }
     }
     // 7) Main engine cut-off
@@ -181,12 +181,12 @@ export class CommandService {
           const rocket = await this.rocketService.findRocket(rocketId);
         const mainEngineCutoffSuccess = await this.hardwareProxyService.mainEngineCutoff(rocketId);
         if(startMainEngineSuccess){
-          this.logger.info(`Main engine of rocket ${rocketId} has been cut off.`);
+          logger.info(`Main engine of rocket ${rocketId} has been cut off.`);
         }else{
-            this.logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}.`);
+            logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}.`);
         }
         } catch (error) {
-          this.logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}: ${error.message}`);
+          logger.error(`An error occurred while cutting off the main engine of rocket ${rocketId}: ${error.message}`);
         }
       }
       // 9) Second engine start
@@ -196,12 +196,12 @@ export class CommandService {
            const rocket = await this.rocketService.findRocket(rocketId);
            const mainEngineCutoffSuccess = await this.hardwareProxyService.startSecondEngine(rocketId);
            if(startSecondEngineSuccess){
-             this.logger.info(`Second engine of rocket ${rocketId} has started.`);
+             logger.info(`Second engine of rocket ${rocketId} has started.`);
              }else{
-                this.logger.error(`An error occurred while starting the second engine of rocket ${rocketId}.`);
+                logger.error(`An error occurred while starting the second engine of rocket ${rocketId}.`);
                  }
          } catch (error) {
-           this.logger.error(`An error occurred while starting the second engine of rocket ${rocketId}: ${error.message}`);
+           logger.error(`An error occurred while starting the second engine of rocket ${rocketId}: ${error.message}`);
          }
        }
     // 11) Second engine cut-off
@@ -211,12 +211,12 @@ export class CommandService {
           const rocket = await this.rocketService.findRocket(rocketId);
           const secondEngineCutoffSuccess = await this.hardwareProxyService.secondEngineCutoff(rocketId);
           if(secondEngineCutoffSuccess){
-            this.logger.info(`Second engine of rocket ${rocketId} has been cut off.`);}
+            logger.info(`Second engine of rocket ${rocketId} has been cut off.`);}
             else{
-              this.logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}.`);
+              logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}.`);
             }
         } catch (error) {
-          this.logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}: ${error.message}`);
+          logger.error(`An error occurred while cutting off the second engine of rocket ${rocketId}: ${error.message}`);
         }
       }
 
