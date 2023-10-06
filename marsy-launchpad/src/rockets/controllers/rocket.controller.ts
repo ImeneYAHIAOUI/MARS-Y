@@ -191,13 +191,8 @@ export class RocketController {
     }
   }
 
-  // @Post(':idrocket/telemetry')
-  // @HttpCode(200)
-  // async postTelemetryRecord(
-  //   @Param('idrocket') rocketId: string,
-  //   @Body() telemetryRecordDto: ControlTelemetryDto,
-  // ): Promise<void> {
-  //   logger.log(`Received telemetry for rocket ID: ${rocketId}`);
-  //   this.rocketService.handleRocketTelemetry(rocketId, telemetryRecordDto);
-  // }
+
+
+
+
 }

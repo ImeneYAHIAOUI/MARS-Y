@@ -25,18 +25,7 @@ import { LaunchDto } from '../dto/launch.dto';
 export class HardwareController {
   private readonly logger: Logger = new Logger(HardwareController.name);
   constructor(private readonly hardwareService: HardwareService) {}
-  // @ApiOkResponse({
-  //   type: DeliveryDto,
-  //   description: 'The delivery status of the rocket',
-  // })
-  // @Post(':idrocket/deliver')
-  // @HttpCode(200)
-  // async deliverRocket(@Param('idrocket') id: string): Promise<DeliveryDto> {
-  //   this.logger.log(`Received request to deliver rocket: ${id}`);
-  //   const deliveryDto = await this.hardwareService.deliverRocket(id);
-  //   this.hardwareService.stopSendingTelemetry(id);
-  //   return deliveryDto;
-  // }
+
 
   @ApiOkResponse({
     type: StagingDto,
