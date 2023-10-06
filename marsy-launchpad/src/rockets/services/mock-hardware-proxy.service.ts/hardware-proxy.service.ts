@@ -57,4 +57,90 @@ export class HardwareProxyService {
       throw error;
     }
   }
+
+  async prepareRocket  rocketId: string): Promise<boolean> {
+    try{
+     const response: AxiosResponse<any> = await firstValueFrom(
+             this.httpService.post(
+               `${this._baseUrl}${this._mockPath}/${rocketId}/prepare`,
+             ),
+           );
+     }catch (error) {
+      this.logger.error(`Error while preparing rocket id ${rocketId}: ${error.message}`);
+          throw error;
+     }
+  }
+    async startupRocket ( rocketId: string): Promise<boolean> {
+      try{
+       const response: AxiosResponse<any> = await firstValueFrom(
+               this.httpService.post(
+                 `${this._baseUrl}${this._mockPath}/${rocketId}/startup',
+               ),
+             );
+       }catch (error) {
+        this.logger.error(`Error while starting up rocket ${rocketId}: ${error.message}`);
+            throw error;
+       }
+    }
+    async powerOnRocket  (rocketId: string): Promise<boolean> {
+          try{
+           const response: AxiosResponse<any> = await firstValueFrom(
+                   this.httpService.post(
+                     `${this._baseUrl}${this._mockPath}/${rocketId}/power-on',
+                   ),
+                 );
+           }catch (error) {
+            this.logger.error(`Error while  powering on rocket ${rocketId}: ${error.message}`);
+                throw error;
+           }
+        }
+      async startMainEngine  (rocketId: string): Promise<boolean> {
+            try{
+             const response: AxiosResponse<any> = await firstValueFrom(
+                     this.httpService.post(
+                       `${this._baseUrl}${this._mockPath}/${rocketId}/start-main-engine',
+                     ),
+                   );
+             }catch (error) {
+              this.logger.error(`Error   while starting the main engine of rocket ${rocketId}: ${error.message}`);
+                  throw error;
+             }
+          }
+     async mainEngineCutoff ( rocketId: string): Promise<boolean> {
+                try{
+                 const response: AxiosResponse<any> = await firstValueFrom(
+                         this.httpService.post(
+                           `${this._baseUrl}${this._mockPath}/${rocketId}/main-engine-cutoff',
+                         ),
+                       );
+                 }catch (error) {
+                  this.logger.error(`Error   while cutting off the main engine of rocket ${rocketId}: ${error.message}`);
+                      throw error;
+                 }
+              }
+        async startSecondEngine(  rocketId: string): Promise<boolean> {
+                    try{
+                     const response: AxiosResponse<any> = await firstValueFrom(
+                             this.httpService.post(
+                               `${this._baseUrl}${this._mockPath}/${rocketId}/start-second-engine',
+                             ),
+                           );
+                     }catch (error) {
+                      this.logger.error(`Error while starting the second engine of rocket ${rocketId}: ${error.message}`);
+                          throw error;
+                     }
+                  }
+     async secondEngineCutoff ( rocketId: string): Promise<boolean> {
+                  try{
+                   const response: AxiosResponse<any> = await firstValueFrom(
+                           this.httpService.post(
+                             `${this._baseUrl}${this._mockPath}/${rocketId}/second-engine-cutoff',
+                           ),
+                         );
+                   }catch (error) {
+                    this.logger.error(`Error   while cutting off the second engine of rocket ${rocketId}: ${error.message}`);
+                        throw error;
+                   }
+                }
+
 }
