@@ -47,14 +47,14 @@ export class GuidanceHardwareController {
     return await this.hardwareService.startSendingTelemetry(launchDto);
   }
 
-  @ApiOkResponse({
-    type: TelemetryRecordDto,
-    description: 'The guidance hardware throttle down initialization',
-  })
-  @Post(':idrocket/throttle-down')
-  @HttpCode(200)
-  throttleDown(@Param('idrocket') id: string): boolean {
-    //this.logger.log(`Received request to throttle down the rocket guidance : ${id}`);
-    return this.hardwareService.throttleDown(id);
-  }
+  // @ApiOkResponse({
+  //   type: TelemetryRecordDto,
+  //   description: 'The guidance hardware throttle down initialization',
+  // })
+  // @Post(':idrocket/throttle-down')
+  // @HttpCode(200)
+  // throttleDown(@Param('idrocket') id: string): boolean {
+  //   //this.logger.log(`Received request to throttle down the rocket guidance : ${id}`);
+  //   return this.hardwareService.throttleDown(id);
+  // }
 }

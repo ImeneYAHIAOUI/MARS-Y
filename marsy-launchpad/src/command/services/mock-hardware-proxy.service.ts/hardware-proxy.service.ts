@@ -24,6 +24,23 @@ export class HardwareProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_mock_url_with_port}`;
   }
 
+  async throttleDownEngines(
+    rocketId: string
+  ): Promise<void> {
+    try {
+      logger.log(`Throttling down engines for rocket id : ${rocketId}`);
+      const response: AxiosResponse<any> = await firstValueFrom(
+        this.httpService.post(
+          `${this._baseUrl}${this._hardwarePath}/${rocketId}/throttle-down`,
+        ),
+      );
+      logger.log(`Rocket engines throttled down`);
+    } catch (error) {
+      logger.error(`Error while throttling down engines for rocket id ${rocketId}: ${error.message}`);
+      throw error;
+    }
+  }
+
   async stageMidFlightFlight(_rocketId: string): Promise<boolean> {
     
       //logger.log(`Performing staging for rocket: ${_rocketId}`);
