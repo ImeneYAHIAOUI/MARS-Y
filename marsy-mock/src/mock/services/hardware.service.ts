@@ -18,6 +18,7 @@ export class HardwareService {
     rocketId: string;
     missionId: string;
     staged: boolean;
+    throttle: boolean;
     telemetry: TelemetryRecordDto;
   }[] = [];
 
@@ -33,6 +34,17 @@ export class HardwareService {
     private readonly marssyMissionProxyService: MarsyMissionProxyService,
     private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
   ) { }
+
+  throttleDown(rocketId: string): boolean {
+    this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    let rocketTelemetry = this.rockets.find((rocket) => {
+      return rocket.rocketId === rocketId;
+    });
+    rocketTelemetry.throttle = true;
+    //this.logger.log(`Approaching the max Q altitude`);
+    return true;
+  }
+
   async stageRocket(rocketId: string): Promise<StagingDto> {
     this.logger.log(`Staging rocket ${rocketId.slice(-3).toUpperCase()}`);
     let rocketTelemetry = this.rockets.find((rocket) => {
@@ -97,7 +109,7 @@ export class HardwareService {
     boosterTelemetry.telemetry = {
       timestamp: Date.now(),
       longitude: boosterTelemetry.telemetry.longitude + Math.floor(Math.random() * (5 - 0)),
-      altitude: boosterTelemetry.telemetry.altitude - Math.floor(Math.random() * (20 - 0)) - 300,
+      altitude: boosterTelemetry.telemetry.altitude - 1900 > 0 ? boosterTelemetry.telemetry.altitude - 1900 : 0,
       latitude: boosterTelemetry.telemetry.latitude + Math.floor(Math.random() * (5 - 0)),
       pressure: boosterTelemetry.telemetry.pressure,
       speed: boosterTelemetry.telemetry.speed,
@@ -120,16 +132,27 @@ export class HardwareService {
     let rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
-    const newFuel = rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * 5) - 50 > 0 ?
-      rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * 5) - 30 :
+
+    const potentialFuel = rocketTelemetry.telemetry.fuel - (
+      rocketTelemetry.throttle ? 50 : 5
+    );
+    const newFuel = potentialFuel > 0 ?
+      potentialFuel :
       0;
+
+    const throttle = -20;
+    const newSpeed = !rocketTelemetry.throttle ? rocketTelemetry.telemetry.speed + 5 : 
+       (rocketTelemetry.telemetry.speed + throttle > 0 ? rocketTelemetry.telemetry.speed + throttle : 0); 
+  
+    rocketTelemetry.throttle && this.logger.log(`Approaching the max Q altitude with throttled speed ${newSpeed}`);
+
     rocketTelemetry.telemetry = {
       timestamp: Date.now(),
       longitude: rocketTelemetry.telemetry.longitude + (Math.random() > 0.5 ? Math.floor(Math.random() * (2 - 0)) : -Math.floor(Math.random() * (2 - 0))),
-      altitude: rocketTelemetry.telemetry.altitude + Math.floor(Math.random() * (20 - 0)) + 400,
+      altitude: rocketTelemetry.telemetry.altitude + 2000,
       latitude: rocketTelemetry.telemetry.latitude + (Math.random() > 0.5 ? Math.floor(Math.random() * (2 - 0)) : -Math.floor(Math.random() * (2 - 0))),
       pressure: rocketTelemetry.telemetry.pressure,
-      speed: rocketTelemetry.telemetry.speed + Math.floor(Math.random() * (5 - 0)),
+      speed: newSpeed,
       humidity: rocketTelemetry.telemetry.humidity,
       temperature: rocketTelemetry.telemetry.temperature,
       fuel: newFuel,
@@ -193,6 +216,7 @@ export class HardwareService {
       rocketId: rocketId,
       missionId: missionId,
       staged: false,
+      throttle: false,
       telemetry: this._getDecentInitialeRocketTelemetry(missionId, rocketId),
     });
     this.rocketCronJob = new cron.CronJob('*/3 * * * * *', () => {

@@ -23,22 +23,22 @@ export class GuidanceHardwareProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_guidance_url_with_port}`;
   }
 
-  async throttleDownEngines(
-    rocketId: string
-  ): Promise<void> {
-    try {
-      logger.log(`Throttling down engines for rocket id : ${rocketId}`);
-      const response: AxiosResponse<any> = await firstValueFrom(
-        this.httpService.post(
-          `${this._baseUrl}${this._guidancePath}/${rocketId}/throttle-down`,
-        ),
-      );
-      logger.log(`Rocket engines throttled down`);
-    } catch (error) {
-      logger.error(`Error while throttling down engines for rocket id ${rocketId}: ${error.message}`);
-      throw error;
-    }
-  }
+  // async throttleDownEngines(
+  //   rocketId: string
+  // ): Promise<void> {
+  //   try {
+  //     logger.log(`Throttling down engines for rocket id : ${rocketId}`);
+  //     const response: AxiosResponse<any> = await firstValueFrom(
+  //       this.httpService.post(
+  //         `${this._baseUrl}${this._guidancePath}/${rocketId}/throttle-down`,
+  //       ),
+  //     );
+  //     logger.log(`Rocket engines throttled down`);
+  //   } catch (error) {
+  //     logger.error(`Error while throttling down engines for rocket id ${rocketId}: ${error.message}`);
+  //     throw error;
+  //   }
+  // }
 
   async deliverPayload(_rocketId: string): Promise<boolean> {
     logger.log(`Issued order to deliver paylod for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
