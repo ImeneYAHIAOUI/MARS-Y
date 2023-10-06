@@ -126,6 +126,19 @@ export class HardwareProxyService {
         throw error;
       }
     }
+        async mainEngineCutoff(rocketId: string): Promise<boolean> {
+          try {
+            const response: AxiosResponse<any> = await firstValueFrom(
+              this.httpService.post(
+                `${this._baseUrl}${this._hardwarePath}/${rocketId}/main-engine-cutoff`
+              )
+            );
+            return response.status === 200;
+          } catch (error) {
+            logger.error(`Error while cutting off the main engine of rocket ${rocketId}: ${error.message}`);
+            throw error;
+          }
+        }
 
     async secondEngineCutoff(rocketId: string): Promise<boolean> {
       try {
