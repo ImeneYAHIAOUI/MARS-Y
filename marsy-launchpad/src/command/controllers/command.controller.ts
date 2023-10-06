@@ -159,11 +159,7 @@ export class CommandController {
      this.commandService.startMainEngine(rocketId);
   }
 
-     // 6) Max Q
-    @Post(':rocketId/maxQ')
-    async maxQ(@Param('rocketId') rocketId: string): Promise<void> {
-      logger.log(`Reaching MaxQ with rocket ${rocketId}`);
-    }
+
     // 7) Main engine cut-off
     @Post(':rocketId/engineCutoff')
     async mainEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
