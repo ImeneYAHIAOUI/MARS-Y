@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+  marsy-payload-hardware-service:
+    image: "nestjs-marsy/marsy-payload-hardware"
+    restart: always
+    ports:
+      - 3010:3000
+    environment:
+      - MARSY_TELEMETRY_SERVICE_URL_WITH_PORT=${MARSY_TELEMETRY_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+
+networks:
+  nestjs-marsy-network:
+    driver: bridge

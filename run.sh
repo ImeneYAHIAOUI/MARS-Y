@@ -10,6 +10,7 @@ services=(
     "marsy-payload:marsy-payload/docker-compose-marsy-payload.yml"
     "marsy-guidance:marsy-guidance/docker-compose-marsy-guidance.yml"
     "marsy-mock:marsy-mock/docker-compose-marsy-mock.yml"
+    "marsy-payload-hardware:marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml"
 )
 container_ids=()
 

@@ -16,6 +16,15 @@ import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
 
 @Injectable()
 export class TelemetryService {
+
+  async storePayLoadTelemetry(telemetryRecordDto: PayloadTelemetryDto) {
+    this.logger.log('Sending telemetry to Payload service after delivery');
+
+    await this.marsyPayloadProxyService.sendTelemetryDelivery(
+      telemetryRecordDto
+    );    
+  }
+
   private readonly logger: Logger = new Logger(TelemetryService.name);
 
   constructor(

@@ -5,6 +5,8 @@ import { DeliveryDto } from '../dto/delivery.dto';
 import * as cron from 'cron';
 import { MarsyTelemetryProxyService } from './marsy-telemetry-proxy/marsy-telemetry-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
+import { MarsyHardwarePayloadProxyService } from './marsy-payload-hardware-proxy/marsy-payload-hardware-proxy.service';
+import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 
 @Injectable()
 export class GuidanceHardwareService {
@@ -27,7 +29,8 @@ export class GuidanceHardwareService {
   }[] = [];
 
   constructor(
-    private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService
+    private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
+    private readonly marsyPayloadHardwareProxyService: MarsyHardwarePayloadProxyService,
   ) { }
 
   throttleDown(rocketId: string): boolean {
@@ -104,7 +107,28 @@ export class GuidanceHardwareService {
   }
 
   stopSendingTelemetry(rocketId: string): void {
-    //this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
+
+    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
     this.rocketCronJob.stop();
   }
+
+  startSendingPayloadHardwareTelemetry(rocketId : string){
+    this.logger.log(`Started sending payload hardware telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    let rocketTelemetry = this.rockets.find((rocket) => {
+      return rocket.rocketId === rocketId;
+    });
+    
+    const payloadTelemetry: PayloadTelemetryDto = {
+      missionId: rocketTelemetry.telemetry.missionId,
+      timestamp: rocketTelemetry.telemetry.timestamp,
+      altitude: rocketTelemetry.telemetry.altitude,
+      latitude: rocketTelemetry.telemetry.latitude,
+      longitude: rocketTelemetry.telemetry.longitude,
+      angle: rocketTelemetry.telemetry.angle,
+    };
+    this.logger.log(`Started sending payload hardware telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
+
+    this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(payloadTelemetry);
+  }
+
 }

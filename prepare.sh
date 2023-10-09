@@ -17,6 +17,7 @@ compile_dir "marsy-mock"
 compile_dir "marsy-payload"
 compile_dir "marsy-boostercontrol"
 compile_dir "marsy-guidance"
+compile_dir "marsy-payload-hardware"
 
 echo "** Done all"
 

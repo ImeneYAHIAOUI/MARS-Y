@@ -34,6 +34,7 @@ export class GuidanceHardwareController {
     //this.logger.log(`Received request to deliver payload on the rocket guidance : ${id}`);
     const deliveryDto = await this.hardwareService.deliverRocket(id);
     this.hardwareService.stopSendingTelemetry(id);
+    this.hardwareService.startSendingPayloadHardwareTelemetry(id);
     return deliveryDto;
   }
 
