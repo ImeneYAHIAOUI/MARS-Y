@@ -90,7 +90,7 @@ export class HardwareController {
 // 1) prepare
 @Post(':idrocket/prepare')
 @HttpCode(200)
-throttleDown(@Param('idrocket') id: string): boolean {
+prepare(@Param('idrocket') id: string): boolean {
   this.logger.log(`Received request to prepare rocket: ${id}`);
   this.logger.log(`Step 1: Fueling for rocket ${id}`);
   this.logger.log(`Step 2: Status check for rocket ${id}`);
