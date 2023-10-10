@@ -10,6 +10,7 @@ import { TelemetryService } from '../services/telemetry.service';
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { TelemetryRecord } from '../schemas/telemetry-record.schema';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
+import { PayloadTelemetryDto } from '../dto/payload-telemetry.dt';
 
 @ApiTags('telemetry')
 @Controller('/telemetry')
@@ -42,6 +43,17 @@ export class TelemetryController {
     //   `Received request to add telemetry: ${telemetryRecordDto.missionId}`,
     // );
     return await this.rocketService.storeTelemetryRecord(telemetryRecordDto);
+  }
+
+  @ApiBody({ type: PayloadTelemetryDto })
+  @ApiCreatedResponse({
+    type: TelemetryRecord,
+  })
+  @Post("/payload")
+  async postMissionPayloadTelemetryRecord(
+    @Body() telemetryRecordDto: PayloadTelemetryDto,
+  ){
+    return await this.rocketService.storePayLoadTelemetry(telemetryRecordDto);
   }
 
   @ApiBody({ type: BoosterTelemetryRecordDto })

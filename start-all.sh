@@ -11,8 +11,9 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-mock/docker-compose-marsy-mock.yml \
                 --file marsy-boostercontrol/docker-compose-marsy-booster.yml \
                 --file marsy-payload/docker-compose-marsy-payload.yml \
+                --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml up -d
-                
+                                
 echo "all services started behind gateway"
 

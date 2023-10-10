@@ -33,6 +33,11 @@ async receiveTelemetry(rocketId: string, telemetry: TelemetryDto): Promise<Paylo
   } else {
     logger.debug(`Orbit not reached for ${rocketCode}`);
   }
+    
+  receiveTelemetryAfterDelivery(telemetry: TelemetryDto): void | PromiseLike<void> {
+    logger.log(`Received telemetry after delivery - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(1)} ** PAYLOAD IN RIGHT ORBIT`);
+  }
+
 }
 
 

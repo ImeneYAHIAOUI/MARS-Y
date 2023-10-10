@@ -37,4 +37,20 @@ export class PayloadController {
     );
 
   }
+
+  @ApiParam({ name: 'rocketId' })
+  @ApiNotFoundResponse({
+    type: RocketNotFoundException,
+    description: 'Rocket not found',
+  })
+  @Post('telemetry/delivery')
+  @HttpCode(200)
+  async receiveTelemetryAfterDelivery(
+    @Body() telemetry: TelemetryDto,
+  ): Promise< void> {
+    return await this.payloadService.receiveTelemetryAfterDelivery(
+      telemetry,
+    );
+
+  }
 }
