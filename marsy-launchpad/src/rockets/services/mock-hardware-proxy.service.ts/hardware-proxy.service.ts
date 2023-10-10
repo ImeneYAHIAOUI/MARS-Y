@@ -20,8 +20,9 @@ export class HardwareProxyService {
       this.configService.get<DependenciesConfig>('dependencies');
     this._baseUrl = `http://${dependenciesConfig.marsy_mock_url_with_port}`;
   }
-
-  async destroyRocket(rocketId: string): Promise<void> {
+  async destroyRocket(
+    rocketId: string
+  ): Promise<void> {
     try {
       this.logger.log(`Sending explosion order to rocket id : ${rocketId}`);
       const response: AxiosResponse<any> = await firstValueFrom(
@@ -40,7 +41,9 @@ export class HardwareProxyService {
     }
   }
 
-  async throttleDownEngines(rocketId: string): Promise<void> {
+  async throttleDownEngines(
+    rocketId: string
+  ): Promise<void> {
     try {
       this.logger.log(`Throttling down engines for rocket id : ${rocketId}`);
       const response: AxiosResponse<any> = await firstValueFrom(
@@ -54,6 +57,4 @@ export class HardwareProxyService {
       throw error;
     }
   }
-
-
 }
