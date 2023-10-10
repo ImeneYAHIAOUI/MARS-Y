@@ -39,7 +39,7 @@ export class CommandController {
     //logger.log(`Received telemetry for rocket ID: ${idrocket}`);
     this.commandService.handleTelemetry(idrocket, controlTelemetryDto);
   }
-
+  // 4) launch
   @ApiParam({ name: 'rocketId' })
   @ApiCreatedResponse({ type: CommandDto })
   @ApiNotFoundResponse({
@@ -68,7 +68,7 @@ export class CommandController {
       throw error; // You can handle and customize error logging as needed
     }
   }
-
+  // 8) Stage separation
   @ApiParam({ name: 'rocketId' })
   @ApiCreatedResponse({
     type: StageRocketMidFlightDto,
@@ -96,7 +96,14 @@ export class CommandController {
       throw error;
     }
   }
+  // 10) Fairing separation
+  @Post(':rocketId/fairingSeparation')
+     async fairingSeparation(@Param('rocketId') rocketId: string): Promise<void> {
+     logger.log(`Fairing separation for rocket ${rocketId}`);
+     this.commandService.fairingSeparation(rocketId);
+ }
 
+  // 12) Payload separation/deploy
   @ApiParam({ name: 'rocketId' })
   @ApiCreatedResponse({
     type: DeliveryResponseDto,
@@ -127,6 +134,53 @@ export class CommandController {
       throw error;
     }
   }
+
+  @Post(':rocketId/prepare')
+  async prepare(@Param('rocketId') rocketId: string): Promise<void> {
+     logger.log(`Preparing rocket ${rocketId}`);
+     this.commandService.prepareRocket(rocketId);
+  }
+
+  @Post(':rocketId/powerOn')
+  async powerOnRocket(@Param('rocketId') rocketId: string): Promise<void> {
+     logger.log(`Powering on rocket ${rocketId}`);
+     this.commandService.powerOnRocket(rocketId);
+  }
+
+  // 3) Startup (T-00:01:00)
+  @Post(':rocketId/startup')
+  async startup(@Param('rocketId') rocketId: string): Promise<void> {
+    logger.log(`Starting up rocket ${rocketId} (T-00:01:00)`);
+  }
+  // 4) Main engine start (T-00:00:03)
+  @Post(':rocketId/engineStart')
+  async startMainEngine(@Param('rocketId') rocketId: string): Promise<void> {
+     logger.log(`Starting main engine of rocket ${rocketId} (T-00:00:03)`);
+     this.commandService.startMainEngine(rocketId);
+  }
+
+
+    // 7) Main engine cut-off
+    @Post(':rocketId/engineCutoff')
+    async mainEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
+      logger.log(`Main engine cutoff for rocket ${rocketId}`);
+      this.commandService.mainEngineCutoff(rocketId);
+    }
+
+    // 9) Second engine start
+    @Post(':rocketId/secondEngineStart')
+    async startSecondEngine(@Param('rocketId') rocketId: string): Promise<void> {
+      logger.log(`Starting second engine for rocket ${rocketId}`);
+      this.commandService.startSecondEngine(rocketId);
+    }
+
+    // 11) Second engine cut-off
+    @Post(':rocketId/secondEngineCutoff')
+    async secondEngineCutoff(@Param('rocketId') rocketId: string): Promise<void> {
+      logger.log(`Second engine cutoff for rocket ${rocketId}`);
+      this.commandService.secondEngineCutoff(rocketId);
+    }
+
 
 
 
