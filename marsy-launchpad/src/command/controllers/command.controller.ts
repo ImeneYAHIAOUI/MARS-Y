@@ -53,7 +53,7 @@ export class CommandController {
   ): Promise<CommandDto> {
     try {
       const rocketId = params.rocketId;
-      logger.info(`Received request to launch the rocket: ${rocketId.slice(-3).toUpperCase()}`,);
+      logger.log(`Received request to launch the rocket: ${rocketId.slice(-3).toUpperCase()}`,);
       const launchCommand = await this.commandService.sendLaunchCommand(rocketId,);
       return launchCommand;
     } catch (error) {
