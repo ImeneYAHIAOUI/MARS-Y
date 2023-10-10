@@ -37,25 +37,6 @@ const logger = new Logger('MissionController');
 @Controller('/missions')
 export class MissionController {
   constructor(private readonly missionService: MissionService) {}
-
-  // @Post(':idrocket/telemetry')
-  // @HttpCode(200)
-  // @ApiNotFoundResponse({
-  //   type: RocketNotFoundException,
-  //   description: 'Rocket not found',
-  // })
-  // @ApiServiceUnavailableResponse({
-  //   type: RocketServiceUnavailableException,
-  //   description: 'MarsyRocketService is unavailble',
-  // })
-  // async receiveTelemetry(
-  //   missionTelemetryDto: MissionTelemetryDto,
-  //   @Param('idrocket') idrocket: string,
-  // ) {
-  //   logger.log(`Received telemetry for rocket ID: ${idrocket}`);
-  //   this.missionService.handleTelemetry(idrocket, missionTelemetryDto);
-  // }
-
   @Post(':id/poll')
   @HttpCode(200)
   @ApiNotFoundResponse({
