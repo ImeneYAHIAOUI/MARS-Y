@@ -29,7 +29,7 @@ receiveBoosterData(boosterTelemetryDto: BoosterTelemetryDto, rocketId: string ) 
 
         const res = this.missionProxyService.updateMission(missionBoosterDto);
         if (res) {
-          logger.info(`Booster is landing for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`);
+          logger.log(`Booster is landing for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`);
         }
       }
     }
@@ -40,7 +40,7 @@ receiveBoosterData(boosterTelemetryDto: BoosterTelemetryDto, rocketId: string ) 
       missionBoosterDto.boosterStatus = 'LANDED';
 
       this.missionProxyService.updateMission(missionBoosterDto);
-      logger.info(`Booster has landed successfully for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`);
+      logger.log(`Booster has landed successfully for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`);
 
     }
   } catch (e) {
