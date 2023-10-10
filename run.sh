@@ -84,7 +84,7 @@ sleep 1
 
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 30
+sleep 39
 
 echo -e "HTTP Response Code: $(format_http_code "$rocket_launch_response")"
 
@@ -145,6 +145,7 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-boostercontrol/docker-compose-marsy-booster.yml \
                 --file marsy-payload/docker-compose-marsy-payload.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
+                --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon' 
 
                 

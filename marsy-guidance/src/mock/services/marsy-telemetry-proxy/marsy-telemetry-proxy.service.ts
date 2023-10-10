@@ -27,9 +27,6 @@ export class MarsyTelemetryProxyService {
     telemetryData: BoosterTelemetryRecordDto,
   ): Promise<TelemetryRecordDto> {
     try {
-      // this.logger.log(
-      //   `Sending telemetry data to ${this._baseUrl}${this._telemtryPath}`,
-      // );
       const response: AxiosResponse<TelemetryRecordDto> = await firstValueFrom(
         this.httpService.post<TelemetryRecordDto>(
           `${this._baseUrl}${this._telemtryPath}`,

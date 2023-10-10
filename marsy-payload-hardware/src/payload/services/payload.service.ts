@@ -7,7 +7,7 @@ const logger = new Logger('PayloadHardwareService');
 
 @Injectable()
 export class PayloadHardwareService {
-  private readonly MAX_CRON_RUNS = 5;
+  private readonly MAX_CRON_RUNS = 3;
   private cronRunCount = 0;
   constructor(
     private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
@@ -21,18 +21,21 @@ export class PayloadHardwareService {
     this.logger.log(`Started sending telemetry of delivered payload`);
     this.telemetries.push(telemetry);
 
-    this.logger.log('Creating a new cron job for telemetry sending...');
-
     this.rocketCronJob = new cron.CronJob('*/3 * * * * *', async () => {
       this.marsyTelemetryProxyService.sendTelemetryToApi(
         await this.retrieveTelemetry(telemetry.missionId),
       );
 
       this.cronRunCount++;
+      console.log("console run count");
+      console.log(this.cronRunCount);
 
       if (this.cronRunCount >= this.MAX_CRON_RUNS) {
-        this.logger.log('Stopping the cron job...');
         this.rocketCronJob.stop();
+
+        setTimeout(() => {
+          logger.log("STOPPING SENDING TELEMETRY PAYLOAD - EVERYTHING AS EXPECTED");
+        }, 1000);
       }
     },
       null,
@@ -40,7 +43,6 @@ export class PayloadHardwareService {
       'America/Los_Angeles');
 
     // Log the cron job starting
-    this.logger.log('Starting the cron job...');
     this.rocketCronJob.start();
   }
 

@@ -12,9 +12,6 @@ const angle = 80;
 
 @Injectable()
 export class PayloadService {
-  receiveTelemetryAfterDelivery(telemetry: TelemetryDto): void | PromiseLike<void> {
-    logger.log(`Received telemetry after delivery- altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(1)}`);
-  }
   constructor(
     private readonly marsyLaunchpadProxyService: MarsyLaunchpadProxyService,
   ) {}
@@ -37,4 +34,9 @@ export class PayloadService {
       //logger.log('orbit not reached');
     }
   }
+    
+  receiveTelemetryAfterDelivery(telemetry: TelemetryDto): void | PromiseLike<void> {
+    logger.log(`Received telemetry after delivery - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(1)} ** PAYLOAD IN RIGHT ORBIT`);
+  }
+
 }

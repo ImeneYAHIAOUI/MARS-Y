@@ -112,23 +112,25 @@ export class GuidanceHardwareService {
     this.rocketCronJob.stop();
   }
 
-  startSendingPayloadHardwareTelemetry(rocketId : string){
+  startSendingPayloadHardwareTelemetry(rocketId: string) {
     this.logger.log(`Started sending payload hardware telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
-    let rocketTelemetry = this.rockets.find((rocket) => {
-      return rocket.rocketId === rocketId;
-    });
     
-    const payloadTelemetry: PayloadTelemetryDto = {
-      missionId: rocketTelemetry.telemetry.missionId,
-      timestamp: rocketTelemetry.telemetry.timestamp,
-      altitude: rocketTelemetry.telemetry.altitude,
-      latitude: rocketTelemetry.telemetry.latitude,
-      longitude: rocketTelemetry.telemetry.longitude,
-      angle: rocketTelemetry.telemetry.angle,
-    };
-    this.logger.log(`Started sending payload hardware telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
-
-    this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(payloadTelemetry);
+    setTimeout(() => {
+      let rocketTelemetry = this.rockets.find((rocket) => {
+        return rocket.rocketId === rocketId;
+      });
+  
+      const payloadTelemetry: PayloadTelemetryDto = {
+        missionId: rocketTelemetry.telemetry.missionId,
+        timestamp: rocketTelemetry.telemetry.timestamp,
+        altitude: rocketTelemetry.telemetry.altitude,
+        latitude: rocketTelemetry.telemetry.latitude,
+        longitude: rocketTelemetry.telemetry.longitude,
+        angle: rocketTelemetry.telemetry.angle,
+      };
+      this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(payloadTelemetry);
+    }, 3000);
   }
+  
 
 }

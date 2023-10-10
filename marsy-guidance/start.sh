@@ -2,8 +2,6 @@
 
 source ../framework.sh
 
-echo "starting marsy-rocket-service"
+echo "starting marsy-guidance-service"
 docker-compose --env-file ./.env.docker \
-               --file docker-compose-marsy-mock.yml up -d
-
-wait_on_health http://localhost:3001 ${PWD##*/}
+               --file docker-compose-marsy-guidance.yml up -d

@@ -48,7 +48,6 @@ export class TelemetryController {
   @ApiBody({ type: PayloadTelemetryDto })
   @ApiCreatedResponse({
     type: TelemetryRecord,
-    description: 'The rocket telemetry has been successfully added.',
   })
   @Post("/payload")
   async postMissionPayloadTelemetryRecord(

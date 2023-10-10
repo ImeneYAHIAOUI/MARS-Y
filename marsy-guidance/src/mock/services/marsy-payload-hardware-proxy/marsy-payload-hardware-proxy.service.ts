@@ -26,9 +26,6 @@ export class MarsyHardwarePayloadProxyService {
   }
 
   async startEmittingPayloadHardware(telemetry: PayloadTelemetryDto): Promise<boolean> {
-    logger.log(
-      `Sending payload hardware telemetry ${telemetry} data to ${this._baseUrl}${this._path}  ${this._baseUrl}${this._path}`,
-    );
     try {
       await firstValueFrom(
         this.httpService.post(
