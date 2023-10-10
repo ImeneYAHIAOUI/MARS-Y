@@ -73,7 +73,7 @@ async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
   }
 
 async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
-  logger.info(`Initiating launch sequence for rocket ${rocketId}.`);
+  logger.log(`Initiating launch sequence for rocket ${rocketId}.`);
   await this.rocketService.updateRocketStatus(
     rocketId,
     RocketStatus.READY_FOR_LAUNCH,
@@ -85,12 +85,12 @@ async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
   };
   await this.rocketService.updateRocketStatus(rocketId,RocketStatus.PRELAUNCH_CHECKS,);
   if (goNogo) {
-    logger.info(`Starting launch sequence for rocket ${rocketId}.`);
+    logger.log(`Starting launch sequence for rocket ${rocketId}.`);
     commandDto.decision = 'Starting launch sequence.';
     // 5) Liftoff/Launch (T+00:00:00)
     commandDto.rocket = await this.rocketService.updateRocketStatus(rocketId,RocketStatus.IN_FLIGHT,);
   } else {
-    logger.info(`Can't start launch sequence ${rocketId}.`);
+    logger.log(`Can't start launch sequence ${rocketId}.`);
     commandDto.decision = "Can't start launch sequence.";
     commandDto.rocket = await this.rocketService.updateRocketStatus(
       rocketId,
@@ -99,7 +99,7 @@ async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
     logger.warn(`Launch sequence aborted for rocket ${rocketId}.`);
   }
   await this.hardwareProxyService.startEmittingTelemetry(rocketId);
-  logger.info(`Telemetry emitting started for rocket ${rocketId}.`);
+  logger.log(`Telemetry emitting started for rocket ${rocketId}.`);
 
   return commandDto;
 }
@@ -113,14 +113,14 @@ async stageRocketMidFlight(
 
   if (rocketStatus === RocketStatus.IN_FLIGHT) {
     // 8) Stage separation
-    logger.info(`Rocket ${rocketId} is currently in mid-flight. Initiating mid-stage separation process.`);
+    logger.log(`Rocket ${rocketId} is currently in mid-flight. Initiating mid-stage separation process.`);
     const midStageSeparationSuccess = await this.hardwareProxyService.stageMidFlightFlight(rocketId);
     if (midStageSeparationSuccess) {
       const updatedRocket = await this.rocketService.updateRocketStatus(
         rocketId,
         RocketStatus.STAGED,
       );
-      logger.info(`Successfully staged rocket mid flight`);
+      logger.log(`Successfully staged rocket mid flight`);
       return {
         midStageSeparationSuccess: true,
         rocket: updatedRocket,
@@ -151,12 +151,12 @@ async stageRocketMidFlight(
     const rocketStatus = rocket.status;
 
     if (rocketStatus === RocketStatus.STAGED) {
-      logger.info(`Rocket ${rocketId} is staged. Initiating payload delivery.`);
+      logger.log(`Rocket ${rocketId} is staged. Initiating payload delivery.`);
 
       const payloadDelivered = await this.guidanceHardwareProxyService.deliverPayload(rocketId);
 
       if (payloadDelivered) {
-        logger.info(`Payload delivered successfully for rocket ${rocketId}.`);
+        logger.log(`Payload delivered successfully for rocket ${rocketId}.`);
 
         const updatedRocket = await this.rocketService.updateRocketStatus(
           rocketId,
