@@ -16,9 +16,10 @@ export class PayloadService {
     private readonly marsyLaunchpadProxyService: MarsyLaunchpadProxyService,
   ) {}
 
-async receiveTelemetry(rocketId: string,telemetry: TelemetryDto,): Promise<PayloadDeliveryDto | void> {
+async receiveTelemetry(rocketId: string, telemetry: TelemetryDto): Promise<PayloadDeliveryDto | void> {
   const rocketCode = rocketId.slice(-3).toUpperCase();
   const rocketInfo = `Rocket ${rocketCode} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)}`;
+
   if (
     telemetry.latitude < (latitude + 15) &&
     telemetry.latitude > (latitude - 15) &&
@@ -26,12 +27,13 @@ async receiveTelemetry(rocketId: string,telemetry: TelemetryDto,): Promise<Paylo
     telemetry.longitude > (longitude - 15) &&
     telemetry.altitude > (altitude - 150)
   ) {
-    logger.log(`Orbit reached for ${rocketCode} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)});
+    logger.log(`Orbit reached for ${rocketCode} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)}`);
     const payloadDelivery = await this.marsyLaunchpadProxyService.notifyCommandPadOfOrbitReach(rocketId);
     return payloadDelivery;
   } else {
     logger.debug(`Orbit not reached for ${rocketCode}`);
   }
 }
+
 
 }

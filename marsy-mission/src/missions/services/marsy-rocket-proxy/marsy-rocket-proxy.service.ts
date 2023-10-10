@@ -64,7 +64,7 @@ export class MarsyRocketProxyService {
       try {
         const response: AxiosResponse<RocketDto[]> = await firstValueFrom(
           this.httpService.get<RocketDto[]>(
-            `${this._baseUrl}${this._rocketsPath}`
+            `${this._baseUrl}${this._rocketsPath}/all`
           ));
           return response.data;
       
