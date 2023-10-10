@@ -41,12 +41,10 @@ export class HardwareService {
       return rocket.rocketId === rocketId;
     });
     rocketTelemetry.throttle = true;
-    //this.logger.log(`Approaching the max Q altitude`);
     return true;
   }
 
   async stageRocket(rocketId: string): Promise<StagingDto> {
-    this.logger.log(`Staging rocket ${rocketId.slice(-3).toUpperCase()}`);
     let rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
@@ -232,7 +230,7 @@ export class HardwareService {
   }
 
   stopSendingTelemetry(rocketId: string): void {
-    //this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
+    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
     this.rocketCronJob.stop();
   }
 }

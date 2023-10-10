@@ -56,6 +56,33 @@ export class HardwareProxyService {
       }
     
   }
+   async prepareRocket(rocketId: string): Promise<boolean> {
+        try {
+          const response: AxiosResponse<any> = await firstValueFrom(
+            this.httpService.post(
+              `${this._baseUrl}${this._hardwarePath}/${rocketId}/prepare`,
+            ),
+          );
+          return response.status === 200;
+        } catch (error) {
+          logger.error(`Error while preparing rocket id ${rocketId}: ${error.message}`);
+          throw error;
+        }
+      }
+
+      async powerOnRocket(rocketId: string): Promise<boolean> {
+        try {
+          const response: AxiosResponse<any> = await firstValueFrom(
+            this.httpService.post(
+              `${this._baseUrl}${this._hardwarePath}/${rocketId}/power-on`,
+            ),
+          );
+          return response.status === 200;
+        } catch (error) {
+          logger.error(`Error while powering on rocket ${rocketId}: ${error.message}`);
+          throw error;
+        }
+      }
 
   async startEmittingTelemetry(_rocketId: string): Promise<void> {
     logger.log(`Request to start sending telemetry for rocket: ${_rocketId.slice(-3).toUpperCase()}`);

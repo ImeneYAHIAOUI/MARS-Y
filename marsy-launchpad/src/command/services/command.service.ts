@@ -54,7 +54,23 @@ async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     logger.error(`Failed to stage mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}: `, error.message);
   }
 }
+ async prepareRocket(rocketId: string){
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const preparationSuccess = await this.hardwareProxyService.prepareRocket(rocketId);
+       } catch (error) {
+            logger.error(`An error occurred while preparing  rocket ${rocketId}: ${error.message}`);
+          }
+      }
 
+ async powerOnRocket(rocketId: string) {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const powerOnSuccess = await this.hardwareProxyService.powerOnRocket(rocketId);
+    } catch (error) {
+      logger.error(`An error occurred while powering on rocket ${rocketId}: ${error.message}`);
+    }
+  }
 
 async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
   logger.info(`Initiating launch sequence for rocket ${rocketId}.`);

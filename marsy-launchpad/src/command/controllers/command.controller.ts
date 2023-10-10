@@ -98,7 +98,17 @@ export class CommandController {
     type: RocketNotFoundException,
     description: 'Rocket not found',
   })
+  @Post(':rocketId/prepare')
+  async prepare(@Param('rocketId') rocketId: string): Promise<void> {
+     logger.log(`Preparing rocket ${rocketId}`);
+     this.commandService.prepareRocket(rocketId);
+  }
 
+  @Post(':rocketId/powerOn')
+  async powerOnRocket(@Param('rocketId') rocketId: string): Promise<void> {
+     logger.log(`Powering on rocket ${rocketId}`);
+     this.commandService.powerOnRocket(rocketId);
+  }
 
   @Post(':rocketId/payload-delivery')
   @HttpCode(200)
