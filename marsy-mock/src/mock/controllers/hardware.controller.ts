@@ -59,6 +59,10 @@ export class HardwareController {
     return await this.hardwareService.retrieveTelemetry(id);
   }
 
+
+  // 3) Startup (T-00:01:00)
+  // 4) Main engine start (T-00:00:03)
+  // 5) Liftoff/Launch (T+00:00:00)
   @Post('launch')
   @ApiOkResponse({
     description: 'Starts sending telemetry data',
@@ -82,6 +86,8 @@ export class HardwareController {
   async destroyRocket(@Param('idrocket') id: string): Promise<void> {
     this.hardwareService.stopSendingTelemetry(id);
   }
+
+// 1) prepare
 @Post(':idrocket/prepare')
 @HttpCode(200)
 throttleDown(@Param('idrocket') id: string): boolean {
@@ -91,6 +97,7 @@ throttleDown(@Param('idrocket') id: string): boolean {
   this.logger.log('Rocket prepared');
   return true;
 }
+// 2) power on
 @Post(':idrocket/power-on')
 @HttpCode(200)
 powerOnRocket(@Param('idrocket') id: string): boolean {
