@@ -25,7 +25,6 @@ export class MarsyLaunchpadProxyService {
   async notifyCommandPadOfOrbitReach(
     rocketId: string,
   ): Promise<PayloadDeliveryDto> {
-    if (this.payloadDeliveryDto === null) {
       logger.log(`Notifying command pad of rocket ${rocketId.slice(-3).toUpperCase()}`);
       const response = await firstValueFrom(
         this.httpService.post<PayloadDeliveryDto>(
@@ -41,5 +40,4 @@ export class MarsyLaunchpadProxyService {
         throw new HttpException(response.data, response.status);
       }
     }
-  }
 }

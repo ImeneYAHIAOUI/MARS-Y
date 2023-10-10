@@ -31,9 +31,12 @@ export class GuidanceHardwareController {
   @Post(':idrocket/deliver')
   @HttpCode(200)
   async deliverRocket(@Param('idrocket') id: string): Promise<DeliveryDto> {
-    //this.logger.log(`Received request to deliver payload on the rocket guidance : ${id}`);
+    this.logger.log(`Received request to deliver payload on the rocket guidance : ${id}`);
     const deliveryDto = await this.hardwareService.deliverRocket(id);
+    this.logger.log('Stopping sending telemetry');
     this.hardwareService.stopSendingTelemetry(id);
+    this.logger.log('Start sending payloaf hardware telemetry')
+    this.hardwareService.startSendingPayloadHardwareTelemetry(id);
     return deliveryDto;
   }
 
@@ -46,6 +49,7 @@ export class GuidanceHardwareController {
     //this.logger.log(`Received request to start sending guidance telemetry in stage two`);
     return await this.hardwareService.startSendingTelemetry(launchDto);
   }
+
 
   // @ApiOkResponse({
   //   type: TelemetryRecordDto,
