@@ -7,7 +7,7 @@ const logger = new Logger('PayloadService');
 
 const latitude = 280;
 const longitude = 80;
-const altitude = 5000;
+const altitude = 10000;
 const angle = 80;
 
 @Injectable()
@@ -19,7 +19,7 @@ export class PayloadService {
     rocketId: string,
     telemetry: TelemetryDto,
   ): Promise<PayloadDeliveryDto | void> {
-    logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(1)}`);
+    logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)}`);
     if (
       telemetry.latitude < (latitude + 15) && (telemetry.latitude > latitude - 15) && 
       telemetry.longitude < (longitude + 15) && (telemetry.longitude > longitude - 15) &&

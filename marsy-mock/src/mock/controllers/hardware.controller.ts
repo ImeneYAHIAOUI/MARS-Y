@@ -87,4 +87,15 @@ export class HardwareController {
     //this.logger.log(`Received request to deliver rocket: ${id}`);
     this.hardwareService.stopSendingTelemetry(id);
   }
+
+  @ApiOkResponse({
+    type: TelemetryRecordDto,
+    description: 'The guidance hardware throttle down initialization',
+  })
+  @Post(':idrocket/throttle-down')
+  @HttpCode(200)
+  throttleDown(@Param('idrocket') id: string): boolean {
+    //this.logger.log(`Received request to throttle down the rocket guidance : ${id}`);
+    return this.hardwareService.throttleDown(id);
+  }
 }

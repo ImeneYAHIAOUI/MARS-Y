@@ -24,6 +24,17 @@ export class CommandService {
 
   async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     try {
+      const approachingMaxQ =
+        telemetry.altitude > 3600 && telemetry.altitude < 4400;
+      if (approachingMaxQ) {
+        logger.warn(`Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`);
+        logger.warn(`Throttling down engines for rocket ${rocketId.slice(-3).toUpperCase()}`);
+        this.hardwareProxyService.throttleDownEngines(rocketId);
+      }
+    } catch (error) {
+      logger.error('Failed to issue throttling order', error.message);
+    }
+    try {
       const rocket = await this.rocketService.findRocket(rocketId);
       logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()} - fuel: ${telemetry.fuel}`);
       if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
@@ -37,18 +48,6 @@ export class CommandService {
       }
     } catch (error) {
       logger.error('Failed to stage mid flight: ', error.message);
-    }
-
-    try {
-      const approachingMaxQ =
-        telemetry.altitude > 3600 && telemetry.altitude < 4000;
-      if (approachingMaxQ) {
-        logger.warn(`Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`);
-        logger.warn(`Throttling down engines for rocket ${rocketId.slice(-3).toUpperCase()}`);
-        this.guidanceHardwareProxyService.throttleDownEngines(rocketId);
-      }
-    } catch (error) {
-      logger.error('Failed to issue throttling order', error.message);
     }
   }
 

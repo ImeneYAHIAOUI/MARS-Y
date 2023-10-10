@@ -11,9 +11,7 @@ import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 @Injectable()
 export class GuidanceHardwareService {
   private readonly logger: Logger = new Logger(GuidanceHardwareService.name);
-  private readonly MAX_Q_ALTITUDE: number = 2000;
   private rocketCronJob: any;
-  private boosterCronJob: any;
   private rockets: {
     rocketId: string;
     missionId: string;
@@ -22,29 +20,25 @@ export class GuidanceHardwareService {
     telemetry: TelemetryRecordDto;
   }[] = [];
 
-  private boosters: {
-    rocketId: string;
-    missionId: string;
-    telemetry: BoosterTelemetryRecordDto;
-  }[] = [];
-
   constructor(
     private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
     private readonly marsyPayloadHardwareProxyService: MarsyHardwarePayloadProxyService,
   ) { }
 
-  throttleDown(rocketId: string): boolean {
-    this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
-    let rocketTelemetry = this.rockets.find((rocket) => {
-      return rocket.rocketId === rocketId;
-    });
-    rocketTelemetry.throttle = true;
-    //this.logger.log(`Approaching the max Q altitude`);
-    return true;
-  }
+  // throttleDown(rocketId: string): boolean {
+  //   this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
+  //   let rocketTelemetry = this.rockets.find((rocket) => {
+  //     return rocket.rocketId === rocketId;
+  //   });
+  //   rocketTelemetry.throttle = true;
+  //   //this.logger.log(`Approaching the max Q altitude`);
+  //   return true;
+  // }
 
   async deliverRocket(rocketId: string): Promise<DeliveryDto> {
     this.logger.log(`Delivering the payload on the rocket ${rocketId.slice(-3).toUpperCase()}`);
+
+    this.stopSendingTelemetry(rocketId);
     return {
       _id: rocketId,
       delivered: true,
@@ -58,11 +52,10 @@ export class GuidanceHardwareService {
     const newFuel = rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * 5) - 30 > 0 ?
       rocketTelemetry.telemetry.fuel - Math.floor(Math.random() * 5) - 30 :
       0;
-    const throttle = (-Math.floor(Math.random() * (5 - 0)) -20);
-    const newSpeed = !rocketTelemetry.throttle ? (rocketTelemetry.telemetry.speed + Math.floor(Math.random() * (5 - 0))) : 
-     (rocketTelemetry.telemetry.speed + throttle > 0 ? rocketTelemetry.telemetry.speed + throttle : 0); 
+    // const throttle = (-Math.floor(Math.random() * (5 - 0)) -20);
+    const newSpeed = 0; 
 
-    rocketTelemetry.throttle && this.logger.log(`Approaching the max Q altitude with throttled speed ${newSpeed}`);
+    // rocketTelemetry.throttle && this.logger.log(`Approaching the max Q altitude with throttled speed ${newSpeed}`);
 
     rocketTelemetry.telemetry = {
       timestamp: Date.now(),

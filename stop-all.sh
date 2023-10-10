@@ -10,6 +10,7 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-boostercontrol/docker-compose-marsy-booster.yml \
                 --file marsy-payload/docker-compose-marsy-payload.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
+                --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
                 --file gateway/docker-compose-gateway.yml down 
 
 echo "all services stopped behind gateway"

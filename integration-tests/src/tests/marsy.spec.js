@@ -84,13 +84,7 @@ describe('Marsy', () => {
                     mission = res.json;
                 });
         });
-        // it("should return the poll result", async () => {
 
-        //     return frisby
-        //         .post(`${missionServiceBaseUrl}${missionServiceMissionsPath}/${mission._id}/poll`)
-        //         .expect("status", 200)
-        //         .expect("jsonTypesStrict", GoNoGoValidator);
-        // });
         it("should return the launch command", async () => {
 
             return frisby
@@ -98,30 +92,6 @@ describe('Marsy', () => {
                 .expect("status", 200)
                 .expect("jsonTypesStrict", LaunchCommandDecisionValidator);
         });
-        // it("should change the rockets status", async () => {
-        //     return frisby
-        //         .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "unknown"})
-        //         .expect("status", 200)
-        //         .expect("jsonTypesStrict", RocketValidator);
-        // });
-        // it("should return an error", async () => {
-
-        //     return frisby
-        //         .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
-        //         .expect("status", 400);
-        // });
-        // it("should change the rockets status", async () => {
-        //     return frisby
-        //         .put(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/status`, {status: "inFlight"})
-        //         .expect("status", 200)
-        //         .expect("jsonTypesStrict", RocketValidator);
-        // });
-        // it("should return stage result", async () => {
-        //     return frisby
-        //         .post(`${launchpadServiceBaseUrl}${launchpadServiceRocketPath}/${rocket._id}/stage`)
-        //         .expect("status", 200)
-        //         .expect("jsonTypesStrict", StageCommandDecisionValidator);
-        // });
 
          it("should return delete rocket", async () => {
             return frisby
