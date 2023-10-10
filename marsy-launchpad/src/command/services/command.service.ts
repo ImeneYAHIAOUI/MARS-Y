@@ -27,6 +27,7 @@ async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     logger.log(`Checking if approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()} - Altitude: ${telemetry.altitude} meters.`);
     const approachingMaxQ =
       telemetry.altitude > 3600 && telemetry.altitude < 4400;
+    // 6) MaxQ
     if (approachingMaxQ) {
       logger.warn(`Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`);
       logger.warn(`Throttling down engines for rocket ${rocketId.slice(-3).toUpperCase()}`);
@@ -41,8 +42,8 @@ async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     logger.log(`Checking fuel level for rocket ${rocketId.slice(-3).toUpperCase()} - Fuel: ${telemetry.fuel} liters.`);
 
     if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
-      logger.info(`Issuing staging order to rocket ${rocketId.slice(-3).toUpperCase()}`);
-
+      logger.warn('issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}');
+      logger.warn('staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}');
       await this.hardwareProxyService.stageMidFlightFlight(rocketId);
       await this.rocketService.updateRocketStatus(
         rocketId,
@@ -70,6 +71,7 @@ async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
   if (goNogo) {
     logger.info(`Starting launch sequence for rocket ${rocketId}.`);
     commandDto.decision = 'Starting launch sequence.';
+    // 5) Liftoff/Launch (T+00:00:00)
     commandDto.rocket = await this.rocketService.updateRocketStatus(rocketId,RocketStatus.IN_FLIGHT,);
   } else {
     logger.info(`Can't start launch sequence ${rocketId}.`);
@@ -94,6 +96,7 @@ async stageRocketMidFlight(
   const rocketStatus = rocket.status;
 
   if (rocketStatus === RocketStatus.IN_FLIGHT) {
+    // 8) Stage separation
     logger.info(`Rocket ${rocketId} is currently in mid-flight. Initiating mid-stage separation process.`);
     const midStageSeparationSuccess = await this.hardwareProxyService.stageMidFlightFlight(rocketId);
     if (midStageSeparationSuccess) {

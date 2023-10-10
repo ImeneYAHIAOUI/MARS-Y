@@ -16,33 +16,39 @@ export class BoosterService {
         private readonly  missionProxyService : MarsyMissionProxyService) {}
 
 
-    receiveBoosterData(boosterTelemetryDto: BoosterTelemetryDto, rocketId: string ) {
-        try{
-        //logger.log(`Received booster telemetry data  for mission id ${boosterTelemetryDto.missionId}`);
-        logger.log(`Booster telemetry received and the altitude is ${boosterTelemetryDto.altitude}`);
-        if(boosterTelemetryDto.altitude < altitudeThreshold && boosterTelemetryDto.altitude > 300) {
-            logger.warn(`Booster has reached the altitude to land`);
-            //CALL HARDWARE SERVICE to land the booster
-            const result = this.hardwareProxyService.callHardwareToLand(rocketId);
-            if(result){
-                const missionBoosterDto = new MissionBoosterDto();
-                missionBoosterDto._id = boosterTelemetryDto.missionId;
-                missionBoosterDto.boosterStatus = 'IS_LANDING'; 
-                const res = this.missionProxyService.updateMission(missionBoosterDto);
-                res && logger.debug(`Booster has landed successfully at ${boosterTelemetryDto.latitude} and ${boosterTelemetryDto.longitude}`);
-            }   
-        }
-        if(boosterTelemetryDto.altitude < 300){
-           const missionBoosterDto = new MissionBoosterDto();
-            missionBoosterDto._id = boosterTelemetryDto.missionId;
-            missionBoosterDto.boosterStatus = 'LANDED'; 
-            this.missionProxyService.updateMission(missionBoosterDto);
+receiveBoosterData(boosterTelemetryDto: BoosterTelemetryDto, rocketId: string ) {
+  try {
+    if (boosterTelemetryDto.altitude < altitudeThreshold && boosterTelemetryDto.altitude > 300) {
+      logger.warn(`Booster has reached the altitude to initiate landing - Altitude: ${boosterTelemetryDto.altitude} meters.`);
+      const result = this.hardwareProxyService.callHardwareToLand(rocketId);
 
+      if (result) {
+        const missionBoosterDto = new MissionBoosterDto();
+        missionBoosterDto._id = boosterTelemetryDto.missionId;
+        missionBoosterDto.boosterStatus = 'IS_LANDING';
+
+        const res = this.missionProxyService.updateMission(missionBoosterDto);
+        if (res) {
+          logger.info(`Booster is landing for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`);
         }
-        }catch(e){
-            logger.error(`Error while receiving booster telemetry data ${e}`);
-        }
-        return 'Booster telemetry received!';
-    }     
+      }
+    }
+
+    if (boosterTelemetryDto.altitude < 300) {
+      const missionBoosterDto = new MissionBoosterDto();
+      missionBoosterDto._id = boosterTelemetryDto.missionId;
+      missionBoosterDto.boosterStatus = 'LANDED';
+
+      this.missionProxyService.updateMission(missionBoosterDto);
+      logger.info(`Booster has landed successfully for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`);
+
+    }
+  } catch (e) {
+    logger.error(`Error while handling booster telemetry data: ${e.message}`);
+  }
+
+  return 'Booster telemetry received!';
+}
+
 
 }

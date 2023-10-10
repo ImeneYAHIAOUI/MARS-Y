@@ -98,6 +98,8 @@ export class CommandController {
     type: RocketNotFoundException,
     description: 'Rocket not found',
   })
+
+
   @Post(':rocketId/payload-delivery')
   @HttpCode(200)
   async deliverPayload(
