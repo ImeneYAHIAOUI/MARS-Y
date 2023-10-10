@@ -36,7 +36,7 @@ export class CommandController {
     description: 'Rocket not found',
   })
   async receiveTelemetry(@Body() controlTelemetryDto: ControlTelemetryDto, @Param('idrocket') idrocket: string){
-    //logger.log(`Received telemetry for rocket ID: ${idrocket}`);
+    logger.log(`Received telemetry for rocket ID: ${idrocket}`);
     this.commandService.handleTelemetry(idrocket, controlTelemetryDto);
   }
 
@@ -53,19 +53,14 @@ export class CommandController {
   ): Promise<CommandDto> {
     try {
       const rocketId = params.rocketId;
-      logger.debug(
-        `Received request to launch the rocket: ${rocketId.slice(-3).toUpperCase()}`,
-      );
-      const launchCommand = await this.commandService.sendLaunchCommand(
-        rocketId,
-      );
-      //logger.log(`Launch command sent for rocket: ${rocketId}`);
+      logger.info(`Received request to launch the rocket: ${rocketId.slice(-3).toUpperCase()}`,);
+      const launchCommand = await this.commandService.sendLaunchCommand(rocketId,);
       return launchCommand;
     } catch (error) {
       logger.error(
         `Error while processing request for rocket with id ${params.rocketId} : ${error.message} status : ${error.status}`,
       );
-      throw error; // You can handle and customize error logging as needed
+      throw error;
     }
   }
 
@@ -85,11 +80,8 @@ export class CommandController {
   ): Promise<StageRocketMidFlightDto> {
     try {
       const rocketId = params.rocketId;
-      logger.log(
-        `Received request to stage rocket with id ${rocketId} mid flight`,
-      );
+      logger.log(`Received request to stage rocket with id ${rocketId} mid flight`,);
       const stage = await this.commandService.stageRocketMidFlight(rocketId);
-      logger.debug(`Successfully staged rocket mid flight`);
       return stage;
     } catch (error) {
       logger.error(`Error while staging rocket mid flight: ${error.message}`);
@@ -113,14 +105,8 @@ export class CommandController {
   ): Promise<DeliveryResponseDto> {
     try {
       const rocketId = params.rocketId;
-      logger.debug(
-        `Received request to deliver payload of the rocket ${rocketId.slice(-3).toUpperCase()}`,
-      );
-      const stage = await this.commandService.sendPayloadDeliveryCommand(
-        rocketId,
-      );
-      //logger.log(`${stage}`);
-      //logger.log(`Successfully delivered payload for rocket: ${rocketId}`);
+      logger.debug( `Received request to deliver payload of the rocket ${rocketId.slice(-3).toUpperCase()}`,);
+      const stage = await this.commandService.sendPayloadDeliveryCommand(rocketId,);
       return stage;
     } catch (error) {
       logger.error(`Error while delivering payload : ${error}`);

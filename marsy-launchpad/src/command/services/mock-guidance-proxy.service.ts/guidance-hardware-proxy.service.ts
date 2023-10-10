@@ -23,36 +23,22 @@ export class GuidanceHardwareProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_guidance_url_with_port}`;
   }
 
-  // async throttleDownEngines(
-  //   rocketId: string
-  // ): Promise<void> {
-  //   try {
-  //     logger.log(`Throttling down engines for rocket id : ${rocketId}`);
-  //     const response: AxiosResponse<any> = await firstValueFrom(
-  //       this.httpService.post(
-  //         `${this._baseUrl}${this._guidancePath}/${rocketId}/throttle-down`,
-  //       ),
-  //     );
-  //     logger.log(`Rocket engines throttled down`);
-  //   } catch (error) {
-  //     logger.error(`Error while throttling down engines for rocket id ${rocketId}: ${error.message}`);
-  //     throw error;
-  //   }
-  // }
-
-  async deliverPayload(_rocketId: string): Promise<boolean> {
-    logger.log(`Issued order to deliver paylod for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+async deliverPayload(_rocketId: string): Promise<boolean> {
+  try {
+    logger.info(`Requesting payload delivery for rocket ${_rocketId.slice(-3).toUpperCase()}`);
     const response: AxiosResponse<DeliveryDto> = await firstValueFrom(
       this.httpService.post<DeliveryDto>(
         `${this._baseUrl}${this._guidancePath}/${_rocketId}/deliver`,
       ),
     );
+
     if (response.status == HttpStatus.OK) {
-      logger.log(`Payload delivered successfully for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
       return response.data.delivered;
-    } else {
-      logger.error(`Error in deliverPayload for rocket: ${_rocketId}`);
-      throw new HttpException(response.data, response.status);
     }
+  } catch (error) {
+    logger.error(`Error in deliverPayload for rocket ${_rocketId.slice(-3).toUpperCase()}: `, error.message);
+    throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
   }
+}
+
 }

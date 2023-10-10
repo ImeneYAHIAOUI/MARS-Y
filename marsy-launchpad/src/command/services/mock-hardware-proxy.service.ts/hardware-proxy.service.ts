@@ -28,13 +28,12 @@ export class HardwareProxyService {
     rocketId: string
   ): Promise<void> {
     try {
-      logger.log(`Throttling down engines for rocket id : ${rocketId}`);
+      logger.log(`Request to start throttling down engines for rocket id : ${rocketId}`);
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._hardwarePath}/${rocketId}/throttle-down`,
         ),
       );
-      logger.log(`Rocket engines throttled down`);
     } catch (error) {
       logger.error(`Error while throttling down engines for rocket id ${rocketId}: ${error.message}`);
       throw error;
@@ -42,8 +41,7 @@ export class HardwareProxyService {
   }
 
   async stageMidFlightFlight(_rocketId: string): Promise<boolean> {
-    
-      //logger.log(`Performing staging for rocket: ${_rocketId}`);
+      logger.log(`Request to start performing staging for rocket: ${_rocketId}`);
       const response: AxiosResponse<StagingResultDto> = await firstValueFrom(
         this.httpService.post<StagingResultDto>(
           `${this._baseUrl}${this._hardwarePath}/${_rocketId}/stage`,
@@ -51,7 +49,6 @@ export class HardwareProxyService {
       );
       if (response.status == HttpStatus.OK) {
         this.StagingResultDto = response.data;
-        //logger.log(`Staging was successful for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
         return this.StagingResultDto.staged;
       } else {
         logger.error(`Error in staging for rocket: ${_rocketId}`);
