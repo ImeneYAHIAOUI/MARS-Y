@@ -73,8 +73,8 @@ export class HardwareService {
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
     // 9) Second engine start
-    logger.log(`Starting second engine for rocket ${_rocketId.slice(-3).toUpperCase()} `);
-    logger.log(`second engine for rocket ${_rocketId.slice(-3).toUpperCase()}  has been successfully started.`);
+    this.logger.log(`Starting second engine for rocket ${_rocketId.slice(-3).toUpperCase()} `);
+    this.logger.log(`second engine for rocket ${_rocketId.slice(-3).toUpperCase()}  has been successfully started.`);
     this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(rocketTelemetry.telemetry);
 
     this.boosters.push({
