@@ -2,7 +2,8 @@
 
 # List of service names and their docker-compose files
 services=(
-   "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
+    "kafka-service:kafka-service/docker-compose-kafka-service.yml"
+    "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
     "marsy-launchpad:marsy-launchpad/docker-compose-marsy-launchpad.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
     "marsy-telemetry:marsy-telemetry/docker-compose-marsy-telemetry.yml"
@@ -147,6 +148,7 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-payload/docker-compose-marsy-payload.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
+                --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
                 logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon' 
 
                 

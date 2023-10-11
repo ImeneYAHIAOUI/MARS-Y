@@ -13,7 +13,8 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-payload/docker-compose-marsy-payload.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
-                --file marsy-webcaster/docker-compose-marsy-webcaster.yml up -d
-                                
+                --file kafka-service/docker-compose-kafka-service.yml \
+                --file marsy-webcaster/docker-compose-marsy-webcaster.yml up -d 
+                
 echo "all services started behind gateway"
 
