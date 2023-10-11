@@ -130,7 +130,7 @@ async stageRocketMidFlight(
         rocketId,
         RocketStatus.FAILED_LAUNCH,
       );
-      logger.warn(`Mid-stage separation failed for ${rocketId}.`);
+      logger.warn(`Mid-stage separation failed for ${rocketId.slice(-3).toUpperCase()}.`);
       return {
         midStageSeparationSuccess: false,
         rocket: updatedRocket,

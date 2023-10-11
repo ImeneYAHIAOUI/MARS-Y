@@ -80,7 +80,7 @@ export class CommandController {
   ): Promise<StageRocketMidFlightDto> {
     try {
       const rocketId = params.rocketId;
-      logger.log(`Received request to stage rocket with id ${rocketId} mid flight`,);
+      logger.log(`Received request to stage rocket with id ${rocketId.slice(-3).toUpperCase()} mid flight`,);
       const stage = await this.commandService.stageRocketMidFlight(rocketId);
       return stage;
     } catch (error) {
@@ -100,13 +100,13 @@ export class CommandController {
   })
   @Post(':rocketId/prepare')
   async prepare(@Param('rocketId') rocketId: string): Promise<void> {
-     logger.log(`Preparing rocket ${rocketId}`);
+     logger.log(`Preparing rocket ${rocketId.slice(-3).toUpperCase()}`);
      this.commandService.prepareRocket(rocketId);
   }
 
   @Post(':rocketId/powerOn')
   async powerOnRocket(@Param('rocketId') rocketId: string): Promise<void> {
-     logger.log(`Powering on rocket ${rocketId}`);
+     logger.log(`Powering on rocket ${rocketId.slice(-3).toUpperCase()}`);
      this.commandService.powerOnRocket(rocketId);
   }
 
