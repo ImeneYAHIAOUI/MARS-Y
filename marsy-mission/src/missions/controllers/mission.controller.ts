@@ -37,25 +37,6 @@ const logger = new Logger('MissionController');
 @Controller('/missions')
 export class MissionController {
   constructor(private readonly missionService: MissionService) {}
-
-  // @Post(':idrocket/telemetry')
-  // @HttpCode(200)
-  // @ApiNotFoundResponse({
-  //   type: RocketNotFoundException,
-  //   description: 'Rocket not found',
-  // })
-  // @ApiServiceUnavailableResponse({
-  //   type: RocketServiceUnavailableException,
-  //   description: 'MarsyRocketService is unavailble',
-  // })
-  // async receiveTelemetry(
-  //   missionTelemetryDto: MissionTelemetryDto,
-  //   @Param('idrocket') idrocket: string,
-  // ) {
-  //   logger.log(`Received telemetry for rocket ID: ${idrocket}`);
-  //   this.missionService.handleTelemetry(idrocket, missionTelemetryDto);
-  // }
-
   @Post(':id/poll')
   @HttpCode(200)
   @ApiNotFoundResponse({
@@ -75,15 +56,8 @@ export class MissionController {
     description: 'Go or Not poll response',
   })
   async goOrNoGo(@Param('id') missionId: string): Promise<GoResponseDto> {
-    // logger.log(
-    //   `Updating mission status to IN_PROGRESS for mission id: ${missionId}`,
-    // );
     this.missionService.saveNewStatus(missionId, MissionStatus.IN_PROGRESS);
-    //logger.log(`Received request for mission ID: ${missionId}`);
-
     const go = await this.missionService.goOrNoGoPoll(missionId);
-    //logger.log(`Response for mission ID: ${missionId}, Go: ${go}`);
-
     return { go };
   }
 
@@ -165,7 +139,6 @@ async postTelemetryRecord(
 ): Promise<void> {
   try {
     logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()}`);
-    //logger.log(`Telemetry Data: ${JSON.stringify(telemetryRecordDto)}`);
     await this.missionService.evaluateRocketDestruction(rocketId,telemetryRecordDto);
   } catch (error) {
     logger.error(`Error while processing telemetry: ${error.message}`);

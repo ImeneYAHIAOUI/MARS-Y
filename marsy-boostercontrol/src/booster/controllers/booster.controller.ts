@@ -20,7 +20,7 @@ export class BoosterController {
   @Post(':rocketId/telemetry')
   async reveiveBoosterDta(@Body() boosterTelemetryDto: BoosterTelemetryDto,
    @Param() params: { rocketId: string }) : Promise<string> {
-    //logger.log(`Received booster data: ${JSON.stringify(boosterTelemetryDto)}`);
+    logger.log(`Received booster telemetry data  for mission id ${boosterTelemetryDto.missionId}`);
     return this.boosterService.receiveBoosterData(boosterTelemetryDto, params.rocketId);
 
   }

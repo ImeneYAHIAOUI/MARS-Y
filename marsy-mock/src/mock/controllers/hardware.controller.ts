@@ -45,7 +45,6 @@ export class HardwareController {
   @Post(':idrocket/stage')
   @HttpCode(200)
   async stageRocket(@Param('idrocket') id: string): Promise<StagingDto> {
-    //this.logger.log(`Received request to stage rocket: ${id}`);
     return await this.hardwareService.stageRocket(id);
   }
 
@@ -57,17 +56,19 @@ export class HardwareController {
   async getRocketTelemetry(
     @Param('idrocket') id: string,
   ): Promise<TelemetryRecordDto> {
-    //this.logger.log(`Received request to get telemetry for rocket: ${id}`);
     return await this.hardwareService.retrieveTelemetry(id);
   }
 
+
+  // 3) Startup (T-00:01:00)
+  // 4) Main engine start (T-00:00:03)
+  // 5) Liftoff/Launch (T+00:00:00)
   @Post('launch')
   @ApiOkResponse({
     description: 'Starts sending telemetry data',
   })
   @HttpCode(200)
   async startSendingTelemetry(@Body() launchDto: LaunchDto): Promise<boolean> {
-    //this.logger.log(`Received request to start telemetry`);
     return await this.hardwareService.startSendingTelemetry(launchDto.rocketId);
   }
 
@@ -77,16 +78,34 @@ export class HardwareController {
   })
   @HttpCode(200)
   async landRocketBooster(@Param('idrocket') id: string): Promise<boolean> {
-    //this.logger.log(`Received request to start landing booster for mission ${id}`);
     return await this.hardwareService.landBooster(id);
   }
 
   @Post(':idrocket/destroy')
   @HttpCode(200)
   async destroyRocket(@Param('idrocket') id: string): Promise<void> {
-    //this.logger.log(`Received request to deliver rocket: ${id}`);
     this.hardwareService.stopSendingTelemetry(id);
   }
+
+// 1) prepare
+@Post(':idrocket/prepare')
+@HttpCode(200)
+prepare(@Param('idrocket') id: string): boolean {
+  this.logger.log(`Received request to prepare rocket: ${id}`);
+  this.logger.log(`Step 1: Fueling for rocket ${id}`);
+  this.logger.log(`Step 2: Status check for rocket ${id}`);
+  this.logger.log('Rocket prepared');
+  return true;
+}
+// 2) power on
+@Post(':idrocket/power-on')
+@HttpCode(200)
+powerOnRocket(@Param('idrocket') id: string): boolean {
+  this.logger.log(`Received request to power on rocket: ${id}`);
+  this.logger.log(`Step 1: Activating internal power for rocket ${id}`);
+  this.logger.log('Rocket on internal power');
+  return true;
+}
 
   @ApiOkResponse({
     type: TelemetryRecordDto,
@@ -95,7 +114,6 @@ export class HardwareController {
   @Post(':idrocket/throttle-down')
   @HttpCode(200)
   throttleDown(@Param('idrocket') id: string): boolean {
-    //this.logger.log(`Received request to throttle down the rocket guidance : ${id}`);
     return this.hardwareService.throttleDown(id);
   }
 }

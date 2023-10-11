@@ -28,7 +28,8 @@ export class MarsyRocketProxyService {
                     status: 'destroyed',
                 })
                 .toPromise();
-            logger.log(`Rocket with ID ${_rocketId} has been successfully destroyed.`);
+        logger.log(`Rocket with ID ${_rocketId.slice(-3).toUpperCase()} has been successfully destroyed.`);
+
             return true;
         } catch (error) {
             if (error.response && error.response.status === 404) {
@@ -76,4 +77,3 @@ export class MarsyRocketProxyService {
 
 }
   
-      

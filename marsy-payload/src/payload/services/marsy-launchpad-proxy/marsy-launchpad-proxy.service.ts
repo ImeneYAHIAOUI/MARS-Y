@@ -32,7 +32,7 @@ export class MarsyLaunchpadProxyService {
         ),
       );
       if (response.status == HttpStatus.OK) {
-        //logger.log(`Command pad notified of rocket ${rocketId}`);
+        logger.log(`Command pad notified of rocket ${rocketId}`);
         this.payloadDeliveryDto = response.data;
         return this.payloadDeliveryDto;
       } else {

@@ -30,7 +30,7 @@ export class PayloadController {
     @Param() params: { rocketId: string },
     @Body() telemetry: TelemetryDto,
   ): Promise<PayloadDeliveryDto | void> {
-    //this.logger.log(`Received telemetry for rocket ${params.rocketId}`);
+    this.logger.log(`Received telemetry for rocket ${params.rocketId}`);
     return await this.payloadService.receiveTelemetry(
       params.rocketId,
       telemetry,

@@ -22,122 +22,168 @@ export class CommandService {
     private readonly rocketService: RocketService,
   ) {}
 
-  async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
-    try {
-      const approachingMaxQ =
-        telemetry.altitude > 3600 && telemetry.altitude < 4400;
-      if (approachingMaxQ) {
-        logger.warn(`Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`);
-        logger.warn(`Throttling down engines for rocket ${rocketId.slice(-3).toUpperCase()}`);
-        this.hardwareProxyService.throttleDownEngines(rocketId);
-      }
-    } catch (error) {
-      logger.error('Failed to issue throttling order', error.message);
+async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
+  try {
+    logger.log(`Checking if approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()} - Altitude: ${telemetry.altitude} meters.`);
+    const approachingMaxQ =
+      telemetry.altitude > 3600 && telemetry.altitude < 4400;
+    // 6) MaxQ
+    if (approachingMaxQ) {
+      logger.warn(`Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`);
+      logger.warn(`Throttling down engines for rocket ${rocketId.slice(-3).toUpperCase()}`);
+      this.hardwareProxyService.throttleDownEngines(rocketId);
     }
+  } catch (error) {
+    logger.error(`Failed to issue throttling order for rocket ${rocketId.slice(-3).toUpperCase()}`, error.message);
+  }
+
+  try {
+    const rocket = await this.rocketService.findRocket(rocketId);
+    logger.log(`Checking fuel level for rocket ${rocketId.slice(-3).toUpperCase()} - Fuel: ${telemetry.fuel} liters.`);
+
+    if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
+      logger.warn('issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}');
+      logger.warn('staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}');
+      await this.hardwareProxyService.stageMidFlightFlight(rocketId);
+      await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.STAGED,
+      );
+    }
+  } catch (error) {
+    logger.error(`Failed to stage mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}: `, error.message);
+  }
+}
+ async prepareRocket(rocketId: string){
     try {
       const rocket = await this.rocketService.findRocket(rocketId);
-      logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()} - fuel: ${telemetry.fuel}`);
-      if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
-        logger.debug(`Issuing staging order to rocket ${rocketId.slice(-3).toUpperCase()}`);
-        await this.hardwareProxyService.stageMidFlightFlight(rocketId);
-        await this.rocketService.updateRocketStatus(
-          rocketId,
-          RocketStatus.STAGED,
-        );
-        logger.debug(`Staged rocket successfully: ${rocketId.slice(-3).toUpperCase()}`);
+      const preparationSuccess = await this.hardwareProxyService.prepareRocket(rocketId);
+       } catch (error) {
+            logger.error(`An error occurred while preparing  rocket ${rocketId}: ${error.message}`);
+          }
       }
+
+ async powerOnRocket(rocketId: string) {
+    try {
+      const rocket = await this.rocketService.findRocket(rocketId);
+      const powerOnSuccess = await this.hardwareProxyService.powerOnRocket(rocketId);
     } catch (error) {
-      logger.error('Failed to stage mid flight: ', error.message);
+      logger.error(`An error occurred while powering on rocket ${rocketId}: ${error.message}`);
     }
   }
 
-  async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
-    await this.rocketService.updateRocketStatus(
+async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
+  logger.log(`Initiating launch sequence for rocket ${rocketId}.`);
+  await this.rocketService.updateRocketStatus(
+    rocketId,
+    RocketStatus.READY_FOR_LAUNCH,
+  );
+  const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
+  const commandDto: CommandDto = {
+    decision: '',
+    rocket: null,
+  };
+  await this.rocketService.updateRocketStatus(rocketId,RocketStatus.PRELAUNCH_CHECKS,);
+  if (goNogo) {
+    logger.log(`Starting launch sequence for rocket ${rocketId}.`);
+    commandDto.decision = 'Starting launch sequence.';
+    // 5) Liftoff/Launch (T+00:00:00)
+    commandDto.rocket = await this.rocketService.updateRocketStatus(rocketId,RocketStatus.IN_FLIGHT,);
+  } else {
+    logger.log(`Can't start launch sequence ${rocketId}.`);
+    commandDto.decision = "Can't start launch sequence.";
+    commandDto.rocket = await this.rocketService.updateRocketStatus(
       rocketId,
-      RocketStatus.READY_FOR_LAUNCH,
+      RocketStatus.ABORTED,
     );
-    const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
-    const commandDto: CommandDto = {
-      decision: '', // Initialize with default values
-      rocket: null, // Initialize with default values
-    };
-    await this.rocketService.updateRocketStatus(
-      rocketId,
-      RocketStatus.PRELAUNCH_CHECKS,
-    );
-    if (goNogo) {
-      commandDto.decision = 'starting launch';
-      commandDto.rocket = await this.rocketService.updateRocketStatus(
-        rocketId,
-        RocketStatus.IN_FLIGHT,
-      );
-    } else {
-      commandDto.decision = "can't start launch";
-      commandDto.rocket = await this.rocketService.updateRocketStatus(
-        rocketId,
-        RocketStatus.ABORTED,
-      );
-    }
-
-    await this.hardwareProxyService.startEmittingTelemetry(rocketId);
-    return commandDto;
+    logger.warn(`Launch sequence aborted for rocket ${rocketId}.`);
   }
+  await this.hardwareProxyService.startEmittingTelemetry(rocketId);
+  logger.log(`Telemetry emitting started for rocket ${rocketId}.`);
 
-  async stageRocketMidFlight(
-    rocketId: string,
-  ): Promise<StageRocketMidFlightDto> {
-    const rocket = await this.rocketService.findRocket(rocketId);
-    const rocketStatus = rocket.status;
-    if (rocketStatus === RocketStatus.IN_FLIGHT) {
-      if (await this.hardwareProxyService.stageMidFlightFlight(rocketId)) {
-        logger.debug(`Sending order to stage rocket mid flight`);
-        return {
-          midStageSeparationSuccess: true,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.STAGED,
-          ),
-        };
-      } else {
-        return {
-          midStageSeparationSuccess: false,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.FAILED_LAUNCH,
-          ),
-        };
-      }
+  return commandDto;
+}
+
+
+async stageRocketMidFlight(
+  rocketId: string,
+): Promise<StageRocketMidFlightDto> {
+  const rocket = await this.rocketService.findRocket(rocketId);
+  const rocketStatus = rocket.status;
+
+  if (rocketStatus === RocketStatus.IN_FLIGHT) {
+    // 8) Stage separation
+    logger.log(`Rocket ${rocketId} is currently in mid-flight. Initiating mid-stage separation process.`);
+    const midStageSeparationSuccess = await this.hardwareProxyService.stageMidFlightFlight(rocketId);
+    if (midStageSeparationSuccess) {
+      const updatedRocket = await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.STAGED,
+      );
+      logger.log(`Successfully staged rocket mid flight`);
+      return {
+        midStageSeparationSuccess: true,
+        rocket: updatedRocket,
+      };
     } else {
-      throw new RocketNotInFlightException(rocketId);
+      const updatedRocket = await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.FAILED_LAUNCH,
+      );
+      logger.warn(`Mid-stage separation failed for ${rocketId.slice(-3).toUpperCase()}.`);
+      return {
+        midStageSeparationSuccess: false,
+        rocket: updatedRocket,
+      };
     }
+  } else {
+    logger.error(`Rocket ${rocketId} is not in mid-flight. Mid-stage separation cannot proceed.`);
+    throw new RocketNotInFlightException(rocketId);
   }
+}
+
 
   async sendPayloadDeliveryCommand(
     rocketId: string,
   ): Promise<DeliveryResponseDto> {
     const rocket = await this.rocketService.findRocket(rocketId);
-    logger.debug(`Sending payload delivery command for rocket ${rocketId} - JSON: ${JSON.stringify(rocket)}`);
+    logger.log(`Sending payload delivery command for rocket ${rocketId} - JSON: ${JSON.stringify(rocket)}`);
     const rocketStatus = rocket.status;
+
     if (rocketStatus === RocketStatus.STAGED) {
-      if (await this.guidanceHardwareProxyService.deliverPayload(rocketId)) {
+      logger.log(`Rocket ${rocketId} is staged. Initiating payload delivery.`);
+
+      const payloadDelivered = await this.guidanceHardwareProxyService.deliverPayload(rocketId);
+
+      if (payloadDelivered) {
+        logger.log(`Payload delivered successfully for rocket ${rocketId}.`);
+
+        const updatedRocket = await this.rocketService.updateRocketStatus(
+          rocketId,
+          RocketStatus.PAYLOAD_DELIVERED,
+        );
+
         return {
           delivered: true,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.PAYLOAD_DELIVERED,
-          ),
+          rocket: updatedRocket,
         };
       } else {
+        logger.warn(`Payload delivery failed for rocket ${rocketId}.`);
+
+        const updatedRocket = await this.rocketService.updateRocketStatus(
+          rocketId,
+          RocketStatus.PAYLOAD_DELIVERY_FAILED,
+        );
+
         return {
           delivered: false,
-          rocket: await this.rocketService.updateRocketStatus(
-            rocketId,
-            RocketStatus.PAYLOAD_DELIVERY_FAILED,
-          ),
+          rocket: updatedRocket,
         };
       }
     } else {
+      logger.error(`Rocket ${rocketId} is not staged. Payload delivery cannot proceed.`);
       throw new RocketNotStagedException(rocketId);
     }
   }
+
 }

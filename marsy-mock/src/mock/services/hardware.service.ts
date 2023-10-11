@@ -57,23 +57,24 @@ export class HardwareService {
     private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
   ) { }
 
-  throttleDown(rocketId: string): boolean {
+   throttleDown(rocketId: string): boolean {
     this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
     let rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
     rocketTelemetry.throttle = true;
-    //this.logger.log(`Approaching the max Q altitude`);
     return true;
   }
 
   async stageRocket(rocketId: string): Promise<StagingDto> {
-    this.logger.log(`Staging rocket ${rocketId.slice(-3).toUpperCase()}`);
     let rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
+    // 9) Second engine start
+    this.logger.log(`Starting second engine for rocket ${rocketId.slice(-3).toUpperCase()} `);
+    this.logger.log(`second engine for rocket ${rocketId.slice(-3).toUpperCase()}  has been successfully started.`);
     this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(rocketTelemetry.telemetry);
 
     this.boosters.push({
@@ -85,8 +86,6 @@ export class HardwareService {
         rocketId,
       ),
     });
-
-    this.logger.debug(`Attempting to stage rocket ${rocketId.slice(-3).toUpperCase()} and starting to send booster telemetry`);
 
     this.marsyTelemetryProxyService.sendBoosterTelemetryToApi(
       this.boosters.find((booster) => {
@@ -183,7 +182,7 @@ export class HardwareService {
 
     if (boosterTelemetry.telemetry.altitude <= 300) {
       this.boosterCronJob.stop();
-      this.logger.log(`Booster landed for mission id ${rocketId}`);
+      this.logger.log(`Booster landed for mission id ${rocketId.slice(-3).toUpperCase()}`);
     }
 
     return boosterTelemetry.telemetry;
@@ -269,7 +268,13 @@ export class HardwareService {
     };
   }
 
+  //3) Startup (T-00:01:00)
+  // 4) Main engine start (T-00:00:03)
+  // 5) Liftoff/Launch (T+00:00:00)
   async startSendingTelemetry(rocketId: string) {
+    this.logger.log(`Step : Initiating startup sequence for rocket ${rocketId} (T-00:01:00)`);
+    this.logger.log(`Step : Starting main engine for rocket ${rocketId} (T-00:00:03)`);
+    this.logger.log(`Step : initiating liftoff for rocket ${rocketId} (T+00:00:00)`);
     this.logger.log(`Started sending telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
     const missionId: string = (
       await this.marssyMissionProxyService.getMission(rocketId)
@@ -295,7 +300,7 @@ export class HardwareService {
   }
 
   stopSendingTelemetry(rocketId: string): void {
-    //this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
+    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
     this.rocketCronJob.stop();
   }
 }
