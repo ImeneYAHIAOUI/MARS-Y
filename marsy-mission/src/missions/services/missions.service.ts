@@ -48,6 +48,9 @@ export class MissionService {
        await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
        return;
      }
+     if(altitude> Constants.MAX_ALTITUDE_MAIN){
+        logger.log(` Main engine cutoff for rocket ${rocketId.slice(-3).toUpperCase()}.Altitude exceeded : ${altitude}`);
+     }
 
      logger.log(`Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`);
    } catch (error) {

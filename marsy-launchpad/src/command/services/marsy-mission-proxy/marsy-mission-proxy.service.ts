@@ -26,7 +26,6 @@ export class MarsyMissionProxyService {
   }
 
   async goOrNoGoPoll(_rocketId: string): Promise<boolean> {
-    logger.debug(`Request for goOrNoGoPoll status for rocket ${_rocketId.slice(-3).toUpperCase()}`);
     const mission = await this.getMission(_rocketId);
     const response: AxiosResponse<GoNoGoDto> = await firstValueFrom(
       this.httpService.post<GoNoGoDto>(

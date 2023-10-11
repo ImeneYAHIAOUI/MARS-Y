@@ -87,8 +87,6 @@ export class HardwareService {
       ),
     });
 
-    this.logger.debug(`Attempting to stage rocket ${rocketId.slice(-3).toUpperCase()} and starting to send booster telemetry`);
-
     this.marsyTelemetryProxyService.sendBoosterTelemetryToApi(
       this.boosters.find((booster) => {
         return booster.rocketId === rocketId;

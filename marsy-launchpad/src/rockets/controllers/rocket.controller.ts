@@ -158,10 +158,8 @@ export class RocketController {
     @Param() params: { rocketId: string },
   ): Promise<RocketPollDto> {
     try {
-      const rocketId = params.rocketId; // Access the 'rocketId' property
-      logger.debug(`Received request to poll status of rocket ${rocketId.slice(-3).toUpperCase()}`);
+      const rocketId = params.rocketId;
       const poll = await this.rocketService.rocketPoll(rocketId);
-      logger.debug(`Response sent: ready for launch`);
       return RocketPollDto.RocketPollDtoFactory(poll);
     } catch (error) {
       logger.error(`Error while polling rocket status by ID: ${error.message}`);

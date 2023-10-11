@@ -37,10 +37,8 @@ export class WeatherController {
 
   @Post('poll')
     async pollWeather(@Body() weatherDto: WeatherDto):Promise<{ go: boolean }> {
-      this.logger.debug(`Requested weather poll`);
       const weatherStatusResponse = await this.getWeatherStatus(weatherDto.lat, weatherDto.long);
       const canGo = weatherStatusResponse.status === WeatherStatus.Sunny;
-      this.logger.debug(`Response sent: go`);
       return {
         go: true,
       };

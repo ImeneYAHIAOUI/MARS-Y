@@ -18,8 +18,6 @@ import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
 export class TelemetryService {
 
   async storePayLoadTelemetry(telemetryRecordDto: PayloadTelemetryDto) {
-    this.logger.debug('Sending telemetry to Payload service after delivery');
-
     await this.marsyPayloadProxyService.sendTelemetryDelivery(
       telemetryRecordDto
     );    

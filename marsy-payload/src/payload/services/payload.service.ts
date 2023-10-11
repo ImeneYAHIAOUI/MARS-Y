@@ -30,8 +30,6 @@ async receiveTelemetry(rocketId: string, telemetry: TelemetryDto): Promise<Paylo
     logger.log(`Orbit reached for ${rocketCode} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)}`);
     const payloadDelivery = await this.marsyLaunchpadProxyService.notifyCommandPadOfOrbitReach(rocketId);
     return payloadDelivery;
-  } else {
-    logger.debug(`Orbit not reached for ${rocketCode}`);
   }
   }
     receiveTelemetryAfterDelivery(telemetry: TelemetryDto): void | Promise<void> {

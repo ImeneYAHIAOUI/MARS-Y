@@ -25,7 +25,6 @@ export class HardwareProxyService {
 
   async callHardwareToLand(_rocketId: string): Promise<boolean> {
     try {
-      logger.debug(`Calling Booster of rocket  ${_rocketId.slice(-3).toUpperCase()} to land`);
       const response: AxiosResponse<LandingResultDto> = await firstValueFrom(
         this.httpService.post<LandingResultDto>(
           `${this._baseUrl}${this._hardwarePath}/${_rocketId}/land`,
