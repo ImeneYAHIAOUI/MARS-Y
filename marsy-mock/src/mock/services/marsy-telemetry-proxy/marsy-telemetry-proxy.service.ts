@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { AxiosResponse } from 'axios';
+
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { TelemetryRecordDto } from 'src/mock/dto/telemetry-record.dto';
 import { BoosterTelemetryRecordDto } from 'src/mock/dto/booster-telemetry-record.dto';
+import { AxiosResponse } from '@nestjs/terminus/dist/health-indicator/http/axios.interfaces';
 
 @Injectable()
 export class MarsyTelemetryProxyService {

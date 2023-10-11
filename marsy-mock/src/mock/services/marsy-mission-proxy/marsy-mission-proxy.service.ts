@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { AxiosResponse } from 'axios';
+
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { MissionDto } from '../../dto/mission.dto';
+import { AxiosResponse } from '@nestjs/terminus/dist/health-indicator/http/axios.interfaces';
 
 const logger = new Logger('MarsyMissionProxyService');
 
@@ -27,7 +28,7 @@ export class MarsyMissionProxyService {
     //logger.log(`Performing getMission for rocket: ${_rocketId}`);
     const response: AxiosResponse<MissionDto> = await firstValueFrom(
       this.httpService.get<MissionDto>(
-        `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=IN_PROGRESS`,
+        `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=IN_PROGRESS`
       ),
     );
     if (response.status == HttpStatus.OK) {

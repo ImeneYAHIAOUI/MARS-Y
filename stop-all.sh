@@ -11,6 +11,8 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-payload/docker-compose-marsy-payload.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
+                --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
+                --file kafka-service/docker-compose-kafka-service.yml \
                 --file gateway/docker-compose-gateway.yml down 
 
 echo "all services stopped behind gateway"
