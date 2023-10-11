@@ -7,6 +7,9 @@ import { MarsyTelemetryProxyService } from './marsy-telemetry-proxy/marsy-teleme
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
 import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
+import { EventDto, Event } from '../dto/event.dto';
+import { Kafka } from 'kafkajs';
+import { publicDecrypt } from 'crypto';
 
 @Injectable()
 export class HardwareService {
@@ -28,6 +31,25 @@ export class HardwareService {
     landing: boolean;
     telemetry: BoosterTelemetryRecordDto;
   }[] = [];
+
+  private kafka = new Kafka({
+    clientId: 'hardware',
+    brokers: ['kafka-service:9092']
+  })
+
+  private asleep = false;
+
+  async postMessageToKafka(event: EventDto) {
+      const producer = this.kafka.producer()
+      await producer.connect()
+      await producer.send({
+          topic: 'topic-mission-events',
+          messages: [
+            { value: JSON.stringify(event) },
+          ],
+        })
+      await producer.disconnect()
+  }
 
   constructor(
     private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
@@ -90,6 +112,46 @@ export class HardwareService {
 
   async landBooster(rocketId: string): Promise<any> {
     //this.logger.log(`Started landing process of the booster of the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.FLIP_MANEUVER,
+    });
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.ENTRY_BURN,
+    });
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.GUIDANCE,
+    });
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.LANDING_BURN,
+    });
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.LANDING_LEG_DEPLOYMENT,
+    });
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.LANDING,
+    });
+
     const booster = this.boosters.find((booster) => {
       return booster.rocketId === rocketId;
     });
@@ -220,6 +282,7 @@ export class HardwareService {
       telemetry: this._getDecentInitialeRocketTelemetry(missionId, rocketId),
     });
     this.rocketCronJob = new cron.CronJob('*/3 * * * * *', () => {
+      !this.asleep &&
       this.marsyTelemetryProxyService.sendTelemetryToApi(
         this.retrieveTelemetry(rocketId),
       );

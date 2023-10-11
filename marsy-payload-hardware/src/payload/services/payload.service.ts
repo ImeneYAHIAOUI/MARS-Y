@@ -27,8 +27,6 @@ export class PayloadHardwareService {
       );
 
       this.cronRunCount++;
-      console.log("console run count");
-      console.log(this.cronRunCount);
 
       if (this.cronRunCount >= this.MAX_CRON_RUNS) {
         this.rocketCronJob.stop();
