@@ -37,13 +37,13 @@ export class MarsyMissionProxyService {
       this._goNoGo = response.data;
       return this._goNoGo.go;
     } else if (response.status == HttpStatus.NOT_FOUND) {
-      logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketId}`);
+      logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
       throw new HttpException(response.data, response.status);
     }
   }
 
   async getMission(_rocketId: string): Promise<MissionDto> {
-    logger.log(`Request to  get mission for rocket: ${_rocketId}`);
+    logger.log(`Request to  get mission for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
     const response: AxiosResponse<MissionDto> = await firstValueFrom(
       this.httpService.get<MissionDto>(
         `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=NOT_STARTED`,
@@ -52,7 +52,7 @@ export class MarsyMissionProxyService {
     if (response.status == HttpStatus.OK) {
       return response.data;
     } else {
-      logger.error(`Error in getMission for rocket: ${_rocketId}`);
+      logger.error(`Error in getMission for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
       throw new HttpException(response.data, response.status);
     }
   }

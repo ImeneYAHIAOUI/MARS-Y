@@ -24,17 +24,17 @@ export class MarsyMissionProxyService {
   }
 
   async getMission(_rocketId: string): Promise<MissionDto> {
-    //logger.log(`Performing getMission for rocket: ${_rocketId}`);
+    //logger.log(`Performing getMission for rocket: ${_rocketId.slice(-3).toUpperCase()});
     const response: AxiosResponse<MissionDto> = await firstValueFrom(
       this.httpService.get<MissionDto>(
         `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=IN_PROGRESS`,
       ),
     );
     if (response.status == HttpStatus.OK) {
-      //logger.log(`getMission successful for rocket: ${_rocketId}`);
+      //logger.log(`getMission successful for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
       return response.data;
     } else {
-      logger.error(`Error in getMission for rocket: ${_rocketId}`);
+      logger.error(`Error in getMission for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
       throw new HttpException(response.data, response.status);
     }
   }
