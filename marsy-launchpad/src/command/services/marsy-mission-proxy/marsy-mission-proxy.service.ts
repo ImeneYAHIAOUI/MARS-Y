@@ -42,7 +42,6 @@ export class MarsyMissionProxyService {
   }
 
   async getMission(_rocketId: string): Promise<MissionDto> {
-    logger.log(`Request to  get mission for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
     const response: AxiosResponse<MissionDto> = await firstValueFrom(
       this.httpService.get<MissionDto>(
         `${this._baseUrl}${this._missionPath}/search?rocketId=${_rocketId}&status=NOT_STARTED`,

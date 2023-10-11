@@ -117,7 +117,6 @@ export class CommandController {
   ): Promise<DeliveryResponseDto> {
     try {
       const rocketId = params.rocketId;
-      logger.debug( `Received request to deliver payload of the rocket ${rocketId.slice(-3).toUpperCase()}`,);
       const stage = await this.commandService.sendPayloadDeliveryCommand(rocketId,);
       return stage;
     } catch (error) {

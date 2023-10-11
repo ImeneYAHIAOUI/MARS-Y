@@ -182,7 +182,7 @@ export class HardwareService {
 
     if (boosterTelemetry.telemetry.altitude <= 300) {
       this.boosterCronJob.stop();
-      this.logger.log(`Booster landed for mission id ${rocketId}`);
+      this.logger.log(`Booster landed for mission id ${rocketId.slice(-3).toUpperCase()}`);
     }
 
     return boosterTelemetry.telemetry;
