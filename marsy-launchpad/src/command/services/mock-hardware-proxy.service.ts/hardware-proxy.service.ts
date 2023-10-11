@@ -28,14 +28,14 @@ export class HardwareProxyService {
     rocketId: string
   ): Promise<void> {
     try {
-      logger.log(`Request to start throttling down engines for rocket id : ${_rocketId.slice(-3).toUpperCase()}`);
+      logger.log(`Request to start throttling down engines for rocket id : ${rocketId.slice(-3).toUpperCase()}`);
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._hardwarePath}/${rocketId}/throttle-down`,
         ),
       );
     } catch (error) {
-      logger.error(`Error while throttling down engines for rocket id ${_rocketId.slice(-3).toUpperCase()}: ${error.message}`);
+      logger.error(`Error while throttling down engines for rocket id ${rocketId.slice(-3).toUpperCase()}: ${error.message}`);
       throw error;
     }
   }
@@ -65,7 +65,7 @@ export class HardwareProxyService {
           );
           return response.status === 200;
         } catch (error) {
-          logger.error(`Error while preparing rocket id ${_rocketId.slice(-3).toUpperCase()}: ${error.message}`);
+          logger.error(`Error while preparing rocket id ${rocketId.slice(-3).toUpperCase()}: ${error.message}`);
           throw error;
         }
       }
@@ -79,7 +79,7 @@ export class HardwareProxyService {
           );
           return response.status === 200;
         } catch (error) {
-          logger.error(`Error while powering on rocket ${_rocketId.slice(-3).toUpperCase()}: ${error.message}`);
+          logger.error(`Error while powering on rocket ${rocketId.slice(-3).toUpperCase()}: ${error.message}`);
           throw error;
         }
       }
