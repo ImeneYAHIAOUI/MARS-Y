@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { GoNoGoDto } from 'src/command/dto/go-no-go.dto';
 import { MissionDto } from '../../dto/mission.dto';
+import { Kafka } from 'kafkajs';
 
 const logger = new Logger('MarsyMissionProxyService');
 
@@ -27,6 +28,7 @@ export class MarsyMissionProxyService {
 
   async goOrNoGoPoll(_rocketId: string): Promise<boolean> {
     const mission = await this.getMission(_rocketId);
+
     const response: AxiosResponse<GoNoGoDto> = await firstValueFrom(
       this.httpService.post<GoNoGoDto>(
         `${this._baseUrl}${this._missionPath}/${mission._id}/poll`,
@@ -36,7 +38,11 @@ export class MarsyMissionProxyService {
       this._goNoGo = response.data;
       return this._goNoGo.go;
     } else if (response.status == HttpStatus.NOT_FOUND) {
-      logger.error(`Error in goOrNoGoPoll for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+      logger.error(
+        `Error in goOrNoGoPoll for rocket: ${_rocketId
+          .slice(-3)
+          .toUpperCase()}`,
+      );
       throw new HttpException(response.data, response.status);
     }
   }
@@ -50,7 +56,9 @@ export class MarsyMissionProxyService {
     if (response.status == HttpStatus.OK) {
       return response.data;
     } else {
-      logger.error(`Error in getMission for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+      logger.error(
+        `Error in getMission for rocket: ${_rocketId.slice(-3).toUpperCase()}`,
+      );
       throw new HttpException(response.data, response.status);
     }
   }

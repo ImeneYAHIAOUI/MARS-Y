@@ -24,7 +24,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: soa-team-d-zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_BROKER_ID: 1
-      KAFKA_CREATE_TOPICS: "topic-mission-events:1:1"
+      KAFKA_CREATE_TOPICS: "topic-mission-events:1:1,telemetry:1:1"
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     expose:
       - 9092

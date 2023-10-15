@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MarsyLaunchpadProxyService } from './marsy-launchpad-proxy/marsy-launchpad-proxy.service';
 import { TelemetryDto } from '../dto/telemetry.dto';
 import { PayloadDeliveryDto } from '../dto/payload-delivery.dto';
+import { Kafka } from 'kafkajs';
 
 const logger = new Logger('PayloadService');
 
@@ -14,28 +15,78 @@ const angle = 80;
 export class PayloadService {
   constructor(
     private readonly marsyLaunchpadProxyService: MarsyLaunchpadProxyService,
-  ) {}
-
-async receiveTelemetry(rocketId: string, telemetry: TelemetryDto): Promise<PayloadDeliveryDto | void> {
-  const rocketCode = rocketId.slice(-3).toUpperCase();
-  const rocketInfo = `Rocket ${rocketCode} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)}`;
-
-  if (
-    telemetry.latitude < (latitude + 15) &&
-    telemetry.latitude > (latitude - 15) &&
-    telemetry.longitude < (longitude + 15) &&
-    telemetry.longitude > (longitude - 15) &&
-    telemetry.altitude > (altitude - 150)
   ) {
-    logger.log(`Orbit reached for ${rocketCode} - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(2)}`);
-    const payloadDelivery = await this.marsyLaunchpadProxyService.notifyCommandPadOfOrbitReach(rocketId);
-    return payloadDelivery;
+    this.receiveTelemetryListener();
   }
-  }
-    receiveTelemetryAfterDelivery(telemetry: TelemetryDto): void | Promise<void> {
-      logger.log(`Received telemetry after delivery - altitude: ${telemetry.altitude} - latitude: ${telemetry.latitude} - longitude: ${telemetry.longitude} - angle: ${telemetry.angle.toPrecision(1)} ** PAYLOAD IN RIGHT ORBIT`);
+
+  private kafka = new Kafka({
+    clientId: 'payload',
+    brokers: ['kafka-service:9092'],
+  });
+
+  async receiveTelemetry(
+    rocketId: string,
+    telemetry: TelemetryDto,
+  ): Promise<PayloadDeliveryDto | void> {
+    const rocketCode = rocketId.slice(-3).toUpperCase();
+    const rocketInfo = `Rocket ${rocketCode} - altitude: ${
+      telemetry.altitude
+    } - latitude: ${telemetry.latitude} - longitude: ${
+      telemetry.longitude
+    } - angle: ${telemetry.angle.toPrecision(2)}`;
+
+    if (
+      telemetry.latitude < latitude + 15 &&
+      telemetry.latitude > latitude - 15 &&
+      telemetry.longitude < longitude + 15 &&
+      telemetry.longitude > longitude - 15 &&
+      telemetry.altitude > altitude - 150
+    ) {
+      logger.log(
+        `Orbit reached for ${rocketCode} - altitude: ${
+          telemetry.altitude
+        } - latitude: ${telemetry.latitude} - longitude: ${
+          telemetry.longitude
+        } - angle: ${telemetry.angle.toPrecision(2)}`,
+      );
+      const payloadDelivery =
+        await this.marsyLaunchpadProxyService.notifyCommandPadOfOrbitReach(
+          rocketId,
+        );
+      return payloadDelivery;
     }
+  }
+  receiveTelemetryAfterDelivery(telemetry: TelemetryDto): void | Promise<void> {
+    logger.log(
+      `Received telemetry after delivery - altitude: ${
+        telemetry.altitude
+      } - latitude: ${telemetry.latitude} - longitude: ${
+        telemetry.longitude
+      } - angle: ${telemetry.angle.toPrecision(1)} ** PAYLOAD IN RIGHT ORBIT`,
+    );
+  }
 
-
-
+  async receiveTelemetryListener(): Promise<PayloadDeliveryDto | void> {
+    const consumer = this.kafka.consumer({ groupId: 'payload-consumer-group' });
+    await consumer.connect();
+    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        const responseEvent = JSON.parse(message.value.toString());
+        if (responseEvent.recipient === 'payload-telemetry') {
+          logger.debug('*****Received payload telemetry from kafka*****');
+          await this.receiveTelemetry(
+            responseEvent.rocketId,
+            responseEvent.telemetry,
+          );
+        }
+        if (responseEvent.recipient === 'payload-delivery-telemetry') {
+          logger.debug(
+            '*****Received payload delivery telemetry from kafka*****',
+          );
+          await this.receiveTelemetryAfterDelivery(responseEvent.telemetry);
+        }
+      },
+    });
+  }
 }

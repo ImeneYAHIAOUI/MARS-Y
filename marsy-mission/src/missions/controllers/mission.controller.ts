@@ -1,6 +1,6 @@
 import {
   Controller,
-  Post, 
+  Post,
   Put,
   Param,
   Get,
@@ -126,23 +126,28 @@ export class MissionController {
     description: 'mission not found',
   })
   async updateMission(@Body() mission: MissionBoosterDto) {
-    const updatedMission = await this.missionService.saveNewStatusBooster(mission);
+    const updatedMission =
+      await this.missionService.saveNewStatusBooster(mission);
     return updatedMission;
   }
 
-
-@Post(':idrocket/telemetry')
-@HttpCode(200)
-async postTelemetryRecord(
-  @Param('idrocket') rocketId: string,
-  @Body() telemetryRecordDto: MissionTelemetryDto,
-): Promise<void> {
-  try {
-    logger.log(`Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()}`);
-    await this.missionService.evaluateRocketDestruction(rocketId,telemetryRecordDto);
-  } catch (error) {
-    logger.error(`Error while processing telemetry: ${error.message}`);
-    throw error;
+  @Post(':idrocket/telemetry')
+  @HttpCode(200)
+  async postTelemetryRecord(
+    @Param('idrocket') rocketId: string,
+    @Body() telemetryRecordDto: MissionTelemetryDto,
+  ): Promise<void> {
+    try {
+      logger.log(
+        `Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()}`,
+      );
+      await this.missionService.evaluateRocketDestruction(
+        rocketId,
+        telemetryRecordDto,
+      );
+    } catch (error) {
+      logger.error(`Error while processing telemetry: ${error.message}`);
+      throw error;
+    }
   }
-}
 }

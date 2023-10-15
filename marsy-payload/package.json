@@ -1,8 +1,7 @@
 {
-  "name": "@fr-univ-cotedazur-restaurant/kitchen-service",
+  "name": "@soa-masrsy-groupD/payload-service",
   "version": "0.0.1",
-  "description": "Micro-Service Restaurant: Kitchen Service",
-  "author": "Christian Brel <ch.brel@gmail.com>",
+  "description": "Micro-Service Marsy: Payload Service",
   "private": true,
   "license": "SEE LICENSE IN <root>/LICENSE",
   "scripts": {
@@ -32,6 +31,7 @@
     "axios": "^0.27.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "kafkajs": "^2.2.4",
     "lodash": "^4.17.21",
     "mongoose": "^6.5.2",
     "reflect-metadata": "^0.1.13",
