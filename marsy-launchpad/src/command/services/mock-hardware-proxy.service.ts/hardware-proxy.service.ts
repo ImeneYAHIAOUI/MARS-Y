@@ -24,68 +24,91 @@ export class HardwareProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_mock_url_with_port}`;
   }
 
-  async throttleDownEngines(
-    rocketId: string
-  ): Promise<void> {
+  async throttleDownEngines(rocketId: string): Promise<void> {
     try {
-      logger.log(`Request to start throttling down engines for rocket id : ${rocketId.slice(-3).toUpperCase()}`);
+      logger.log(
+        `Request to start throttling down engines for rocket id : ${rocketId
+          .slice(-3)
+          .toUpperCase()}`,
+      );
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._hardwarePath}/${rocketId}/throttle-down`,
         ),
       );
     } catch (error) {
-      logger.error(`Error while throttling down engines for rocket id ${rocketId.slice(-3).toUpperCase()}: ${error.message}`);
+      logger.error(
+        `Error while throttling down engines for rocket id ${rocketId
+          .slice(-3)
+          .toUpperCase()}: ${error.message}`,
+      );
       throw error;
     }
   }
 
   async stageMidFlightFlight(_rocketId: string): Promise<boolean> {
-      logger.log(`Request to start performing staging for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
-      const response: AxiosResponse<StagingResultDto> = await firstValueFrom(
-        this.httpService.post<StagingResultDto>(
-          `${this._baseUrl}${this._hardwarePath}/${_rocketId}/stage`,
+    logger.log(
+      `Request to start performing staging for rocket: ${_rocketId
+        .slice(-3)
+        .toUpperCase()}`,
+    );
+    const response: AxiosResponse<StagingResultDto> = await firstValueFrom(
+      this.httpService.post<StagingResultDto>(
+        `${this._baseUrl}${this._hardwarePath}/${_rocketId}/stage`,
+      ),
+    );
+    if (response.status == HttpStatus.OK) {
+      this.StagingResultDto = response.data;
+      return this.StagingResultDto.staged;
+    } else {
+      logger.error(
+        `Error in staging for rocket: ${_rocketId.slice(-3).toUpperCase()}`,
+      );
+      throw new HttpException(response.data, response.status);
+    }
+  }
+  async prepareRocket(rocketId: string): Promise<boolean> {
+    try {
+      const response: AxiosResponse<any> = await firstValueFrom(
+        this.httpService.post(
+          `${this._baseUrl}${this._hardwarePath}/${rocketId}/prepare`,
         ),
       );
-      if (response.status == HttpStatus.OK) {
-        this.StagingResultDto = response.data;
-        return this.StagingResultDto.staged;
-      } else {
-        logger.error(`Error in staging for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
-        throw new HttpException(response.data, response.status);
-      }
-    
+      return response.status === 200;
+    } catch (error) {
+      logger.error(
+        `Error while preparing rocket id ${rocketId.slice(-3).toUpperCase()}: ${
+          error.message
+        }`,
+      );
+      throw error;
+    }
   }
-   async prepareRocket(rocketId: string): Promise<boolean> {
-        try {
-          const response: AxiosResponse<any> = await firstValueFrom(
-            this.httpService.post(
-              `${this._baseUrl}${this._hardwarePath}/${rocketId}/prepare`,
-            ),
-          );
-          return response.status === 200;
-        } catch (error) {
-          logger.error(`Error while preparing rocket id ${rocketId.slice(-3).toUpperCase()}: ${error.message}`);
-          throw error;
-        }
-      }
 
-      async powerOnRocket(rocketId: string): Promise<boolean> {
-        try {
-          const response: AxiosResponse<any> = await firstValueFrom(
-            this.httpService.post(
-              `${this._baseUrl}${this._hardwarePath}/${rocketId}/power-on`,
-            ),
-          );
-          return response.status === 200;
-        } catch (error) {
-          logger.error(`Error while powering on rocket ${rocketId.slice(-3).toUpperCase()}: ${error.message}`);
-          throw error;
-        }
-      }
+  async powerOnRocket(rocketId: string): Promise<boolean> {
+    try {
+      const response: AxiosResponse<any> = await firstValueFrom(
+        this.httpService.post(
+          `${this._baseUrl}${this._hardwarePath}/${rocketId}/power-on`,
+        ),
+      );
+      return response.status === 200;
+    } catch (error) {
+      logger.error(
+        `Error while powering on rocket ${rocketId.slice(-3).toUpperCase()}: ${
+          error.message
+        }`,
+      );
+      throw error;
+    }
+  }
 
   async startEmittingTelemetry(_rocketId: string): Promise<void> {
-    logger.log(`Request to start sending telemetry for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+    logger.log(
+      `Request to start sending telemetry for rocket: ${_rocketId
+        .slice(-3)
+        .toUpperCase()}`,
+    );
     const response: AxiosResponse = await firstValueFrom(
       this.httpService.post(`${this._baseUrl}${this._hardwarePath}/launch`, {
         rocketId: _rocketId,
@@ -94,7 +117,11 @@ export class HardwareProxyService {
     if (response.status == HttpStatus.OK) {
       //logger.log(`Telemetry started for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
     } else {
-      logger.error(`Error starting telemetry for rocket: ${_rocketId.slice(-3).toUpperCase()}`);
+      logger.error(
+        `Error starting telemetry for rocket: ${_rocketId
+          .slice(-3)
+          .toUpperCase()}`,
+      );
       throw new HttpException(response.data, response.status);
     }
   }

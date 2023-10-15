@@ -1,8 +1,7 @@
 {
-  "name": "@fr-univ-cotedazur-restaurant/kitchen-service",
+  "name": "@soa-masrsy-groupD/telemetry-service",
   "version": "0.0.1",
-  "description": "Micro-Service Restaurant: Kitchen Service",
-  "author": "Christian Brel <ch.brel@gmail.com>",
+  "description": "Micro-Service Marsy: telemetry Service",
   "private": true,
   "license": "SEE LICENSE IN <root>/LICENSE",
   "scripts": {
@@ -36,7 +35,9 @@
     "mongoose": "^6.5.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "kafka-node": "^5.0.0",
+    "kafkajs": "^2.2.4"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

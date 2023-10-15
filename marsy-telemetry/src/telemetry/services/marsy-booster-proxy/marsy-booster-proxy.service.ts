@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { BoosterTelemetryDto } from 'src/telemetry/dto/booster-telemetry.dto';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class MarsyBoosterProxyService {
@@ -22,17 +23,34 @@ export class MarsyBoosterProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_booster_url_with_port}`;
   }
 
-  async sendTelemetry(idrocket: string, telemetry: BoosterTelemetryDto) {
+  async sendTelemetry(
+    idrocket: string,
+    telemetry: BoosterTelemetryDto,
+    kafka: Kafka,
+  ) {
     try {
+      const message = {
+        recipient: 'booster-telemetry',
+        telemetry: telemetry,
+        rocketId: idrocket,
+      };
+      const producer = kafka.producer();
+      await producer.connect();
+      await producer.send({
+        topic: 'telemetry',
+        messages: [{ value: JSON.stringify(message) }],
+      });
+      await producer.disconnect();
       // this.logger.log(
       //   `Sending telemetry to ${this._baseUrl}${this._rocketsPath}/${idrocket}/telemetry`,
       // );
-      const response: AxiosResponse = await firstValueFrom(
+
+      /*const response: AxiosResponse = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._rocketsPath}/${idrocket}/telemetry`,
           telemetry,
         ),
-      );
+      );*/
     } catch (error) {
       this.logger.error(`Failed to send telemetry : ${error}`);
     }

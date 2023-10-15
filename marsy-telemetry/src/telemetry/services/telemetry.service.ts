@@ -13,16 +13,10 @@ import { ControlTelemetryDto } from '../dto/control-telemetry.dto';
 import { BoosterTelemetryDto } from '../dto/booster-telemetry.dto';
 import { BoosterTelemetryRecord } from '../schemas/booster-telemetry-record.schema';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class TelemetryService {
-
-  async storePayLoadTelemetry(telemetryRecordDto: PayloadTelemetryDto) {
-    await this.marsyPayloadProxyService.sendTelemetryDelivery(
-      telemetryRecordDto
-    );    
-  }
-
   private readonly logger: Logger = new Logger(TelemetryService.name);
 
   constructor(
@@ -36,6 +30,17 @@ export class TelemetryService {
     private readonly marsyPayloadProxyService: MarsyPayloadProxyService,
   ) {}
 
+  private kafka = new Kafka({
+    clientId: 'telemetry',
+    brokers: ['kafka-service:9092'],
+  });
+
+  async storePayLoadTelemetry(telemetryRecordDto: PayloadTelemetryDto) {
+    await this.marsyPayloadProxyService.sendTelemetryDelivery(
+      telemetryRecordDto,
+      this.kafka,
+    );
+  }
   async storeTelemetryRecord(
     telemetryRecordDTO: TelemetryRecordDto,
   ): Promise<TelemetryRecord> {
@@ -46,7 +51,9 @@ export class TelemetryService {
       telemetryRecordDTO,
     );
 
-    this.logger.log('Sending telemetry to Mission service, Payload service and ControlPad service');
+    this.logger.log(
+      'Sending telemetry to Mission service, Payload service and ControlPad service',
+    );
 
     const missionTelemetry: MissionTelemetryDto = {
       missionId: telemetry.missionId,
@@ -63,6 +70,7 @@ export class TelemetryService {
     await this.marsyMissionProxyService.sendTelemetry(
       telemetry.rocketId,
       missionTelemetry,
+      this.kafka,
     );
 
     const payloadTelemetry: PayloadTelemetryDto = {
@@ -77,16 +85,18 @@ export class TelemetryService {
     await this.marsyPayloadProxyService.sendTelemetry(
       telemetry.rocketId,
       payloadTelemetry,
+      this.kafka,
     );
 
     const controlTelemetry: ControlTelemetryDto = {
-        rocketId: telemetryRecordDTO.rocketId,
-        fuel: telemetryRecordDTO.fuel,
-        altitude: telemetryRecordDTO.altitude,
+      rocketId: telemetryRecordDTO.rocketId,
+      fuel: telemetryRecordDTO.fuel,
+      altitude: telemetryRecordDTO.altitude,
     };
     await this.marsyRocketProxyService.sendTelemetry(
-        telemetryRecordDTO.rocketId,
-        controlTelemetry,
+      telemetryRecordDTO.rocketId,
+      controlTelemetry,
+      this.kafka,
     );
 
     return telemetry;
@@ -100,7 +110,10 @@ export class TelemetryService {
     //   `Storing booster telemetry record for mission ${boosterTelemetryRecordDto.missionId.slice(-3).toUpperCase()}`,
     // );
     const telemetry: BoosterTelemetryRecord =
-      await this.boosterTelemetryRecordModel.create({...boosterTelemetryRecordDto, rocketId: id});
+      await this.boosterTelemetryRecordModel.create({
+        ...boosterTelemetryRecordDto,
+        rocketId: id,
+      });
 
     this.logger.log('Sending telemetry to booster service');
 
@@ -115,6 +128,7 @@ export class TelemetryService {
     await this.marsyBoosterProxyService.sendTelemetry(
       telemetry.rocketId,
       boosterTelemetry,
+      this.kafka,
     );
 
     return boosterTelemetryRecordDto;

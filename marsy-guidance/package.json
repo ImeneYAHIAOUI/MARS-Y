@@ -1,8 +1,7 @@
 {
-  "name": "@fr-univ-cotedazur-restaurant/kitchen-service",
+  "name": "@soa-masrsy-groupD/guidence-service",
   "version": "0.0.1",
-  "description": "Micro-Service Restaurant: Kitchen Service",
-  "author": "Christian Brel <ch.brel@gmail.com>",
+  "description": "Micro-Service Marsy: guidence Service",
   "private": true,
   "license": "SEE LICENSE IN <root>/LICENSE",
   "scripts": {

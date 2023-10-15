@@ -2,7 +2,6 @@ import { MissionService } from './missions.service';
 import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
-import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 
 import { Mission } from '../schema/mission.schema';
 import { SiteService } from './site.service';

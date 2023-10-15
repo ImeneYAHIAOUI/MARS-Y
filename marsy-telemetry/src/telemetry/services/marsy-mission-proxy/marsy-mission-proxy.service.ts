@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
 import { MissionTelemetryDto } from 'src/telemetry/dto/mission-telemetry.dto';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class MarsyMissionProxyService {
@@ -13,6 +14,10 @@ export class MarsyMissionProxyService {
 
   private _baseUrl: string;
   private _missionPath = '/missions';
+  private kafka = new Kafka({
+    clientId: 'web-caster',
+    brokers: ['kafka-service:9092'],
+  });
 
   constructor(
     private configService: ConfigService,
@@ -23,17 +28,33 @@ export class MarsyMissionProxyService {
     this._baseUrl = `http://${dependenciesConfig.marsy_mission_url_with_port}`;
   }
 
-  async sendTelemetry(idrocket: string, telemetry: MissionTelemetryDto) {
+  async sendTelemetry(
+    idrocket: string,
+    telemetry: MissionTelemetryDto,
+    kafka: Kafka,
+  ) {
     try {
       // this.logger.log(
       //   `Sending telemetry to ${this._baseUrl}${this._missionPath}/${idrocket}/telemetry`,
       // );
-      const response: AxiosResponse = await firstValueFrom(
+      const message = {
+        recipient: 'mission-telemetry',
+        telemetry: telemetry,
+        rocketId: idrocket,
+      };
+      const producer = kafka.producer();
+      await producer.connect();
+      await producer.send({
+        topic: 'telemetry',
+        messages: [{ value: JSON.stringify(message) }],
+      });
+      await producer.disconnect();
+      /*const response: AxiosResponse = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._missionPath}/${idrocket}/telemetry`,
           telemetry,
         ),
-      );
+      );*/
     } catch (error) {
       this.logger.error(`Failed to send telemetry : ${error}`);
     }
