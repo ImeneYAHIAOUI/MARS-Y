@@ -11,11 +11,11 @@ import {
   BoosterTelemetryRecord,
   BoosterTelemetryRecordSchema,
 } from './schemas/booster-telemetry-record.schema';
-import { MarsyBoosterProxyService } from './services/marsy-booster-proxy/marsy-booster-proxy.service';
-import { MarsyMissionProxyService } from './services/marsy-mission-proxy/marsy-mission-proxy.service';
-import { MarsyRocketProxyService } from './services/marsy-rocket-proxy/marsy-rocket-proxy.service';
-import { MarsyPayloadProxyService } from './services/marsy-payload-proxy/marsy-payload-proxy.service';
 
+import {
+  PayloadTelemetry,
+  payloadTelemetrySchema,
+} from './schemas/payload-telemetry.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -24,17 +24,12 @@ import { MarsyPayloadProxyService } from './services/marsy-payload-proxy/marsy-p
         name: BoosterTelemetryRecord.name,
         schema: BoosterTelemetryRecordSchema,
       },
+      { name: PayloadTelemetry.name, schema: payloadTelemetrySchema },
     ]),
     HttpModule,
   ],
   controllers: [TelemetryController],
-  providers: [
-    TelemetryService,
-    MarsyBoosterProxyService,
-    MarsyMissionProxyService,
-    MarsyRocketProxyService,
-    MarsyPayloadProxyService,
-  ],
+  providers: [TelemetryService],
   exports: [TelemetryService],
 })
 export class TelemetryModule {}

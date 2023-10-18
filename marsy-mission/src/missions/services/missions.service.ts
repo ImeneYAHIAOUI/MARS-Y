@@ -41,7 +41,7 @@ export class MissionService {
   ): Promise<void> {
     try {
       logger.log(`Evaluating telemetry for rocket with ID: ${rocketId}`);
-      const mission = (await this.getMissionByRocketId(rocketId)) as Mission;
+      await this.getMissionByRocketId(rocketId);
 
       const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
 
@@ -253,7 +253,7 @@ export class MissionService {
     await consumer.connect();
     await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if (responseEvent.recipient === 'mission-telemetry') {
           const telemetry = responseEvent.telemetry;
@@ -274,7 +274,7 @@ export class MissionService {
       fromBeginning: true,
     });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const producer = this.kafka.producer();
         await producer.connect();
         await producer.send({

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import * as cron from 'cron';
-import { MarsyTelemetryProxyService } from './marsy-telemetry-proxy/marsy-telemetry-proxy.service';
+import { Kafka } from 'kafkajs';
 
 const logger = new Logger('PayloadHardwareService');
 
@@ -9,10 +9,12 @@ const logger = new Logger('PayloadHardwareService');
 export class PayloadHardwareService {
   private readonly MAX_CRON_RUNS = 3;
   private cronRunCount = 0;
-  constructor(
-    private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
-  ) {}
-
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  constructor() {}
+  private kafka = new Kafka({
+    clientId: 'payload-hardware',
+    brokers: ['kafka-service:9092'],
+  });
   private readonly logger: Logger = new Logger(PayloadHardwareService.name);
   private telemetries: PayloadTelemetryDto[] = [];
   private rocketCronJob: any;
@@ -21,24 +23,40 @@ export class PayloadHardwareService {
     this.logger.log(`Started sending telemetry of delivered payload`);
     this.telemetries.push(telemetry);
 
-    this.rocketCronJob = new cron.CronJob('*/3 * * * * *', async () => {
-      this.marsyTelemetryProxyService.sendTelemetryToApi(
-        await this.retrieveTelemetry(telemetry.missionId),
-      );
+    this.rocketCronJob = new cron.CronJob(
+      '*/3 * * * * *',
+      async () => {
+        const payloadTelemetry = await this.retrieveTelemetry(
+          telemetry.missionId,
+        );
+        const message = {
+          recipient: 'payload-delivery-telemetry',
+          telemetry: payloadTelemetry,
+        };
+        this.logger.debug('sending telemetry to kafka 3');
+        const producer = this.kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: 'telemetry',
+          messages: [{ value: JSON.stringify(message) }],
+        });
+        await producer.disconnect();
+        this.cronRunCount++;
 
-      this.cronRunCount++;
+        if (this.cronRunCount >= this.MAX_CRON_RUNS) {
+          this.rocketCronJob.stop();
 
-      if (this.cronRunCount >= this.MAX_CRON_RUNS) {
-        this.rocketCronJob.stop();
-
-        setTimeout(() => {
-          logger.log("STOPPING SENDING TELEMETRY PAYLOAD - EVERYTHING AS EXPECTED");
-        }, 1000);
-      }
-    },
+          setTimeout(() => {
+            logger.log(
+              'STOPPING SENDING TELEMETRY PAYLOAD - EVERYTHING AS EXPECTED',
+            );
+          }, 1000);
+        }
+      },
       null,
       true,
-      'America/Los_Angeles');
+      'America/Los_Angeles',
+    );
 
     // Log the cron job starting
     this.rocketCronJob.start();
@@ -46,8 +64,7 @@ export class PayloadHardwareService {
 
   async retrieveTelemetry(missionId: string): Promise<PayloadTelemetryDto> {
     const telemetry = this.telemetries.find((t) => t.missionId === missionId);
-    let newTelemetry: PayloadTelemetryDto;
-    newTelemetry = {
+    const newTelemetry: PayloadTelemetryDto = {
       missionId,
       timestamp: Date.now(),
       latitude: telemetry.latitude + (Math.random() - 0.5) * 2 * 0.05,
