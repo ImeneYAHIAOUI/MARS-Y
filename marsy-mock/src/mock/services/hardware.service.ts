@@ -34,32 +34,32 @@ export class HardwareService {
 
   private kafka = new Kafka({
     clientId: 'hardware',
-    brokers: ['kafka-service:9092']
-  })
+    brokers: ['kafka-service:9092'],
+  });
 
   private asleep = false;
 
   async postMessageToKafka(event: EventDto) {
-      const producer = this.kafka.producer()
-      await producer.connect()
-      await producer.send({
-          topic: 'topic-mission-events',
-          messages: [
-            { value: JSON.stringify(event) },
-          ],
-        })
-      await producer.disconnect()
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
   }
 
   constructor(
     private readonly marsyTelemetryProxyService: MarsyTelemetryProxyService,
     private readonly marssyMissionProxyService: MarsyMissionProxyService,
     private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
-  ) { }
+  ) {}
 
-   throttleDown(rocketId: string): boolean {
-    this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
-    let rocketTelemetry = this.rockets.find((rocket) => {
+  throttleDown(rocketId: string): boolean {
+    this.logger.log(
+      `Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`,
+    );
+    const rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
     rocketTelemetry.throttle = true;
@@ -67,15 +67,19 @@ export class HardwareService {
   }
 
   async stageRocket(rocketId: string): Promise<StagingDto> {
-    let rocketTelemetry = this.rockets.find((rocket) => {
+    const rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
     // 9) Second engine start
-    this.logger.log(`Starting second engine for rocket ${rocketId.slice(-3).toUpperCase()} `);
-    this.logger.log(`second engine for rocket ${rocketId.slice(-3).toUpperCase()}  has been successfully started.`);
-    this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(rocketTelemetry.telemetry);
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.SECOND_ENGINE_START,
+    });
+    await this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(
+      rocketTelemetry.telemetry,
+    );
 
     this.boosters.push({
       rocketId: rocketId,
@@ -94,15 +98,18 @@ export class HardwareService {
       rocketId,
     );
 
-    this.boosterCronJob = new cron.CronJob('*/3 * * * * *', () => {
-      this.marsyTelemetryProxyService.sendBoosterTelemetryToApi(
-        this.retrieveBoosterTelemetry(rocketId),
-        rocketId,
-      );
-    },
+    this.boosterCronJob = new cron.CronJob(
+      '*/3 * * * * *',
+      () => {
+        this.marsyTelemetryProxyService.sendBoosterTelemetryToApi(
+          this.retrieveBoosterTelemetry(rocketId),
+          rocketId,
+        );
+      },
       null,
       true,
-      'America/Los_Angeles');
+      'America/Los_Angeles',
+    );
     return {
       _id: rocketId,
       staged: rocketTelemetry.staged,
@@ -116,37 +123,37 @@ export class HardwareService {
       event: Event.FLIP_MANEUVER,
     });
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.ENTRY_BURN,
     });
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.GUIDANCE,
     });
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.LANDING_BURN,
     });
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.LANDING_LEG_DEPLOYMENT,
     });
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
-    this.postMessageToKafka({
+    await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.LANDING,
     });
@@ -155,63 +162,94 @@ export class HardwareService {
       return booster.rocketId === rocketId;
     });
     booster.landing = true;
-    return {_id : rocketId, landed : true };
+    return { _id: rocketId, landed: true };
   }
 
   // before landing speed is zero and we are falling in altitude free fall
   retrieveBoosterTelemetry(rocketId: string): BoosterTelemetryRecordDto {
-    this.logger.log(`Retrieving telemetry from the booster of the staged rocket ${rocketId.slice(-3).toUpperCase()}`);
-    let boosterTelemetry = this.boosters.find((booster) => {
+    this.logger.log(
+      `Retrieving telemetry from the booster of the staged rocket ${rocketId
+        .slice(-3)
+        .toUpperCase()}`,
+    );
+    const boosterTelemetry = this.boosters.find((booster) => {
       return booster.rocketId === rocketId;
     });
 
-    const newFuel = boosterTelemetry.telemetry.fuel - 15 > 0 ? boosterTelemetry.telemetry.fuel - 15 : 0;
+    const newFuel =
+      boosterTelemetry.telemetry.fuel - 15 > 0
+        ? boosterTelemetry.telemetry.fuel - 15
+        : 0;
 
     boosterTelemetry.telemetry = {
       timestamp: Date.now(),
-      longitude: boosterTelemetry.telemetry.longitude + Math.floor(Math.random() * (5 - 0)),
-      altitude: boosterTelemetry.telemetry.altitude - 1900 > 0 ? boosterTelemetry.telemetry.altitude - 1900 : 0,
-      latitude: boosterTelemetry.telemetry.latitude + Math.floor(Math.random() * (5 - 0)),
+      longitude:
+        boosterTelemetry.telemetry.longitude +
+        Math.floor(Math.random() * (5 - 0)),
+      altitude:
+        boosterTelemetry.telemetry.altitude - 1900 > 0
+          ? boosterTelemetry.telemetry.altitude - 1900
+          : 0,
+      latitude:
+        boosterTelemetry.telemetry.latitude +
+        Math.floor(Math.random() * (5 - 0)),
       pressure: boosterTelemetry.telemetry.pressure,
       speed: boosterTelemetry.telemetry.speed,
       humidity: boosterTelemetry.telemetry.humidity,
       temperature: boosterTelemetry.telemetry.temperature,
-      fuel: boosterTelemetry.landing ? newFuel : boosterTelemetry.telemetry.fuel,
+      fuel: boosterTelemetry.landing
+        ? newFuel
+        : boosterTelemetry.telemetry.fuel,
       missionId: boosterTelemetry.telemetry.missionId,
     };
 
     if (boosterTelemetry.telemetry.altitude <= 300) {
       this.boosterCronJob.stop();
-      this.logger.log(`Booster landed for mission id ${rocketId.slice(-3).toUpperCase()}`);
+      this.logger.log(
+        `Booster landed for mission id ${rocketId.slice(-3).toUpperCase()}`,
+      );
     }
 
     return boosterTelemetry.telemetry;
   }
 
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
-    this.logger.log(`Sending telemetry from the rocket ${rocketId.slice(-3).toUpperCase()}`);
-    let rocketTelemetry = this.rockets.find((rocket) => {
+    this.logger.log(
+      `Sending telemetry from the rocket ${rocketId.slice(-3).toUpperCase()}`,
+    );
+    const rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
 
-    const potentialFuel = rocketTelemetry.telemetry.fuel - (
-      rocketTelemetry.throttle ? 50 : 5
-    );
-    const newFuel = potentialFuel > 0 ?
-      potentialFuel :
-      0;
+    const potentialFuel =
+      rocketTelemetry.telemetry.fuel - (rocketTelemetry.throttle ? 50 : 5);
+    const newFuel = potentialFuel > 0 ? potentialFuel : 0;
 
     const throttle = -20;
-    const newSpeed = !rocketTelemetry.throttle ? rocketTelemetry.telemetry.speed + 5 : 
-       (rocketTelemetry.telemetry.speed + throttle > 0 ? rocketTelemetry.telemetry.speed + throttle : 0); 
-  
-    rocketTelemetry.throttle && this.logger.log(`Approaching the max Q altitude with throttled speed ${newSpeed}`);
+    const newSpeed = !rocketTelemetry.throttle
+      ? rocketTelemetry.telemetry.speed + 5
+      : rocketTelemetry.telemetry.speed + throttle > 0
+      ? rocketTelemetry.telemetry.speed + throttle
+      : 0;
+
+    rocketTelemetry.throttle &&
+      this.logger.log(
+        `Approaching the max Q altitude with throttled speed ${newSpeed}`,
+      );
 
     rocketTelemetry.telemetry = {
       timestamp: Date.now(),
-      longitude: rocketTelemetry.telemetry.longitude + (Math.random() > 0.5 ? Math.floor(Math.random() * (2 - 0)) : -Math.floor(Math.random() * (2 - 0))),
+      longitude:
+        rocketTelemetry.telemetry.longitude +
+        (Math.random() > 0.5
+          ? Math.floor(Math.random() * (2 - 0))
+          : -Math.floor(Math.random() * (2 - 0))),
       altitude: rocketTelemetry.telemetry.altitude + 2000,
-      latitude: rocketTelemetry.telemetry.latitude + (Math.random() > 0.5 ? Math.floor(Math.random() * (2 - 0)) : -Math.floor(Math.random() * (2 - 0))),
+      latitude:
+        rocketTelemetry.telemetry.latitude +
+        (Math.random() > 0.5
+          ? Math.floor(Math.random() * (2 - 0))
+          : -Math.floor(Math.random() * (2 - 0))),
       pressure: rocketTelemetry.telemetry.pressure,
       speed: newSpeed,
       humidity: rocketTelemetry.telemetry.humidity,
@@ -263,7 +301,7 @@ export class HardwareService {
       fuel: 100,
       rocketId: rocketId,
       angle: 90,
-      
+
       staged: false,
     };
   }
@@ -272,10 +310,20 @@ export class HardwareService {
   // 4) Main engine start (T-00:00:03)
   // 5) Liftoff/Launch (T+00:00:00)
   async startSendingTelemetry(rocketId: string) {
-    this.logger.log(`Step : Initiating startup sequence for rocket ${rocketId} (T-00:01:00)`);
-    this.logger.log(`Step : Starting main engine for rocket ${rocketId} (T-00:00:03)`);
-    this.logger.log(`Step : initiating liftoff for rocket ${rocketId} (T+00:00:00)`);
-    this.logger.log(`Started sending telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.START_UP,
+    });
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.MAIN_ENGINE_START,
+    });
+    await this.postMessageToKafka({ rocketId: rocketId, event: Event.LIFTOFF });
+    this.logger.log(
+      `Started sending telemetry for the rocket ${rocketId
+        .slice(-3)
+        .toUpperCase()}`,
+    );
     const missionId: string = (
       await this.marssyMissionProxyService.getMission(rocketId)
     )._id;
@@ -286,15 +334,18 @@ export class HardwareService {
       throttle: false,
       telemetry: this._getDecentInitialeRocketTelemetry(missionId, rocketId),
     });
-    this.rocketCronJob = new cron.CronJob('*/3 * * * * *', () => {
-      !this.asleep &&
-      this.marsyTelemetryProxyService.sendTelemetryToApi(
-        this.retrieveTelemetry(rocketId),
-      );
-    },
+    this.rocketCronJob = new cron.CronJob(
+      '*/3 * * * * *',
+      () => {
+        !this.asleep &&
+          this.marsyTelemetryProxyService.sendTelemetryToApi(
+            this.retrieveTelemetry(rocketId),
+          );
+      },
       null,
       true,
-      'America/Los_Angeles');
+      'America/Los_Angeles',
+    );
     this.rocketCronJob.start();
     return true;
   }

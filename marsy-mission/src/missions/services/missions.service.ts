@@ -77,11 +77,23 @@ export class MissionService {
         return;
       }
       if (altitude > Constants.MAX_ALTITUDE_MAIN) {
-        logger.log(
-          ` Main engine cutoff for rocket ${rocketId
+        const event = {
+          rocketId: rocketId,
+          event: `Main engine cutoff for rocket ${rocketId
             .slice(-3)
-            .toUpperCase()}.Altitude exceeded : ${altitude}`,
-        );
+            .toUpperCase()}`,
+        };
+        const producer = this.kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: 'topic-mission-events',
+          messages: [
+            {
+              value: JSON.stringify(event),
+            },
+          ],
+        });
+        await producer.disconnect();
       }
 
       logger.log(
@@ -243,7 +255,6 @@ export class MissionService {
       eachMessage: async ({ topic, partition, message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if (responseEvent.recipient === 'mission-telemetry') {
-          logger.debug('*****Received mission telemetry from kafka*****');
           const telemetry = responseEvent.telemetry;
           const rocketId = responseEvent.rocketId;
           await this.evaluateRocketDestruction(rocketId, telemetry);

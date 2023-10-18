@@ -19,11 +19,19 @@ import { DeliveryDto } from '../dto/delivery.dto';
 import { StagingDto } from '../dto/staging.dto';
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { LaunchDto } from '../dto/launch.dto';
+import { Kafka } from 'kafkajs';
+import { Event } from '../dto/event.dto';
 
 @ApiTags('mock')
 @Controller('/mock')
 export class HardwareController {
   private readonly logger: Logger = new Logger(HardwareController.name);
+
+  private kafka = new Kafka({
+    clientId: 'hardware',
+    brokers: ['kafka-service:9092'],
+  });
+
   constructor(private readonly hardwareService: HardwareService) {}
   // @ApiOkResponse({
   //   type: DeliveryDto,
@@ -59,7 +67,6 @@ export class HardwareController {
     return await this.hardwareService.retrieveTelemetry(id);
   }
 
-
   // 3) Startup (T-00:01:00)
   // 4) Main engine start (T-00:00:03)
   // 5) Liftoff/Launch (T+00:00:00)
@@ -87,25 +94,29 @@ export class HardwareController {
     this.hardwareService.stopSendingTelemetry(id);
   }
 
-// 1) prepare
-@Post(':idrocket/prepare')
-@HttpCode(200)
-prepare(@Param('idrocket') id: string): boolean {
-  this.logger.log(`Received request to prepare rocket: ${id}`);
-  this.logger.log(`Step 1: Fueling for rocket ${id}`);
-  this.logger.log(`Step 2: Status check for rocket ${id}`);
-  this.logger.log('Rocket prepared');
-  return true;
-}
-// 2) power on
-@Post(':idrocket/power-on')
-@HttpCode(200)
-powerOnRocket(@Param('idrocket') id: string): boolean {
-  this.logger.log(`Received request to power on rocket: ${id}`);
-  this.logger.log(`Step 1: Activating internal power for rocket ${id}`);
-  this.logger.log('Rocket on internal power');
-  return true;
-}
+  // 1) prepare
+  @Post(':idrocket/prepare')
+  @HttpCode(200)
+  async prepare(@Param('idrocket') id: string): Promise<boolean> {
+    this.logger.log(`Received request to prepare rocket: ${id}`);
+    await this.hardwareService.postMessageToKafka({
+      rocketId: id,
+      event: Event.ROCKET_PREPARATION,
+    });
+    this.logger.log('Rocket prepared');
+    return true;
+  }
+  // 2) power on
+  @Post(':idrocket/power-on')
+  @HttpCode(200)
+  async powerOnRocket(@Param('idrocket') id: string): Promise<boolean> {
+    this.logger.log(`Received request to power on rocket: ${id}`);
+    await this.hardwareService.postMessageToKafka({
+      rocketId: id,
+      event: Event.ROCKET_INTERNAL_POWER_ON,
+    });
+    return true;
+  }
 
   @ApiOkResponse({
     type: TelemetryRecordDto,

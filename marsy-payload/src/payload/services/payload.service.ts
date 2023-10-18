@@ -74,16 +74,12 @@ export class PayloadService {
       eachMessage: async ({ topic, partition, message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if (responseEvent.recipient === 'payload-telemetry') {
-          logger.debug('*****Received payload telemetry from kafka*****');
           await this.receiveTelemetry(
             responseEvent.rocketId,
             responseEvent.telemetry,
           );
         }
         if (responseEvent.recipient === 'payload-delivery-telemetry') {
-          logger.debug(
-            '*****Received payload delivery telemetry from kafka*****',
-          );
           await this.receiveTelemetryAfterDelivery(responseEvent.telemetry);
         }
       },

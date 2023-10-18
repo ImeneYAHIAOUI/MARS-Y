@@ -38,6 +38,22 @@ export class CommandService {
       const approachingMaxQ =
         telemetry.altitude > 3600 && telemetry.altitude < 4400;
       // 6) MaxQ
+
+      const event = {
+        rocketId: rocketId,
+        event: `MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
+      };
+      const producer = this.kafka.producer();
+      await producer.connect();
+      await producer.send({
+        topic: 'topic-mission-events',
+        messages: [
+          {
+            value: JSON.stringify(event),
+          },
+        ],
+      });
+      await producer.disconnect();
       if (approachingMaxQ) {
         logger.warn(
           `Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
@@ -161,6 +177,23 @@ export class CommandService {
 
     if (rocketStatus === RocketStatus.IN_FLIGHT) {
       // 8) Stage separation
+      const event = {
+        rocketId: rocketId,
+        event: `Rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()} is currently in mid-flight. Initiating mid-stage separation process.`,
+      };
+      const producer = this.kafka.producer();
+      await producer.connect();
+      await producer.send({
+        topic: 'topic-mission-events',
+        messages: [
+          {
+            value: JSON.stringify(event),
+          },
+        ],
+      });
+      await producer.disconnect();
       logger.log(
         `Rocket ${rocketId} is currently in mid-flight. Initiating mid-stage separation process.`,
       );
@@ -211,13 +244,45 @@ export class CommandService {
     const rocketStatus = rocket.status;
 
     if (rocketStatus === RocketStatus.STAGED) {
-      logger.log(`Rocket ${rocketId} is staged. Initiating payload delivery.`);
+      const event = {
+        rocketId: rocketId,
+        event: `Rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()} is staged. Initiating payload delivery.`,
+      };
+      const producer = this.kafka.producer();
+      await producer.connect();
+      await producer.send({
+        topic: 'topic-mission-events',
+        messages: [
+          {
+            value: JSON.stringify(event),
+          },
+        ],
+      });
+      await producer.disconnect();
 
       const payloadDelivered =
         await this.guidanceHardwareProxyService.deliverPayload(rocketId);
 
       if (payloadDelivered) {
-        logger.log(`Payload delivered successfully for rocket ${rocketId}.`);
+        const event = {
+          rocketId: rocketId,
+          event: `Payload delivered successfully for rocket ${rocketId
+            .slice(-3)
+            .toUpperCase()} `,
+        };
+        const producer = this.kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: 'topic-mission-events',
+          messages: [
+            {
+              value: JSON.stringify(event),
+            },
+          ],
+        });
+        await producer.disconnect();
 
         const updatedRocket = await this.rocketService.updateRocketStatus(
           rocketId,
@@ -229,6 +294,24 @@ export class CommandService {
           rocket: updatedRocket,
         };
       } else {
+        const event = {
+          rocketId: rocketId,
+          event: `Payload delivery failed for rocket ${rocketId
+            .slice(-3)
+            .toUpperCase()} `,
+        };
+        const producer = this.kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: 'topic-mission-events',
+          messages: [
+            {
+              value: JSON.stringify(event),
+            },
+          ],
+        });
+        await producer.disconnect();
+
         logger.warn(`Payload delivery failed for rocket ${rocketId}.`);
 
         const updatedRocket = await this.rocketService.updateRocketStatus(
@@ -250,14 +333,15 @@ export class CommandService {
   }
 
   async receiveTelemetryListener(): Promise<void> {
-    const consumer = this.kafka.consumer({ groupId: 'controlpad-consumer-group' });
+    const consumer = this.kafka.consumer({
+      groupId: 'controlpad-consumer-group',
+    });
     await consumer.connect();
     await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if (responseEvent.recipient === 'controlPad-telemetry') {
-          logger.debug('*****Received controlpad telemetry from kafka*****');
           const telemetry = responseEvent.telemetry;
           const rocketId = responseEvent.rocketId;
           await this.handleTelemetry(rocketId, telemetry);

@@ -75,7 +75,6 @@ export class BoosterService {
       eachMessage: async ({ topic, partition, message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if (responseEvent.recipient === 'booster-telemetry') {
-          logger.debug('*****Received booster telemetry from kafka*****');
           this.receiveBoosterData(
             responseEvent.telemetry,
             responseEvent.rocketId,
