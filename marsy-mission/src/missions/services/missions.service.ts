@@ -27,6 +27,7 @@ export class MissionService {
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {
     this.receiveTelemetryListener();
+    this.receiveEventListener();
   }
 
   private kafka = new Kafka({
@@ -259,6 +260,28 @@ export class MissionService {
           const rocketId = responseEvent.rocketId;
           await this.evaluateRocketDestruction(rocketId, telemetry);
         }
+      },
+    });
+  }
+
+  async receiveEventListener(): Promise<void> {
+    const consumer = this.kafka.consumer({
+      groupId: 'mission-consumer-group2',
+    });
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: 'topic-mission-events',
+      fromBeginning: true,
+    });
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        const producer = this.kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: 'events-web-caster',
+          messages: [{ value: message.value.toString() }],
+        });
+        await producer.disconnect();
       },
     });
   }

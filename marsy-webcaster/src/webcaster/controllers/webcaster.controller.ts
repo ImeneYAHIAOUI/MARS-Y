@@ -33,7 +33,7 @@ export class WebcasterController {
     const producer = this.kafka.producer();
     await producer.connect();
     await producer.send({
-      topic: 'topic-mission-events',
+      topic: 'events-web-caster',
       messages: [{ value: message }],
     });
     await producer.disconnect();
@@ -44,7 +44,7 @@ export class WebcasterController {
     const consumer = this.kafka.consumer({ groupId: 'web-caster-group' });
     await consumer.connect();
     await consumer.subscribe({
-      topic: 'topic-mission-events',
+      topic: 'events-web-caster',
       fromBeginning: true,
     });
     await consumer.run({
