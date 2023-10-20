@@ -1,6 +1,8 @@
 import { Controller, Get,Post,Logger } from '@nestjs/common';
 import { AppService } from '../services/app.service';
 import { Kafka } from 'kafkajs';
+import {EventDto} from '../dto/event.dto';
+import {Event} from '../dto/event.dto';
 @Controller()
 export class AppController {
   private readonly logger = new Logger(AppController.name);
@@ -25,13 +27,16 @@ export class AppController {
         topic: 'events-broadcast',
         fromBeginning: true,
       });
-      await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-          this.appService.requestLaunchDetails(
-            JSON.parse(message.value.toString()),
-          );
-        },
-      });
+     await consumer.run({
+       eachMessage: async ({ message }) => {
+       this.logger.log('Received message', message.value.toString());
+       const eventDto: EventDto = {
+      event: JSON.parse(message.value.toString()) as Event,};
+         this.logger.log('Received message', eventDto);
+         await this.appService.requestLaunchDetails(eventDto);       },
+     });
+
     }
+
 
 }
