@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  broadcast-service:
+    image: "marsy/broadcast-service"
+    restart: always
+    ports:
+      - 3021:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

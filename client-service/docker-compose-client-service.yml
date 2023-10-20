@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  client-service:
+    image: "marsy/client-service"
+    restart: always
+    ports:
+      - 3020:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge
