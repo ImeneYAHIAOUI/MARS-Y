@@ -29,10 +29,9 @@ export class AppController {
       });
      await consumer.run({
        eachMessage: async ({ message }) => {
-       this.logger.log('Received message', message.value.toString());
+       this.logger.log('Received event', message.value.toString());
        const eventDto: EventDto = {
-      event: JSON.parse(message.value.toString()) as Event,};
-         this.logger.log('Received message', eventDto);
+      event: message.value.toString() as Event,};
          await this.appService.requestLaunchDetails(eventDto);       },
      });
 

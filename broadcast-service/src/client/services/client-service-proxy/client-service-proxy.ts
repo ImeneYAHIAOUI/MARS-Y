@@ -23,8 +23,8 @@ export class ClientServiceProxy {
                 .toPromise();
             return true;
         } catch (error) {
-            logger.error(`${error.response.data.message || error.message}`);
-            throw new Error(error.response.data.message || error.message);
+            logger.error(`${error.message}`);
+            throw new Error(error.message);
         }
     }
 }
