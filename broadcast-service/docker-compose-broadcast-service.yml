@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   broadcast-service:
-    image: "marsy/broadcast-service"
+    image: "nestjs-marsy/broadcast-service"
     restart: always
     ports:
       - 3021:3000
