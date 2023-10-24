@@ -56,7 +56,6 @@ format_http_code() {
   fi
 }
 
-API_TELEMETRY_URL="http://localhost:3004/telemetry"
 API_MISSION_URL="http://localhost:3000/missions"
 API_SITE_URL="http://localhost:3000/sites"
 API_CONTROL_URL="http://localhost:3001/rockets"
@@ -65,9 +64,9 @@ API_GUIDANCE_URL="http://localhost:3007/mock-guidance"
 API_BOOSTER_URL="http://localhost:3030/booster"
 API_PAYLOAD_URL="http://localhost:3006/payload"
 
-tests1() {
+tests() {
 
-  sleep 1
+ sleep 1
 
   clear
 
@@ -92,7 +91,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 39
+sleep 30
 
 
 
@@ -123,7 +122,49 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 39
+
+sleep 30
+
+TIMESTAMP=$(date +%s)
+LATITUDE=12.3456
+LONGITUDE=78.9012
+ALTITUDE=1000
+ANGLE=45
+SPEED=300
+FUEL=90
+TEMPERATURE=25
+PRESSURE=1013
+HUMIDITY=50
+STAGED=true
+
+JSON_DATA=$(cat <<EOF
+{
+  "rocketId": "$rocket_id",
+  "missionId": "$mission_id",
+  "timestamp": $TIMESTAMP,
+  "latitude": $LATITUDE,
+  "longitude": $LONGITUDE,
+  "altitude": $ALTITUDE,
+  "angle": $ANGLE,
+  "speed": $SPEED,
+  "fuel": $FUEL,
+  "temperature": $TEMPERATURE,
+  "pressure": $PRESSURE,
+  "humidity": $HUMIDITY,
+  "staged": $STAGED
+}
+EOF
+)
+
+clear
+echo "..."
+echo "..."
+echo -e "\n\n\nscenario 2 : send telemetry data to trigger rocket destruction"
+
+API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
+
+rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$API_HARDWARE_URL" -H "Content-Type: application/json" -d "$JSON_DATA")
+echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
 
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
@@ -134,7 +175,7 @@ curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/nul
 
 
 
-tests1 &
+tests &
 
 
 

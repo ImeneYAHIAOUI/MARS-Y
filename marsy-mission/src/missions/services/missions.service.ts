@@ -29,7 +29,8 @@ export class MissionService {
     this.receiveTelemetryListener();
     this.receiveEventListener();
   }
-
+  private readonly Rocket_Destruction_EVENT =
+    'Just in : the rocket is destroyed';
   private kafka = new Kafka({
     clientId: 'missions',
     brokers: ['kafka-service:9092'],
@@ -281,6 +282,12 @@ export class MissionService {
           topic: 'events-web-caster',
           messages: [{ value: message.value.toString() }],
         });
+        if (message.value.toString() === this.Rocket_Destruction_EVENT) {
+          const responseEvent = JSON.parse(message.value.toString());
+          const rocketId = responseEvent.rocketId;
+          const reason = responseEvent.reason;
+          await this.destroyRocket(rocketId, reason);
+        }
         await producer.disconnect();
       },
     });

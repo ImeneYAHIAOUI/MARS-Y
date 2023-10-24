@@ -9,11 +9,12 @@ import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/g
 import { EventDto, Event } from '../dto/event.dto';
 import { Kafka } from 'kafkajs';
 import { TelemetryEvent } from '../dto/telemetry.event';
-
+import * as Constants from '../schema/constants';
 @Injectable()
 export class HardwareService {
   private readonly logger: Logger = new Logger(HardwareService.name);
   private readonly MAX_Q_ALTITUDE: number = 2000;
+
   private rocketCronJob: any;
   private boosterCronJob: any;
   private rockets: {
@@ -366,6 +367,8 @@ export class HardwareService {
       () => {
         if (!this.asleep) {
           const telemetry = this.retrieveTelemetry(rocketId);
+          this.evaluateRocketDestruction(telemetry);
+
           const telemetryStoring = {
             recipient: 'telemetry-storage',
             telemetry: telemetry,
@@ -422,6 +425,86 @@ export class HardwareService {
     );
     this.rocketCronJob.start();
     return true;
+  }
+
+  async evaluateRocketDestruction(
+    telemetryRecord: TelemetryRecordDto,
+  ): Promise<void> {
+    this.logger.log(
+      `Evaluating telemetry for rocket with ID: ${telemetryRecord.rocketId}`,
+    );
+
+    if (
+      telemetryRecord.angle > Constants.MAX_ANGLE ||
+      telemetryRecord.angle < Constants.MIN_ANGLE
+    ) {
+      this.logger.log(
+        `Angle exceeded for rocket ${telemetryRecord.rocketId
+          .slice(-3)
+          .toUpperCase()}. Angle: ${telemetryRecord.angle}`,
+      );
+      await this.destroyRocket(telemetryRecord.rocketId, 'Angle exceeded');
+      return;
+    }
+
+    if (
+      telemetryRecord.altitude > Constants.MAX_ALTITUDE ||
+      telemetryRecord.speed > Constants.MAX_SPEED
+    ) {
+      this.logger.log(
+        `Critical telemetry exceeded for rocket ${telemetryRecord.rocketId
+          .slice(-3)
+          .toUpperCase()}. Altitude: ${telemetryRecord.altitude}, Speed: ${
+          telemetryRecord.speed
+        }`,
+      );
+      await this.destroyRocket(
+        telemetryRecord.rocketId,
+        'Critical telemetry exceeded',
+      );
+      return;
+    }
+
+    if (
+      telemetryRecord.temperature > Constants.MAX_TEMPERATURE ||
+      telemetryRecord.pressure > Constants.MAX_PRESSURE
+    ) {
+      this.logger.log(
+        `Environmental conditions exceeded for rocket ${telemetryRecord.rocketId
+          .slice(-3)
+          .toUpperCase()}. Temperature: ${
+          telemetryRecord.temperature
+        }, Pressure: ${telemetryRecord.pressure}`,
+      );
+      await this.destroyRocket(
+        telemetryRecord.rocketId,
+        'Environmental conditions exceeded',
+      );
+      return;
+    }
+  }
+  async destroyRocket(rocketId: string, reason: string): Promise<void> {
+    try {
+      await this.postMessageToKafka({
+        rocketId: rocketId,
+        event: Event.START_UP_FAILURE,
+        reason: reason,
+      });
+      const formattedRocketId = rocketId.slice(-3).toUpperCase();
+      this.logger.log(
+        `Issuing order to destroy rocket ${formattedRocketId}. Reason: ${reason}`,
+      );
+      await this.postMessageToKafka({
+        rocketId: rocketId,
+        event: Event.Rocket_Destruction,
+      });
+      this.stopSendingTelemetry(rocketId);
+    } catch (error) {
+      this.logger.error(
+        `Error while destroying rocket with ID ${rocketId}: ${error.message}`,
+      );
+      throw error;
+    }
   }
 
   stopSendingTelemetry(rocketId: string): void {
