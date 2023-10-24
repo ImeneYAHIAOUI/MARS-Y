@@ -66,7 +66,38 @@ API_PAYLOAD_URL="http://localhost:3006/payload"
 
 tests() {
 
+ sleep 1
 
+  clear
+
+  echo -e "Starting tests..."
+
+  echo -e "\nrocket 1 : launch rocket without destroying it\n\n\n"
+
+  sleep 1
+
+rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket8","status":"readyForLaunch"}' "${API_CONTROL_URL}")
+rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite8","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
+site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission8","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
+mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+
+
+
+
+
+rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/prepare")
+rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
+rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
+
+sleep 30
+
+
+
+curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
+curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
+curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
 
 sleep 2
 
@@ -92,7 +123,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 
-sleep 10
+sleep 30
 
 TIMESTAMP=$(date +%s)
 LATITUDE=12.3456
@@ -130,7 +161,7 @@ echo "..."
 echo "..."
 echo -e "\n\n\nscenario 2 : send telemetry data to trigger rocket destruction"
 
-API_HARDWARE_URL="http://localhost:3002/evaluateDestruction"
+API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
 rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$API_HARDWARE_URL" -H "Content-Type: application/json" -d "$JSON_DATA")
 echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"

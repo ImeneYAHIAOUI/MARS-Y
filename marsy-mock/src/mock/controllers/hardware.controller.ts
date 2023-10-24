@@ -132,7 +132,8 @@ export class HardwareController {
   @HttpCode(200)
   async evaluateDestruction(
     @Body() telemetry: TelemetryRecordDto,
-  ): Promise<void> {
-    return await this.hardwareService.evaluateRocketDestruction(telemetry);
+  ): Promise<string> {
+    await this.hardwareService.evaluateRocketDestruction(telemetry);
+    return 'ok';
   }
 }
