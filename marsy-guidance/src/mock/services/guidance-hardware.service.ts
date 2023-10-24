@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { DeliveryDto } from '../dto/delivery.dto';
 import * as cron from 'cron';
-import { MarsyHardwarePayloadProxyService } from './marsy-payload-hardware-proxy/marsy-payload-hardware-proxy.service';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import { Kafka } from 'kafkajs';
 import {TelemetryEvent} from "../dto/telemetry.event";
@@ -21,9 +20,7 @@ export class GuidanceHardwareService {
     telemetry: TelemetryRecordDto;
   }[] = [];
 
-  constructor(
-    private readonly marsyPayloadHardwareProxyService: MarsyHardwarePayloadProxyService,
-  ) {
+  constructor() {
     this.hardware();
   }
   private kafka = new Kafka({

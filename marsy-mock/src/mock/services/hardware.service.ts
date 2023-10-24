@@ -5,7 +5,6 @@ import { StagingDto } from '../dto/staging.dto';
 import * as cron from 'cron';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
-import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
 import { EventDto, Event } from '../dto/event.dto';
 import { Kafka } from 'kafkajs';
 import { TelemetryEvent } from '../dto/telemetry.event';
@@ -60,7 +59,6 @@ export class HardwareService {
 
   constructor(
     private readonly marssyMissionProxyService: MarsyMissionProxyService,
-    private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
   ) {}
 
   throttleDown(rocketId: string): boolean {
