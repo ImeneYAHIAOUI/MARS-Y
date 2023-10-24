@@ -1,9 +1,11 @@
+import { PayloadTelemetryDto } from "./payload-telemetry.dto";
 import { TelemetryRecordDto } from "./telemetry-record.dto";
 
 export class EventDto {
     rocketId: string;
     event: Event;
     telemetry: TelemetryRecordDto;
+    payloadTelemetry: PayloadTelemetryDto;
 }
 
 export enum Event {

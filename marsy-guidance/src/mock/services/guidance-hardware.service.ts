@@ -7,6 +7,7 @@ import { MarsyHardwarePayloadProxyService } from './marsy-payload-hardware-proxy
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import { Kafka } from 'kafkajs';
 import {TelemetryEvent} from "../dto/telemetry.event";
+import { EventDto, Event } from '../dto/event.dto';
 
 @Injectable()
 export class GuidanceHardwareService {
@@ -22,11 +23,43 @@ export class GuidanceHardwareService {
 
   constructor(
     private readonly marsyPayloadHardwareProxyService: MarsyHardwarePayloadProxyService,
-  ) {}
+  ) {
+    this.hardware();
+  }
   private kafka = new Kafka({
     clientId: 'telemetry',
     brokers: ['kafka-service:9092'],
   });
+
+  async hardware() {
+    const consumer = this.kafka.consumer({ groupId: 'guidance-group' });
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: 'events-web-caster',
+      fromBeginning: true,
+    });
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        if(message.value.toString().includes('stage separation')) {
+          this.startSendingTelemetry(JSON.parse(message.value.toString()).telemetry);
+        }
+
+      },
+    });
+  }
+  
+  async postMessageToKafka(event: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
+  }
+
+
+
   // throttleDown(rocketId: string): boolean {
   //   this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
   //   let rocketTelemetry = this.rockets.find((rocket) => {
@@ -53,11 +86,14 @@ export class GuidanceHardwareService {
         .toUpperCase()}`,
     );
 
+
     this.stopSendingTelemetry(rocketId);
     return {
       _id: rocketId,
       delivered: true,
     };
+
+
   }
 
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
@@ -195,7 +231,7 @@ export class GuidanceHardwareService {
         .toUpperCase()}`,
     );
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const rocketTelemetry = this.rockets.find((rocket) => {
         return rocket.rocketId === rocketId;
       });
@@ -208,9 +244,16 @@ export class GuidanceHardwareService {
         longitude: rocketTelemetry.telemetry.longitude,
         angle: rocketTelemetry.telemetry.angle,
       };
-      this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.PAYLOAD_DEPLOYMENT,
+      telemetry: payloadTelemetry,
+    });
+    
+      
+     /* this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(
         payloadTelemetry,
-      );
+      );*/
     }, 3000);
   }
 }

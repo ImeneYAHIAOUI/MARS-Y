@@ -38,7 +38,7 @@ export class HardwareService {
 
   private asleep = false;
 
-  async postMessageToKafka(event: EventDto) {
+  async postMessageToKafka(event: any) {
     const producer = this.kafka.producer();
     await producer.connect();
     await producer.send({
@@ -80,14 +80,20 @@ export class HardwareService {
     });
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
+
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.STAGE_SEPARATION,
+      telemetry: rocketTelemetry.telemetry,
+    });
+    
+
     // 9) Second engine start
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.SECOND_ENGINE_START,
     });
-    await this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(
-      rocketTelemetry.telemetry,
-    );
+
 
     this.boosters.push({
       rocketId: rocketId,
