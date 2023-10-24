@@ -24,11 +24,15 @@ export class MissionService {
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
     private readonly siteService: SiteService,
+
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
   ) {
     this.receiveTelemetryListener();
     this.receiveEventListener();
   }
+
+   receivedWeatherStatus: boolean = false;
+   receivedRocketStatus: boolean = false;
 
   private kafka = new Kafka({
     clientId: 'missions',
@@ -137,16 +141,16 @@ export class MissionService {
         throw new MissionNotFoundException(_missionId);
       }
       const _site = await this.siteService.getSiteById(mission.site.toString());
-      const _weatherStatus =
-        await this.marsyWeatherProxyService.retrieveWeatherStatus(
+      
+        this.marsyWeatherProxyService.retrieveWeatherStatus(
           _site.latitude,
           _site.longitude,
         );
 
       const _rocketId = mission.rocket.toString();
-      const _rocketStatus =
-        await this.marsyRocketProxyService.retrieveRocketStatus(_rocketId);
-      logger.log(
+      
+        this.marsyRocketProxyService.retrieveRocketStatus(_rocketId);
+    /*  logger.log(
         `Weather status for mission ${_missionId
           .slice(-3)
           .toUpperCase()}: ${JSON.stringify(_weatherStatus)}`,
@@ -155,8 +159,8 @@ export class MissionService {
         `Rocket status for mission ${_missionId
           .slice(-3)
           .toUpperCase()}: ${JSON.stringify(_rocketStatus)}`,
-      );
-      return _rocketStatus && _weatherStatus;
+      );*/
+      return true;
     } catch (error) {
       logger.error(
         `Error while performing go/no go poll for mission ${_missionId}: ${error.message}`,
@@ -275,6 +279,7 @@ export class MissionService {
     });
     await consumer.run({
       eachMessage: async ({ message }) => {
+        analyse(message.value.toString());
         const producer = this.kafka.producer();
         await producer.connect();
         await producer.send({
@@ -286,3 +291,15 @@ export class MissionService {
     });
   }
 }
+
+function analyse(arg: any) {
+  if(arg.weather == true || arg.weather == false){
+    logger.log(`Received weather status: ${arg.weather}`);
+    this.receivedWeatherStatus = arg.weather;
+  }
+  if(arg.rocket == true || arg.rocket == false){
+    logger.log(`Received rocket status: ${arg.rocket}`);
+    this.receivedRocketStatus = arg.rocket;
+  }
+}
+

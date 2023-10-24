@@ -32,12 +32,21 @@ import { RocketPollDto } from '../dto/rocket-poll.dto';
 import { StageRocketMidFlightDto } from '../../command/dto/stage-rocket-mid-flight.dto';
 import { ControlTelemetryDto } from '../dto/control-telemetry.dto';
 
+
+import { Kafka } from 'kafkajs';
+
 const logger = new Logger('ControlPadController');
 
 @ApiTags('rockets')
 @Controller('/rockets')
 export class RocketController {
   constructor(private readonly rocketService: RocketService) {}
+
+  private kafka = new Kafka({
+    clientId: 'hardware',
+    brokers: ['kafka-service:9092'],
+  });
+
 
   @ApiOkResponse({ type: RocketDto, isArray: true })
   @Get('all')
@@ -143,6 +152,16 @@ export class RocketController {
     }
   }
 
+  async postMessageToKafka(event: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
+  }
+
   @ApiParam({ name: 'rocketId' })
   @ApiCreatedResponse({
     type: RocketPollDto,
@@ -160,6 +179,9 @@ export class RocketController {
     try {
       const rocketId = params.rocketId;
       const poll = await this.rocketService.rocketPoll(rocketId);
+      this.postMessageToKafka({ 
+        rocket: true,
+      });
       return RocketPollDto.RocketPollDtoFactory(poll);
     } catch (error) {
       logger.error(`Error while polling rocket status by ID: ${error.message}`);
