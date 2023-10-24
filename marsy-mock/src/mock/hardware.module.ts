@@ -3,7 +3,6 @@ import { HttpModule } from '@nestjs/axios';
 import { HardwareController } from './controllers/hardware.controller';
 import { HardwareService } from './services/hardware.service';
 import { MarsyMissionProxyService } from './services/marsy-mission-proxy/marsy-mission-proxy.service';
-import { GuidanceHardwareProxyService } from './services/mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
 
 @Module({
   imports: [HttpModule],
@@ -11,7 +10,6 @@ import { GuidanceHardwareProxyService } from './services/mock-guidance-proxy.ser
   providers: [
     HardwareService,
     MarsyMissionProxyService,
-    GuidanceHardwareProxyService
   ],
   exports: [HardwareService],
 })
