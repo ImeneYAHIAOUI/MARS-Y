@@ -6,7 +6,7 @@ import * as cron from 'cron';
 import { MarsyHardwarePayloadProxyService } from './marsy-payload-hardware-proxy/marsy-payload-hardware-proxy.service';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import { Kafka } from 'kafkajs';
-import {TelemetryEvent} from "../dto/telemetry.event";
+import { TelemetryEvent } from '../dto/telemetry.event';
 
 @Injectable()
 export class GuidanceHardwareService {
@@ -126,54 +126,12 @@ export class GuidanceHardwareService {
       '*/3 * * * * *',
       () => {
         const telemetry = this.retrieveTelemetry(latestTelemetry.rocketId);
-        const telemetryStoring = {
-          recipient: 'telemetry',
+        const telemetryMessage = {
+          sender: 'rocket',
           telemetry: telemetry,
           rocketId: telemetry.rocketId,
         };
-        const missionTelemetry = {
-          missionId: telemetry.missionId,
-          timestamp: telemetry.timestamp,
-          latitude: telemetry.latitude,
-          longitude: telemetry.longitude,
-          altitude: telemetry.altitude,
-          angle: telemetry.angle,
-          speed: telemetry.speed,
-          pressure: telemetry.pressure,
-          temperature: telemetry.temperature,
-        };
-        const missionMessage = {
-          recipient: 'mission-telemetry',
-          telemetry: missionTelemetry,
-          rocketId: telemetry.rocketId,
-        };
-        const payloadTelemetry = {
-          missionId: telemetry.missionId,
-          timestamp: telemetry.timestamp,
-          altitude: telemetry.altitude,
-          latitude: telemetry.latitude,
-          longitude: telemetry.longitude,
-          angle: telemetry.angle,
-        };
-        const payloadMessage = {
-          recipient: 'payload-telemetry',
-          telemetry: payloadTelemetry,
-          rocketId: telemetry.rocketId,
-        };
-        const controlTelemetry = {
-          rocketId: telemetry.rocketId,
-          fuel: telemetry.fuel,
-          altitude: telemetry.altitude,
-        };
-        const controlMessage = {
-          recipient: 'controlPad-telemetry',
-          telemetry: controlTelemetry,
-          rocketId: telemetry.rocketId,
-        };
-        this.sendTelemetryToKafka(missionMessage);
-        this.sendTelemetryToKafka(payloadMessage);
-        this.sendTelemetryToKafka(controlMessage);
-        this.sendTelemetryToKafka(telemetryStoring);
+        this.sendTelemetryToKafka(telemetryMessage);
       },
       null,
       true,

@@ -321,29 +321,14 @@ export class HardwareService {
     telemetry: BoosterTelemetryRecordDto,
     rocketId: string,
   ) {
-    const boosterTelemetryStoring = {
-      recipient: 'booster-telemetry-storage',
+    const boosterTelemetry = {
+      sender: 'booster',
       telemetry: telemetry,
       rocketId: rocketId,
     };
-    const boosterTelemetry = {
-      missionId: telemetry.missionId,
-      timestamp: telemetry.timestamp,
-      latitude: telemetry.latitude,
-      longitude: telemetry.longitude,
-      altitude: telemetry.altitude,
-    };
-    const message = {
-      recipient: 'booster-telemetry',
-      telemetry: boosterTelemetry,
-      rocketId: rocketId,
-    };
-    await this.sendTelemetryToKafka(message);
-    await this.sendTelemetryToKafka(boosterTelemetryStoring);
+    await this.sendTelemetryToKafka(boosterTelemetry);
   }
-  //3) Startup (T-00:01:00)
-  // 4) Main engine start (T-00:00:03)
-  // 5) Liftoff/Launch (T+00:00:00)
+
   async startSendingTelemetry(rocketId: string) {
     await this.postMessageToKafka({
       rocketId: rocketId,
@@ -376,54 +361,12 @@ export class HardwareService {
           const telemetry = this.retrieveTelemetry(rocketId);
           this.evaluateRocketDestruction(telemetry);
 
-          const telemetryStoring = {
-            recipient: 'telemetry-storage',
+          const telemetryMessage = {
+            sender: 'rocket',
             telemetry: telemetry,
             rocketId: telemetry.rocketId,
           };
-          const missionTelemetry = {
-            missionId: telemetry.missionId,
-            timestamp: telemetry.timestamp,
-            latitude: telemetry.latitude,
-            longitude: telemetry.longitude,
-            altitude: telemetry.altitude,
-            angle: telemetry.angle,
-            speed: telemetry.speed,
-            pressure: telemetry.pressure,
-            temperature: telemetry.temperature,
-          };
-          const missionMessage = {
-            recipient: 'mission-telemetry',
-            telemetry: missionTelemetry,
-            rocketId: telemetry.rocketId,
-          };
-          const payloadTelemetry = {
-            missionId: telemetry.missionId,
-            timestamp: telemetry.timestamp,
-            altitude: telemetry.altitude,
-            latitude: telemetry.latitude,
-            longitude: telemetry.longitude,
-            angle: telemetry.angle,
-          };
-          const payloadMessage = {
-            recipient: 'payload-telemetry',
-            telemetry: payloadTelemetry,
-            rocketId: telemetry.rocketId,
-          };
-          const controlTelemetry = {
-            rocketId: telemetry.rocketId,
-            fuel: telemetry.fuel,
-            altitude: telemetry.altitude,
-          };
-          const controlMessage = {
-            recipient: 'controlPad-telemetry',
-            telemetry: controlTelemetry,
-            rocketId: telemetry.rocketId,
-          };
-          this.sendTelemetryToKafka(missionMessage);
-          this.sendTelemetryToKafka(payloadMessage);
-          this.sendTelemetryToKafka(controlMessage);
-          this.sendTelemetryToKafka(telemetryStoring);
+          this.sendTelemetryToKafka(telemetryMessage);
         }
       },
       null,

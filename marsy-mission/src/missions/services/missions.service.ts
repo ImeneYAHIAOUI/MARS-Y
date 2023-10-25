@@ -233,15 +233,16 @@ export class MissionService {
   async receiveTelemetryListener(): Promise<void> {
     const consumer = this.kafka.consumer({ groupId: 'mission-consumer-group' });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.subscribe({
+      topic: 'mission-telemetry',
+      fromBeginning: true,
+    });
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if (responseEvent.recipient === 'mission-telemetry') {
-          const telemetry = responseEvent.telemetry;
-          const rocketId = responseEvent.rocketId;
-          await this.evaluateRocketDestruction(rocketId, telemetry);
-        }
+        const telemetry = responseEvent.telemetry;
+        const rocketId = responseEvent.rocketId;
+        await this.evaluateRocketDestruction(rocketId, telemetry);
       },
     });
   }
