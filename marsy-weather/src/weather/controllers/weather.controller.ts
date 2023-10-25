@@ -5,13 +5,18 @@ import { ApiTags } from '@nestjs/swagger';
 import { WeatherDto } from '../../dto/weather.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-
+import { Kafka } from 'kafkajs';
 
 @Controller('weather')
 @ApiTags('weather')
 export class WeatherController {
   private readonly logger = new Logger(WeatherController.name);
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+
+  private kafka = new Kafka({
+    clientId: 'rocket-service',
+    brokers: ['kafka-service:9092'],
+  });
 
   @Get('status')
   async getWeatherStatus(@Query('lat') lat: number, @Query('long') long: number): Promise<{ status: WeatherStatus }> {
@@ -39,8 +44,23 @@ export class WeatherController {
     async pollWeather(@Body() weatherDto: WeatherDto):Promise<{ go: boolean }> {
       const weatherStatusResponse = await this.getWeatherStatus(weatherDto.lat, weatherDto.long);
       const canGo = weatherStatusResponse.status === WeatherStatus.Sunny;
+      this.postMessageToKafka({
+        rocketId: weatherDto.rocketId,
+        weather_poll: true,
+        event : "poll-weather",
+      });
       return {
         go: true,
       };
+    }
+
+    async postMessageToKafka(event: any) {
+      const producer = this.kafka.producer();
+      await producer.connect();
+      await producer.send({
+        topic: 'topic-mission-events',
+        messages: [{ value: JSON.stringify(event) }],
+      });
+      await producer.disconnect();
     }
 }

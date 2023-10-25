@@ -20,11 +20,12 @@ export class MarsyWeatherProxyService {
         const dependenciesConfig = this.configService.get<DependenciesConfig>('dependencies');
         this._baseUrl = `http://${dependenciesConfig.marsy_weather_url_with_port}`;
     }
-    async retrieveWeatherStatus(latitude: number, longitude: number): Promise<boolean> {
+    async retrieveWeatherStatus(latitude: number, longitude: number, rocketId): Promise<boolean> {
         try {
             const weatherDto = new WeatherDto();
             weatherDto.lat = latitude;
             weatherDto.long = longitude;
+            weatherDto.rocketId = rocketId;
             const response: AxiosResponse<GoResponseDto> = await firstValueFrom(
                 this.httpService.post<GoResponseDto>(
                   `${this._baseUrl}${this._weatherPath}`,

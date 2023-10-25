@@ -15,40 +15,32 @@ import { RocketNotFoundException } from '../exceptions/rocket-not-found.exceptio
 import { InvalidStatusException } from '../exceptions/invalid-status.exception';
 import { ControlTelemetryDto } from '../dto/control-telemetry.dto';
 import { HardwareProxyService } from './mock-hardware-proxy.service.ts/hardware-proxy.service';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class RocketService {
   private readonly logger = new Logger('ControlPadService');
+  
 
   constructor(
     @InjectModel(Rocket.name) private rocketModel: Model<RocketDocument>,
     private readonly hardwareProxyService: HardwareProxyService,
   ) { }
 
-  // async handleRocketTelemetry(rocketId: string, telemetryRecordDto: ControlTelemetryDto): Promise<void> {
-  //   try {
-  //     const { fuel, altitude } = telemetryRecordDto;
-  //     const approachingMaxQ = altitude > 3600 && altitude < 4000;
-  //     if (approachingMaxQ) {
-  //       this.throttleDownEngines(rocketId);
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof RocketNotFoundException) {
-  //       this.logger.error(`Rocket with ID ${rocketId} not found`);
-  //     } else {
-  //       this.logger.error(error.message);
-  //     }
-  //   }
-  // }
+  private kafka = new Kafka({
+    clientId: 'rocket-service',
+    brokers: ['kafka-service:9092'],
+  });
 
-  // async throttleDownEngines(rocketId: string): Promise<void> {
-  //   const rocket: Rocket = await this.findRocket(rocketId);
-  //   if (!rocket) {
-  //     throw new RocketNotFoundException(rocketId);
-  //   }
-  //   this.logger.log(`Throttling down engines for rocket ${rocketId}`);
-  //   this.hardwareProxyService.throttleDownEngines(rocketId);
-  // }
+  async postMessageToKafka(event: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
+  }
 
   async findAll(): Promise<RocketDto[]> {
     const allRockets: Rocket[] = await this.rocketModel.find().lean();
@@ -114,6 +106,12 @@ export class RocketService {
 
   async rocketPoll(rocketId: string): Promise<boolean> {
     const rocketStatus = await this.getRocketStatus(rocketId);
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      rocket_poll: true,
+      event : "poll",
+    });
+    
     return rocketStatus === RocketStatus.READY_FOR_LAUNCH;
   }
 

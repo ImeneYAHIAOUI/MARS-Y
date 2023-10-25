@@ -22,6 +22,7 @@ export class CommandService {
     private readonly rocketService: RocketService,
   ) {
     this.receiveTelemetryListener();
+    this.hardware();
   }
 
   private kafka = new Kafka({
@@ -136,8 +137,44 @@ export class CommandService {
       rocketId,
       RocketStatus.READY_FOR_LAUNCH,
     );
+    this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
+    // 4) Go/NoGo Poll
 
-    const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
+    /*
+    const goNogo = await 
+    const commandDto: CommandDto = {
+      decision: '',
+      rocket: null,
+    };
+    await this.rocketService.updateRocketStatus(
+      rocketId,
+      RocketStatus.PRELAUNCH_CHECKS,
+    );
+    if (goNogo) {
+      logger.log(`Starting launch sequence for rocket ${rocketId}.`);
+      commandDto.decision = 'Starting launch sequence.';
+      // 5) Liftoff/Launch (T+00:00:00)
+      commandDto.rocket = await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.IN_FLIGHT,
+      );
+    } else {
+      logger.log(`Can't start launch sequence ${rocketId}.`);
+      commandDto.decision = "Can't start launch sequence.";
+      commandDto.rocket = await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.ABORTED,
+      );
+      logger.warn(`Launch sequence aborted for rocket ${rocketId}.`);
+    }
+    await this.hardwareProxyService.startEmittingTelemetry(rocketId);
+    logger.log(`Telemetry emitting started for rocket ${rocketId}.`);
+*/
+    return null;
+  }
+
+  async sendAbortCommand(rocketId: string, goNogo : boolean): Promise<CommandDto> {
+
     const commandDto: CommandDto = {
       decision: '',
       rocket: null,
@@ -345,6 +382,26 @@ export class CommandService {
           const telemetry = responseEvent.telemetry;
           const rocketId = responseEvent.rocketId;
           await this.handleTelemetry(rocketId, telemetry);
+        }
+      },
+    });
+  }
+
+  async hardware() {
+    const consumer = this.kafka.consumer({ groupId: 'rocket-group' });
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: 'topic-mission-events',
+      fromBeginning: true,
+    });
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        const responseEvent = JSON.parse(message.value.toString());
+        if(responseEvent.mission_poll != undefined ) {
+          this.sendAbortCommand(responseEvent.rocketId, responseEvent.mission_poll);
+         logger.log(`Received poll request for rocket ${responseEvent.rocketId
+          .slice(-3)
+          .toUpperCase()}`);
         }
       },
     });
