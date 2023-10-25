@@ -80,17 +80,17 @@ export class HardwareService {
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
 
-    await this.postMessageToKafka({
-      rocketId: rocketId,
-      event: Event.STAGE_SEPARATION,
-      telemetry: rocketTelemetry.telemetry,
-    });
     
 
     // 9) Second engine start
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.MAXQ,
+    });
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.STAGE_SEPARATION,
+      telemetry: rocketTelemetry.telemetry,
     });
     await this.postMessageToKafka({
       rocketId: rocketId,

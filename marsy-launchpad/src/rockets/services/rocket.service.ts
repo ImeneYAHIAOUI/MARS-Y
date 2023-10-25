@@ -84,7 +84,9 @@ export class RocketService {
   ): Promise<RocketDto> {
     const rocket = await this.findRocket(rocketId);
 
-    this.logger.log(`Updating rocket ${rocketId} status to ${newStatus} - JSON: ${JSON.stringify(rocket)}`)
+    this.logger.log(`Updating rocket ${rocketId
+      .slice(-3)
+      .toUpperCase()} status to ${newStatus} - JSON: ${JSON.stringify(rocket)}`)
 
     // Check if the newStatus is a valid value from the RocketStatus enum
     if (!Object.values(RocketStatus).includes(newStatus)) {
@@ -108,7 +110,7 @@ export class RocketService {
     const rocketStatus = await this.getRocketStatus(rocketId);
     this.postMessageToKafka({
       rocketId: rocketId,
-      rocket_poll: true,
+      rocket_poll: rocketStatus === RocketStatus.READY_FOR_LAUNCH,
       event : "PRELAUNCH_CHECKS : Polling rocket status",
     });
     

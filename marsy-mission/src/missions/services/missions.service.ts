@@ -291,8 +291,8 @@ export class MissionService {
   async checkWeatherRocketStatus(responseEvent: any){
             
     if(responseEvent.rocket_poll != undefined) {
-      logger.debug(
-        `rocket  ${responseEvent.rocketId
+      logger.log(
+        `rocket Id ${responseEvent.rocketId
           .slice(-3)
           .toUpperCase()} status ${responseEvent.rocket_poll} for launch`,
       );
@@ -304,8 +304,8 @@ export class MissionService {
     }
 
     if(responseEvent.weather_poll != undefined) {
-      logger.debug(
-        `weather  ${responseEvent.rocketId
+      logger.log(
+        `weather for rocket Id ${responseEvent.rocketId
           .slice(-3)
           .toUpperCase()} status ${responseEvent.weather_poll} checked before launch`,
       );
