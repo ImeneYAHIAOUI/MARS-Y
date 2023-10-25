@@ -5,7 +5,9 @@ services:
     image: "nestjs-marsy/client-service"
     restart: always
     ports:
-      - 3020:3000
+      - 3025:3000
+    environment:
+      - PAYLOAD_HARDWARE_SERVICE_URL_WITH_PORT=${MARSY_PAYLOAD_HARDWARE_SERVICE}:3000
     networks:
       - nestjs-marsy-network
 networks:

@@ -15,10 +15,11 @@ export class ClientServiceProxy {
         this._baseUrl = `http://${dependenciesConfig.payload_hardware_service_url_with_port}`;
     }
 
-    async requestLaunchDetails(): Promise<boolean> {
+    async requestLaunchDetails(rocketId :string): Promise<boolean> {
         try {
-            const response = await this.httpService
-                .post(`${this._baseUrl}${this._client}/`, { })
+        logger.log(`Requesting launch details from ${this._baseUrl}${this._client}/${rocketId}`);
+        const response = await this.httpService
+                .post(`${this._baseUrl}/payload-hardware${this._client}/${rocketId}`, { })
                 .toPromise();
             return true;
         } catch (error) {

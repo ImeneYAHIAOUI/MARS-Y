@@ -14,6 +14,6 @@ import { ConfigModule } from '@nestjs/config';
        load: [appConfig, swaggeruiConfig,dependenciesConfig],
      }), HttpModule,],
   controllers: [AppController],
-  providers: [AppService,ClientServiceProxy],
+  providers: [ClientServiceProxy,AppService],
 })
 export class AppModule {}
