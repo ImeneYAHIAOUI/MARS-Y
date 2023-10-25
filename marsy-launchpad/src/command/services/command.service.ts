@@ -22,7 +22,7 @@ export class CommandService {
     private readonly rocketService: RocketService,
   ) {
     this.receiveTelemetryListener();
-    this.hardware();
+    this.consymeForPollGoNoGo();
   }
 
   private kafka = new Kafka({
@@ -380,7 +380,7 @@ export class CommandService {
     });
   }
 
-  async hardware() {
+  async consymeForPollGoNoGo() {
     const consumer = this.kafka.consumer({ groupId: 'rocket-group' });
     await consumer.connect();
     await consumer.subscribe({
