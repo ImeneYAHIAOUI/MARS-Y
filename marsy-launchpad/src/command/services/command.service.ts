@@ -329,15 +329,16 @@ export class CommandService {
       groupId: 'controlpad-consumer-group',
     });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.subscribe({
+      topic: 'controlpad-telemetry',
+      fromBeginning: true,
+    });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if (responseEvent.recipient === 'controlPad-telemetry') {
-          const telemetry = responseEvent.telemetry;
-          const rocketId = responseEvent.rocketId;
-          await this.handleTelemetry(rocketId, telemetry);
-        }
+        const telemetry = responseEvent.telemetry;
+        const rocketId = responseEvent.rocketId;
+        await this.handleTelemetry(rocketId, telemetry);
       },
     });
   }

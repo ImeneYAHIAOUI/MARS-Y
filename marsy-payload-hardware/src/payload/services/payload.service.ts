@@ -30,7 +30,7 @@ export class PayloadHardwareService {
           telemetry.missionId,
         );
         const message = {
-          recipient: 'payload-delivery-telemetry',
+          sender: 'payload-hardware',
           telemetry: payloadTelemetry,
         };
         this.logger.debug('sending telemetry to kafka 3');

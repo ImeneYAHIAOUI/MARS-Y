@@ -1,5 +1,5 @@
 export class TelemetryEvent {
   rocketId: string;
-  recipient: string;
+  sender: string;
   telemetry: object;
 }
