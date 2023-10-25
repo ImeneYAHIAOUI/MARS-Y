@@ -25,5 +25,5 @@ export enum Event {
   LANDING_LEG_DEPLOYMENT = 'Just in : the rocket is deploying its landing legs',
   LANDING = 'Just in : the rocket landed',
   START_UP_FAILURE = 'Just in : start up failure',
-  Rocket_Destruction = 'Just in : the rocket is destroyed',
+  ROCKET_DESTRUCTION = 'Just in : the rocket is destroyed',
 }
