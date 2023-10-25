@@ -1,6 +1,6 @@
 import { Controller, Get, Post , Logger } from '@nestjs/common';
 import { AppService } from '../services/app.service';
-import { Kafka } from 'kafkajs';
+import { Kafka,EachMessagePayload } from 'kafkajs';
 @Controller()
 export class AppController {
     private readonly logger = new Logger(AppController.name);
@@ -36,22 +36,34 @@ async receiveEventListener(): Promise<void> {
   });
 
   await consumer.run({
-    eachMessage: async ({ message }) => {
-      const messageValue = message.value.toString();
-        this.logger.log(`Received event: ${messageValue}`);
+    eachMessage: async ({ topic, partition, message }:EachMessagePayload ) => {
+      const messageValue = message.value?.toString();
+      const messageKey = message.key?.toString();
+       this.logger.log(`Received event  ${messageValue} from payload service`);
       if (messageValue === 'DELIVERED') {
-        const producer = this.kafka.producer();
-        await producer.connect();
+        this.logger.log(`Payload of rocket ${messageKey} has been delivered.`);
+        // envoyez a Payload Hardware Service
 
-        await producer.send({
-          topic: 'events-broadcast',
-          messages: [{ value: 'LAUNCHED' }],
-        });
-        this.logger.log('Sent event to broadcast service: LAUNCHED');
-        await producer.disconnect();
       }
     },
   });
+    const consumer1 = this.kafka.consumer({
+      groupId: 'client-service-group-1',
+    });
+
+    await consumer1.connect();
+    await consumer1.subscribe({
+      topic: 'broadcast-events',
+      fromBeginning: true,
+    });
+
+  await consumer1.run({
+    eachMessage: async ({ message }) => {
+      const messageValue = message.value.toString();
+      const messageKey = message.key.toString();
+       this.logger.log(`Received event  ${messageValue} from broadcast service`);
+    },}
+  );
 }
 
 

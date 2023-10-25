@@ -16,6 +16,7 @@ import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 @Controller('/payload-hardware')
 export class PayloadHardwareController {
   private readonly logger = new Logger('PayloadHardwareController');
+
   constructor(private readonly payloadService: PayloadHardwareService) { }
 
   @Get()
@@ -37,5 +38,18 @@ export class PayloadHardwareController {
     );
 
   }
+   @ApiNotFoundResponse({
+      type: RocketNotFoundException,
+      description: 'Rocket not found',
+    })
+    @Post('/broadcast')
+    @HttpCode(200)
+    async sendDetailsToBroadCast(
+      @Body() telemetry: PayloadTelemetryDto,
+    ): Promise<void> {
+      this.logger.log('Received request to launch payload');
+      return await this.payloadService.sendDetailsToBroadCastService();
+
+    }
  
 }

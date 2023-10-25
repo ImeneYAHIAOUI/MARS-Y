@@ -61,6 +61,33 @@ export class PayloadHardwareService {
     // Log the cron job starting
     this.rocketCronJob.start();
   }
+  async sendDetailsToBroadCastService(){
+   const producer = this.kafka.producer();
+   await producer.connect();
+await producer.send({
+  topic: 'broadcast-service',
+  messages: [
+    {
+      value: JSON.stringify({
+        launchPayload: {
+          payloadType: 'Satellite',
+          satelliteName: 'Satellite-1',
+          purpose: 'Communication',
+          orbitType: 'Geostationary',
+          weightKg: 1500,
+          launchDate: '2023-11-15',
+          manufacturer: 'XYZ Aerospace',
+          communicationFrequency: 'Ku-band',
+          powerSource: 'Solar Panels',
+          operationalLifeYears: 15
+        }
+      })
+    }
+  ]
+});
+   await producer.disconnect();
+   this.logger.log('Details sent to broadcast service');
+  }
 
   async retrieveTelemetry(missionId: string): Promise<PayloadTelemetryDto> {
     const telemetry = this.telemetries.find((t) => t.missionId === missionId);

@@ -10,10 +10,10 @@ const logger = new Logger('ClientServiceProxy');
 @Injectable()
 export class ClientServiceProxy {
     private _baseUrl: string;
-    private _client = '/send';
+    private _client = '/broadcast';
     constructor(private configService: ConfigService, private readonly httpService: HttpService) {
         const dependenciesConfig = this.configService.get<DependenciesConfig>('dependencies');
-        this._baseUrl = `http://${dependenciesConfig.client_service_url_with_port}`;
+        this._baseUrl = `http://${dependenciesConfig.payload_hardware_service_url_with_port}`;
     }
 
     async requestLaunchDetails(): Promise<boolean> {
@@ -29,4 +29,3 @@ export class ClientServiceProxy {
     }
 }
 
-  

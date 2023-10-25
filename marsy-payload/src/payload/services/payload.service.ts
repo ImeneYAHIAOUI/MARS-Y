@@ -16,7 +16,7 @@ export class PayloadService {
     private readonly logger = new Logger(PayloadService.name);
 
  private kafka = new Kafka({
-    clientId: 'client-service',
+    clientId: 'payload-hardware',
     brokers: ['kafka-service:9092'],
   });
   constructor(
@@ -52,14 +52,16 @@ export class PayloadService {
         } - angle: ${telemetry.angle.toPrecision(2)}`,
       );
 
-      const producer = this.kafka.producer();
-              await producer.connect();
-              await producer.send({
-                topic: 'client-service-events',
-                messages: [{ value: 'DELIVERED' }],
-              });
-      await producer.disconnect();
-      this.logger.log('Event sent to client service');
+     try {
+        await producer.connect();
+        await producer.send({
+          topic: 'client-service-events',
+          messages: [{ value: 'DELIVERED', key: rocketId }],
+        });
+    this.logger.log(`Event sent to inform the client service about the payload delivery of rocket ID ${rocketId}`);
+      } finally {
+        await producer.disconnect();
+      }
       const payloadDelivery =
         await this.marsyLaunchpadProxyService.notifyCommandPadOfOrbitReach(
           rocketId,
