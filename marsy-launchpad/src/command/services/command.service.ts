@@ -38,23 +38,7 @@ export class CommandService {
       );
       const approachingMaxQ =
         telemetry.altitude > 3600 && telemetry.altitude < 4400;
-      // 6) MaxQ
 
-      const event = {
-        rocketId: rocketId,
-        event: `MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
-      };
-      const producer = this.kafka.producer();
-      await producer.connect();
-      await producer.send({
-        topic: 'topic-mission-events',
-        messages: [
-          {
-            value: JSON.stringify(event),
-          },
-        ],
-      });
-      await producer.disconnect();
       if (approachingMaxQ) {
         logger.warn(
           `Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
@@ -64,7 +48,15 @@ export class CommandService {
             .slice(-3)
             .toUpperCase()}`,
         );
-        this.hardwareProxyService.throttleDownEngines(rocketId);
+        await this.hardwareProxyService.throttleDownEngines(rocketId);
+        logger.warn(
+          `Reached MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
+        );
+        logger.warn(
+          `Throttling up engines for rocket ${rocketId
+            .slice(-3)
+            .toUpperCase()}`,
+        );
       }
     } catch (error) {
       logger.error(
@@ -374,15 +366,16 @@ export class CommandService {
       groupId: 'controlpad-consumer-group',
     });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.subscribe({
+      topic: 'controlpad-telemetry',
+      fromBeginning: true,
+    });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if (responseEvent.recipient === 'controlPad-telemetry') {
-          const telemetry = responseEvent.telemetry;
-          const rocketId = responseEvent.rocketId;
-          await this.handleTelemetry(rocketId, telemetry);
-        }
+        const telemetry = responseEvent.telemetry;
+        const rocketId = responseEvent.rocketId;
+        await this.handleTelemetry(rocketId, telemetry);
       },
     });
   }

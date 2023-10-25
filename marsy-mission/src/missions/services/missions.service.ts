@@ -29,7 +29,8 @@ export class MissionService {
     this.receiveTelemetryListener();
     this.receiveEventListener();
   }
-
+  private readonly Rocket_Destruction_EVENT =
+    'Just in : the rocket is destroyed';
   private kafka = new Kafka({
     clientId: 'missions',
     brokers: ['kafka-service:9092'],
@@ -76,25 +77,6 @@ export class MissionService {
         );
         await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
         return;
-      }
-      if (altitude > Constants.MAX_ALTITUDE_MAIN) {
-        const event = {
-          rocketId: rocketId,
-          event: `Main engine cutoff for rocket ${rocketId
-            .slice(-3)
-            .toUpperCase()}`,
-        };
-        const producer = this.kafka.producer();
-        await producer.connect();
-        await producer.send({
-          topic: 'topic-mission-events',
-          messages: [
-            {
-              value: JSON.stringify(event),
-            },
-          ],
-        });
-        await producer.disconnect();
       }
 
       logger.log(
@@ -249,15 +231,16 @@ export class MissionService {
   async receiveTelemetryListener(): Promise<void> {
     const consumer = this.kafka.consumer({ groupId: 'mission-consumer-group' });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.subscribe({
+      topic: 'mission-telemetry',
+      fromBeginning: true,
+    });
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if (responseEvent.recipient === 'mission-telemetry') {
-          const telemetry = responseEvent.telemetry;
-          const rocketId = responseEvent.rocketId;
-          await this.evaluateRocketDestruction(rocketId, telemetry);
-        }
+        const telemetry = responseEvent.telemetry;
+        const rocketId = responseEvent.rocketId;
+        await this.evaluateRocketDestruction(rocketId, telemetry);
       },
     });
   }
@@ -292,6 +275,12 @@ export class MissionService {
           topic: 'events-web-caster',
           messages: [{ value: message.value.toString() }],
         });
+        if (message.value.toString() === this.Rocket_Destruction_EVENT) {
+          const responseEvent = JSON.parse(message.value.toString());
+          const rocketId = responseEvent.rocketId;
+          const reason = responseEvent.reason;
+          await this.destroyRocket(rocketId, reason);
+        }
         await producer.disconnect();
       }
       },
