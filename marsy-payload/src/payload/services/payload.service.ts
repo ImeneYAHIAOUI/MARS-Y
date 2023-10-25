@@ -51,12 +51,16 @@ export class PayloadService {
           telemetry.longitude
         } - angle: ${telemetry.angle.toPrecision(2)}`,
       );
-
+    const producer = this.kafka.producer();
      try {
+     const payload = {
+       message: 'DELIVERED',
+       rocketId: rocketId,
+     };
         await producer.connect();
         await producer.send({
           topic: 'client-service-events',
-          messages: [{ value: 'DELIVERED', key: rocketId }],
+          messages: [{ value: JSON.stringify(payload) }],
         });
     this.logger.log(`Event sent to inform the client service about the payload delivery of rocket ID ${rocketId}`);
       } finally {

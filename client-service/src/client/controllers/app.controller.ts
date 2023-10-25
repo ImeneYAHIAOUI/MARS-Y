@@ -37,11 +37,13 @@ async receiveEventListener(): Promise<void> {
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }:EachMessagePayload ) => {
-      const messageValue = message.value?.toString();
-      const messageKey = message.key?.toString();
+      const payload = JSON.parse(message.value.toString());
+      const messageValue = payload.message?.toString();
+      const messageKey = payload.rocketId?.toString();
        this.logger.log(`Received event  ${messageValue} from payload service`);
       if (messageValue === 'DELIVERED') {
         this.logger.log(`Payload of rocket ${messageKey} has been delivered.`);
+
         // envoyez a Payload Hardware Service
 
       }
