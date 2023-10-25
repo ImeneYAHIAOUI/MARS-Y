@@ -10,7 +10,7 @@ constructor(private readonly clientServiceProxy: ClientServiceProxy) {
   getService(): string {
     return 'Welcome to the client service!';
   }
-    announceEvent(event: EventDto): void {
+    announceEvent(rocketId : string): void {
     this.clientServiceProxy.requestLaunchDetails();
     }
 

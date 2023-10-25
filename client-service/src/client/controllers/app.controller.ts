@@ -42,8 +42,8 @@ async receiveEventListener(): Promise<void> {
       const messageKey = payload.rocketId?.toString();
        this.logger.log(`Received event  ${messageValue} from payload service`);
       if (messageValue === 'DELIVERED') {
-        this.logger.log(`Payload of rocket ${messageKey} has been delivered.`);
-
+        this.logger.log(`Payload of rocket ${messageKey}.slice(-3).toUpperCase() has been delivered.`);
+        this.appService.announceEvent(messageKey);
         // envoyez a Payload Hardware Service
 
       }

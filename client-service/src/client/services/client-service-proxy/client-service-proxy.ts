@@ -4,7 +4,6 @@ import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { DependenciesConfig } from '../../../shared/config/interfaces/dependencies-config.interface';
-
 const logger = new Logger('ClientServiceProxy');
 
 @Injectable()
