@@ -78,25 +78,6 @@ export class MissionService {
         await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
         return;
       }
-      if (altitude > Constants.MAX_ALTITUDE_MAIN) {
-        const event = {
-          rocketId: rocketId,
-          event: `Main engine cutoff for rocket ${rocketId
-            .slice(-3)
-            .toUpperCase()}`,
-        };
-        const producer = this.kafka.producer();
-        await producer.connect();
-        await producer.send({
-          topic: 'topic-mission-events',
-          messages: [
-            {
-              value: JSON.stringify(event),
-            },
-          ],
-        });
-        await producer.disconnect();
-      }
 
       logger.log(
         `Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`,

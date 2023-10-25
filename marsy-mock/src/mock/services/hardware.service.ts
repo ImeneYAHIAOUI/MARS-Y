@@ -60,7 +60,7 @@ export class HardwareService {
   }
 
   constructor(
-    private readonly marssyMissionProxyService: MarsyMissionProxyService,
+    private readonly marsyMissionProxyService: MarsyMissionProxyService,
     private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
   ) {}
 
@@ -81,7 +81,14 @@ export class HardwareService {
     });
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
-    // 9) Second engine start
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.MAXQ,
+    });
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.MAIN_ENGINE_CUTOFF,
+    });
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.SECOND_ENGINE_START,
@@ -353,7 +360,7 @@ export class HardwareService {
         .toUpperCase()}`,
     );
     const missionId: string = (
-      await this.marssyMissionProxyService.getMission(rocketId)
+      await this.marsyMissionProxyService.getMission(rocketId)
     )._id;
     this.rockets.push({
       rocketId: rocketId,
@@ -496,7 +503,7 @@ export class HardwareService {
       );
       await this.postMessageToKafka({
         rocketId: rocketId,
-        event: Event.Rocket_Destruction,
+        event: Event.ROCKET_DESTRUCTION,
       });
       this.stopSendingTelemetry(rocketId);
     } catch (error) {
