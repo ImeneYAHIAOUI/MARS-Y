@@ -47,7 +47,7 @@ export class WeatherController {
       this.postMessageToKafka({
         rocketId: weatherDto.rocketId,
         weather_poll: true,
-        event : "poll-weather",
+        event : "PRELAUNCH_CHECKS : Polling weather status",
       });
       return {
         go: true,

@@ -109,7 +109,7 @@ export class RocketService {
     this.postMessageToKafka({
       rocketId: rocketId,
       rocket_poll: true,
-      event : "poll",
+      event : "PRELAUNCH_CHECKS : Polling rocket status",
     });
     
     return rocketStatus === RocketStatus.READY_FOR_LAUNCH;

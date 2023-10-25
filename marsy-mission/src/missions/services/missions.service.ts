@@ -284,38 +284,45 @@ export class MissionService {
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if(responseEvent.rocket_poll != undefined) {
-          logger.debug(
-            `rocket  ${responseEvent.rocketId
-              .slice(-3)
-              .toUpperCase()} status ${responseEvent.rocket_poll} for launch`,
-          );
-          await this.postMessageToKafka({
-            rocketId: responseEvent.rocketId,
-            event: "go mission",
-            mission_poll: responseEvent.rocket_poll,
-          });
-        }
-
-        if(responseEvent.weather_poll != undefined) {
-          logger.debug(
-            `weather  ${responseEvent.rocketId
-              .slice(-3)
-              .toUpperCase()} status ${responseEvent.rocket_poll} checked before launch`,
-          );
-          if(responseEvent.weather_poll == true) {
-          await this.marsyRocketProxyService.retrieveRocketStatus(responseEvent.rocketId);
-        }
-      }
-
+        await this.checkWeatherRocketStatus(responseEvent);
         const producer = this.kafka.producer();
         await producer.connect();
+        if(!responseEvent.event.includes("PRELAUNCH_CHECKS") ) {
         await producer.send({
           topic: 'events-web-caster',
           messages: [{ value: message.value.toString() }],
         });
         await producer.disconnect();
+      }
       },
+      
     });
+  }
+
+  async checkWeatherRocketStatus(responseEvent: any){
+            
+    if(responseEvent.rocket_poll != undefined) {
+      logger.debug(
+        `rocket  ${responseEvent.rocketId
+          .slice(-3)
+          .toUpperCase()} status ${responseEvent.rocket_poll} for launch`,
+      );
+      await this.postMessageToKafka({
+        rocketId: responseEvent.rocketId,
+        event : "PRELAUNCH_CHECKS : GO/NOGO Mission",
+        mission_poll: responseEvent.rocket_poll,
+      });
+    }
+
+    if(responseEvent.weather_poll != undefined) {
+      logger.debug(
+        `weather  ${responseEvent.rocketId
+          .slice(-3)
+          .toUpperCase()} status ${responseEvent.weather_poll} checked before launch`,
+      );
+      if(responseEvent.weather_poll == true) {
+      await this.marsyRocketProxyService.retrieveRocketStatus(responseEvent.rocketId);
+    }
+  }
   }
 }
