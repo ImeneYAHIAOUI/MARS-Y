@@ -34,7 +34,7 @@ async launch_events_listener() {
               this.logger.log('start broadcasting');
               this.sendEventToClientService('BROADCASTING STARTED', responseEvent.rocketId.toString());
            }
-           if (responseEvent.messageNumber === 2 ) {
+           if (responseEvent.messageNumber === 3 ) {
                 this.sendEventToClientService('BROADCASTING TERMINATED', responseEvent.rocketId.toString());
                 this.logger.log('broadcasting terminated');
            }
