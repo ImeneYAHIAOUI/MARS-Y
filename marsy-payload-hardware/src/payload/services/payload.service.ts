@@ -109,10 +109,6 @@ async sendDetailsToBroadcastService(rocketId: string) {
                const randomSpeed = Math.random() * (5000 - 1000) + 1000;
                const directions = ['north', 'south', 'east', 'west'];
                const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-               let lastone = false;
-               if (this.cronBroadCastRunCount === 2) {
-                   lastone = true;
-               }
                const satelliteDetails = {
                   messageNumber: this.cronBroadCastRunCount,
                   rocketId: rocketId,
@@ -120,9 +116,7 @@ async sendDetailsToBroadcastService(rocketId: string) {
                   longitude: randomLongitude,
                   speed: randomSpeed,
                   direction: randomDirection,
-                  LastMessage: lastone
                };
-
                const message = {
                   value: JSON.stringify(satelliteDetails)
                };

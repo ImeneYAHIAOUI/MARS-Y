@@ -34,19 +34,19 @@ async launch_events_listener() {
               this.logger.log('start broadcasting');
               this.sendEventToClientService('BROADCASTING STARTED', responseEvent.rocketId.toString());
            }
-           if (responseEvent.LastMessage === true) {
+           if (responseEvent.messageNumber === 2 ) {
                 this.sendEventToClientService('BROADCASTING TERMINATED', responseEvent.rocketId.toString());
                 this.logger.log('broadcasting terminated');
            }
-               this.logger.log(`New message received with satellite details of rocket with id ${id}:`);
-               const lat= responseEvent.latitude.toString();
-               this.logger.log('- Latitude: ${lat}' );
-               const long= responseEvent.longitude.toString();
-               this.logger.log('- Longitude: ${long}');
-               const speed= responseEvent.speed.toString();
-               this.logger.log('- Speed: ${speed} ');
-                const direction= responseEvent.direction.toString();
-               this.logger.log('- Direction: ${direction} ');
+          this.logger.log(`New message received with satellite details of rocket with ID ${id}:`);
+          const lat = responseEvent.latitude.toString();
+          this.logger.log(`- Latitude: ${lat}`);
+          const long = responseEvent.longitude.toString();
+          this.logger.log(`- Longitude: ${long}`);
+          const speed = responseEvent.speed.toString();
+          this.logger.log(`- Speed: ${speed}`);
+          const direction = responseEvent.direction.toString();
+          this.logger.log(`- Direction: ${direction}`);
             } catch (error) {
                this.logger.error('Error processing satellite details of rocket with id ${id}:', error);
             }
