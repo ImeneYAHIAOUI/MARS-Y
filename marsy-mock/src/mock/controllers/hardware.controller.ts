@@ -136,4 +136,18 @@ export class HardwareController {
     await this.hardwareService.evaluateRocketDestruction(telemetry);
     return 'ok';
   }
+
+  @Post('sleep')
+  @HttpCode(200)
+  async sleep(): Promise<string> {
+    this.hardwareService.sleep();
+    return 'ok';
+  }
+
+  @Post('wake')
+  @HttpCode(200)
+  async wake(): Promise<string> {
+    this.hardwareService.wake();
+    return 'ok';
+  }
 }
