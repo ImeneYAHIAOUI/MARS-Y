@@ -119,16 +119,14 @@ export class MissionService {
         throw new MissionNotFoundException(_missionId);
       }
       const _site = await this.siteService.getSiteById(mission.site.toString());
-      const _weatherStatus =
-        await this.marsyWeatherProxyService.retrieveWeatherStatus(
+      const _rocketId = mission.rocket.toString();
+
+      this.marsyWeatherProxyService.retrieveWeatherStatus(
           _site.latitude,
           _site.longitude,
+          _rocketId,
         );
-
-      const _rocketId = mission.rocket.toString();
-      const _rocketStatus =
-        await this.marsyRocketProxyService.retrieveRocketStatus(_rocketId);
-      logger.log(
+    /*  logger.log(
         `Weather status for mission ${_missionId
           .slice(-3)
           .toUpperCase()}: ${JSON.stringify(_weatherStatus)}`,
@@ -137,8 +135,8 @@ export class MissionService {
         `Rocket status for mission ${_missionId
           .slice(-3)
           .toUpperCase()}: ${JSON.stringify(_rocketStatus)}`,
-      );
-      return _rocketStatus && _weatherStatus;
+      );*/
+      return true;
     } catch (error) {
       logger.error(
         `Error while performing go/no go poll for mission ${_missionId}: ${error.message}`,
@@ -247,6 +245,16 @@ export class MissionService {
     });
   }
 
+  async postMessageToKafka(event: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
+  }
+
   async receiveEventListener(): Promise<void> {
     const consumer = this.kafka.consumer({
       groupId: 'mission-consumer-group2',
@@ -258,8 +266,11 @@ export class MissionService {
     });
     await consumer.run({
       eachMessage: async ({ message }) => {
+        const responseEvent = JSON.parse(message.value.toString());
+        await this.checkWeatherRocketStatus(responseEvent);
         const producer = this.kafka.producer();
         await producer.connect();
+        if(!responseEvent.event.includes("PRELAUNCH_CHECKS") ) {
         await producer.send({
           topic: 'events-web-caster',
           messages: [{ value: message.value.toString() }],
@@ -271,7 +282,36 @@ export class MissionService {
           await this.destroyRocket(rocketId, reason);
         }
         await producer.disconnect();
+      }
       },
+      
     });
+  }
+
+  async checkWeatherRocketStatus(responseEvent: any){
+            
+    if(responseEvent.rocket_poll != undefined) {
+      logger.log(
+        `rocket Id ${responseEvent.rocketId
+          .slice(-3)
+          .toUpperCase()} status ${responseEvent.rocket_poll} for launch`,
+      );
+      await this.postMessageToKafka({
+        rocketId: responseEvent.rocketId,
+        event : "PRELAUNCH_CHECKS : GO/NOGO Mission",
+        mission_poll: responseEvent.rocket_poll,
+      });
+    }
+
+    if(responseEvent.weather_poll != undefined) {
+      logger.log(
+        `weather for rocket Id ${responseEvent.rocketId
+          .slice(-3)
+          .toUpperCase()} status ${responseEvent.weather_poll} checked before launch`,
+      );
+      if(responseEvent.weather_poll == true) {
+      await this.marsyRocketProxyService.retrieveRocketStatus(responseEvent.rocketId);
+    }
+  }
   }
 }

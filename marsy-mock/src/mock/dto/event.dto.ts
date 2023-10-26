@@ -1,6 +1,9 @@
+import { TelemetryRecordDto } from "./telemetry-record.dto";
+
 export class EventDto {
-  rocketId: string;
-  event: Event;
+    rocketId: string;
+    event: Event;
+    telemetry: TelemetryRecordDto;
   reason?: string;
 }
 

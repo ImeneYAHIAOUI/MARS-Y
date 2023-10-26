@@ -10,11 +10,42 @@ export class PayloadHardwareService {
   private readonly MAX_CRON_RUNS = 3;
   private cronRunCount = 0;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
+  constructor() {
+    this.hardware();
+  }
   private kafka = new Kafka({
     clientId: 'payload-hardware',
     brokers: ['kafka-service:9092'],
   });
+
+  async hardware() {
+    const consumer = this.kafka.consumer({ groupId: 'payload-hardware-group' });
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: 'events-web-caster',
+      fromBeginning: true,
+    });
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        if(message.value.toString().includes('the rocket deployed its payload')) {
+          this.startSendingTelemetry(JSON.parse(message.value.toString()).telemetry);
+        }
+
+      },
+    });
+  }
+  
+  async postMessageToKafka(event: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
+  }
+
+
   private readonly logger: Logger = new Logger(PayloadHardwareService.name);
   private telemetries: PayloadTelemetryDto[] = [];
   private rocketCronJob: any;
