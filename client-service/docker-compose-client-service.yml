@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  client-service:
+    image: "nestjs-marsy/client-service"
+    restart: always
+    ports:
+      - 3025:3000
+    environment:
+      - PAYLOAD_HARDWARE_SERVICE_URL_WITH_PORT=${MARSY_PAYLOAD_HARDWARE_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

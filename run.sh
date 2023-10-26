@@ -13,6 +13,8 @@ services=(
     "marsy-mock:marsy-mock/docker-compose-marsy-mock.yml"
     "marsy-payload-hardware:marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml"
     "marsy-webcaster:marsy-webcaster/docker-compose-marsy-webcaster.yml"
+    "client-service:client-service/docker-compose-client-service.yml"
+    "broadcast-service:broadcast-service/docker-compose-broadcast-service.yml"
 )
 container_ids=()
 
@@ -193,6 +195,8 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
+                --file client-service/client-service/docker-compose-client-service.yml \
+                --file broadcast-service/broadcast-service/docker-compose-broadcast-service.yml \
                 logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon' 
 
                 
