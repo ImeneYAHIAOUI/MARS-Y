@@ -45,9 +45,9 @@ async receiveEventListener(): Promise<void> {
         const rocket=messageKey.slice(-3).toUpperCase()
         this.logger.log(`Payload of rocket ${rocket} has been delivered.`);
         this.appService.announceEvent(messageKey);
-      }else if(messageValue === 'BROADCASTING TERMINATED'){
+      }else if(messageValue === 'BROADCASTING STARTED'){
         this.logger.log(`broadcast service started broadcasting`);
-      }else if(messageValue === 'BROADCASTING STOPPED'){
+      }else if(messageValue === 'BROADCASTING TERMINATED'){
         this.logger.log(`broadcast service stopped broadcasting`);
       }
     },
