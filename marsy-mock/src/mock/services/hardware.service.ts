@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { StagingDto } from '../dto/staging.dto';
@@ -11,6 +11,7 @@ import { TelemetryEvent } from '../dto/telemetry.event';
 import * as Constants from '../schema/constants';
 @Injectable()
 export class HardwareService {
+  private runtimes = 0;
   private readonly logger: Logger = new Logger(HardwareService.name);
   private readonly MAX_Q_ALTITUDE: number = 2000;
 
@@ -63,6 +64,9 @@ export class HardwareService {
   ) {}
 
   throttleDown(rocketId: string): boolean {
+    if (this.asleep) {
+      throw new HttpException('An error was encoutered while connecting to the Hardware.',HttpStatus.BAD_REQUEST);
+    }
     this.logger.log(
       `Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`,
     );
@@ -335,6 +339,7 @@ export class HardwareService {
   }
 
   async startSendingTelemetry(rocketId: string) {
+    this.runtimes++;
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.START_UP,
@@ -386,7 +391,7 @@ export class HardwareService {
     telemetryRecord: TelemetryRecordDto,
   ): Promise<void> {
     this.logger.log(
-      `Evaluating telemetry for rocket with ID: ${telemetryRecord.rocketId}`,
+      `Evaluating telemetry for rocket : ${telemetryRecord.rocketId.slice(-3).toUpperCase()}`,
     );
 
     if (
@@ -456,14 +461,23 @@ export class HardwareService {
       this.stopSendingTelemetry(rocketId);
     } catch (error) {
       this.logger.error(
-        `Error while destroying rocket with ID ${rocketId}: ${error.message}`,
+        `Error while destroying rocket ${rocketId.slice(-3).toUpperCase()}: ${error.message}`,
       );
       throw error;
     }
   }
 
+  sleep(): void {
+    this.asleep = true;
+  }
+
+  wake(): void {
+    this.logger.debug(`Rebooted : Resending telemetry`);
+    this.asleep = false;
+  }
+
   stopSendingTelemetry(rocketId: string): void {
-    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
+    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
     this.rocketCronJob.stop();
   }
 }

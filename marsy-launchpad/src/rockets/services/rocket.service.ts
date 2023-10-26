@@ -84,9 +84,7 @@ export class RocketService {
   ): Promise<RocketDto> {
     const rocket = await this.findRocket(rocketId);
 
-    this.logger.log(`Updating rocket ${rocketId
-      .slice(-3)
-      .toUpperCase()} status to ${newStatus} - JSON: ${JSON.stringify(rocket)}`)
+    this.logger.log(`Updating rocket ${rocketId.slice(-3).toUpperCase()} status to ${newStatus}`)
 
     // Check if the newStatus is a valid value from the RocketStatus enum
     if (!Object.values(RocketStatus).includes(newStatus)) {

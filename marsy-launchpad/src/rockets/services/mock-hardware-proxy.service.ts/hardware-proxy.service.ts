@@ -24,7 +24,7 @@ export class HardwareProxyService {
     rocketId: string
   ): Promise<void> {
     try {
-      this.logger.log(`Sending explosion order to rocket id : ${rocketId}`);
+      this.logger.log(`Sending explosion order to rocket : ${rocketId.slice(-3).toUpperCase()}`);
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._mockPath}/${rocketId}/destroy`,

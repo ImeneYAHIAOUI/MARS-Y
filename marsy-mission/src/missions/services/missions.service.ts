@@ -41,8 +41,17 @@ export class MissionService {
     telemetryRecord: MissionTelemetryDto,
   ): Promise<void> {
     try {
-      logger.log(`Evaluating telemetry for rocket with ID: ${rocketId}`);
-      await this.getMissionByRocketId(rocketId);
+      logger.log(`Evaluating telemetry for the rocket : ${rocketId.slice(-3).toUpperCase()}`);
+      const mission = await this.getMissionByRocketId(rocketId);
+
+      if (mission.status === MissionStatus.FAILED) {
+        logger.log(`Received telemetry from malfunctioning rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()} for failed mission ${mission._id
+          }. `);
+        await this.destroyRocket(rocketId, 'Mission failed');
+        return;
+      }
 
       const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
 
@@ -80,7 +89,7 @@ export class MissionService {
       }
 
       logger.log(
-        `Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`,
+        `Telemetry for rocket ${rocketId.slice(-3).toUpperCase()} is within safe parameters. No need for destruction.`,
       );
     } catch (error) {
       if (error instanceof MissionNotFoundException) {
@@ -310,8 +319,14 @@ export class MissionService {
           .toUpperCase()} status ${responseEvent.weather_poll} checked before launch`,
       );
       if(responseEvent.weather_poll == true) {
-      await this.marsyRocketProxyService.retrieveRocketStatus(responseEvent.rocketId);
+        await this.marsyRocketProxyService.retrieveRocketStatus(responseEvent.rocketId);
+      }
     }
   }
+  async missionFailed(rocketId: string): Promise<void> {
+    const mission = await this.missionModel.findOne({ rocket: rocketId }).exec();
+    mission.status = MissionStatus.FAILED;
+    await mission.save();
+    logger.log(`Mission of the rocket ${rocketId.slice(-3).toUpperCase()} failed`);
   }
 }

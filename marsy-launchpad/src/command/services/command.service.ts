@@ -29,6 +29,9 @@ export class CommandService {
     clientId: 'control-pad',
     brokers: ['kafka-service:9092'],
   });
+
+  private runtimes = 0;
+
   async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     try {
       logger.log(
@@ -40,19 +43,38 @@ export class CommandService {
         telemetry.altitude > 3600 && telemetry.altitude < 4400;
 
       if (approachingMaxQ) {
-        logger.warn(
+        logger.debug(
           `Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
-        logger.warn(
+        logger.debug(
           `Throttling down engines for rocket ${rocketId
             .slice(-3)
             .toUpperCase()}`,
         );
-        await this.hardwareProxyService.throttleDownEngines(rocketId);
-        logger.warn(
+
+        await this.hardwareProxyService.sleepEngine();
+
+        if (this.runtimes !== 2){
+          await this.hardwareProxyService.wakeEngine();
+        }
+
+        await this.hardwareProxyService.throttleDownEngines(rocketId, (
+          async (error) => {
+            try{
+            if (this.runtimes === 2){
+              await this.marsyMissionProxyService.missionFailed(rocketId);
+              await this.hardwareProxyService.wakeEngine();
+            }
+          } catch (error) {
+             logger.error(
+              `Error : ${error.message}`);
+                        }
+          }
+        ).bind(this));
+        logger.debug(
           `Reached MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
-        logger.warn(
+        logger.debug(
           `Throttling up engines for rocket ${rocketId
             .slice(-3)
             .toUpperCase()}`,
@@ -98,6 +120,7 @@ export class CommandService {
     }
   }
   async prepareRocket(rocketId: string) {
+    this.runtimes++;
     try {
       const rocket = await this.rocketService.findRocket(rocketId);
       const preparationSuccess = await this.hardwareProxyService.prepareRocket(
@@ -266,9 +289,7 @@ export class CommandService {
   ): Promise<DeliveryResponseDto> {
     const rocket = await this.rocketService.findRocket(rocketId);
     logger.log(
-      `Sending payload delivery command for rocket ${rocketId} - JSON: ${JSON.stringify(
-        rocket,
-      )}`,
+      `Sending payload delivery command for rocket ${rocketId.slice(-3).toUpperCase()}`,
     );
     const rocketStatus = rocket.status;
 

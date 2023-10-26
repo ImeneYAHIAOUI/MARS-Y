@@ -80,7 +80,7 @@ export class CommandController {
   ): Promise<StageRocketMidFlightDto> {
     try {
       const rocketId = params.rocketId;
-      logger.log(`Received request to stage rocket with id ${rocketId.slice(-3).toUpperCase()} mid flight`,);
+      logger.log(`Received request to stage rocket ${rocketId.slice(-3).toUpperCase()} mid flight`,);
       const stage = await this.commandService.stageRocketMidFlight(rocketId);
       return stage;
     } catch (error) {
