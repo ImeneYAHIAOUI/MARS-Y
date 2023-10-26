@@ -87,17 +87,20 @@ export class PayloadService {
   async receiveTelemetryListener(): Promise<PayloadDeliveryDto | void> {
     const consumer = this.kafka.consumer({ groupId: 'payload-consumer-group' });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.subscribe({
+      topic: 'payload-telemetry',
+      fromBeginning: true,
+    });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if (responseEvent.recipient === 'payload-telemetry') {
+        if (responseEvent.sender === 'rocket') {
           await this.receiveTelemetry(
             responseEvent.rocketId,
             responseEvent.telemetry,
           );
         }
-        if (responseEvent.recipient === 'payload-delivery-telemetry') {
+        if (responseEvent.sender === 'payload-hardware') {
           await this.receiveTelemetryAfterDelivery(responseEvent.telemetry);
         }
       },

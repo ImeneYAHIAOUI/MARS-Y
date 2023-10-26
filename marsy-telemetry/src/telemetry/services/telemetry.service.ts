@@ -64,7 +64,88 @@ export class TelemetryService {
     // );
     return this.telemetryRecordModel.find({ missionId }).lean();
   }
+  async publishTelemetry(telemetry: TelemetryRecordDto): Promise<void> {
+    const missionTelemetry = {
+      missionId: telemetry.missionId,
+      timestamp: telemetry.timestamp,
+      latitude: telemetry.latitude,
+      longitude: telemetry.longitude,
+      altitude: telemetry.altitude,
+      angle: telemetry.angle,
+      speed: telemetry.speed,
+      pressure: telemetry.pressure,
+      temperature: telemetry.temperature,
+    };
+    const missionMessage = {
+      telemetry: missionTelemetry,
+      rocketId: telemetry.rocketId,
+    };
+    const payloadTelemetry = {
+      missionId: telemetry.missionId,
+      timestamp: telemetry.timestamp,
+      altitude: telemetry.altitude,
+      latitude: telemetry.latitude,
+      longitude: telemetry.longitude,
+      angle: telemetry.angle,
+    };
+    const payloadMessage = {
+      telemetry: payloadTelemetry,
+      rocketId: telemetry.rocketId,
+      sender: 'rocket',
+    };
+    const controlTelemetry = {
+      rocketId: telemetry.rocketId,
+      fuel: telemetry.fuel,
+      altitude: telemetry.altitude,
+    };
+    const controlMessage = {
+      telemetry: controlTelemetry,
+      rocketId: telemetry.rocketId,
+    };
+    await this.sendTelemetryToKafka('controlpad-telemetry', controlMessage);
+    await this.sendTelemetryToKafka('payload-telemetry', payloadMessage);
+    await this.sendTelemetryToKafka('mission-telemetry', missionMessage);
+  }
 
+  async publishBoosterTelemetry(
+    telemetry: BoosterTelemetryRecordDto,
+    rocketId: string,
+  ): Promise<void> {
+    const boosterTelemetry = {
+      missionId: telemetry.missionId,
+      timestamp: telemetry.timestamp,
+      latitude: telemetry.latitude,
+      longitude: telemetry.longitude,
+      altitude: telemetry.altitude,
+    };
+    const message = {
+      telemetry: boosterTelemetry,
+      rocketId: rocketId,
+    };
+    await this.sendTelemetryToKafka('booster-telemetry', message);
+  }
+
+  async publishPayloadTelemetry(
+    telemetry: PayloadTelemetryDto,
+    rocketId: string,
+  ): Promise<void> {
+    const message = {
+      telemetry: telemetry,
+      rocketId: rocketId,
+      sender: 'payload-hardware',
+    };
+    await this.sendTelemetryToKafka('payload-telemetry', message);
+  }
+
+  async sendTelemetryToKafka(topic: string, message: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: topic,
+      messages: [{ value: JSON.stringify(message) }],
+    });
+    await producer.disconnect();
+  }
   async receiveTelemetryListener(): Promise<void> {
     const consumer = this.kafka.consumer({
       groupId: 'telemetry-consumer-group',
@@ -77,15 +158,19 @@ export class TelemetryService {
     await consumer.run({
       eachMessage: async ({ message }) => {
         const telemetry = JSON.parse(message.value.toString()).telemetry;
-        const recipient = JSON.parse(message.value.toString()).recipient;
-        if (recipient === 'booster-telemetry-storage') {
+        const sender = JSON.parse(message.value.toString()).sender;
+        if (sender === 'booster') {
           const rocketId = JSON.parse(message.value.toString()).rocketId;
           await this.storeBoosterTelemetryRecord(telemetry, rocketId);
+          await this.publishBoosterTelemetry(telemetry, rocketId);
         }
-        if (recipient === 'payload-delivery-telemetry') {
+        if (sender === 'payload-hardware') {
+          const rocketId = JSON.parse(message.value.toString()).rocketId;
           await this.storePayLoadTelemetry(telemetry);
+          await this.publishPayloadTelemetry(telemetry, rocketId);
         }
-        if (recipient === 'telemetry-storage') {
+        if (sender === 'rocket') {
+          await this.publishTelemetry(telemetry);
           await this.storeTelemetryRecord(telemetry);
         }
       },

@@ -5,15 +5,15 @@ import { StagingDto } from '../dto/staging.dto';
 import * as cron from 'cron';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
-import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
 import { EventDto, Event } from '../dto/event.dto';
 import { Kafka } from 'kafkajs';
 import { TelemetryEvent } from '../dto/telemetry.event';
-
+import * as Constants from '../schema/constants';
 @Injectable()
 export class HardwareService {
   private readonly logger: Logger = new Logger(HardwareService.name);
   private readonly MAX_Q_ALTITUDE: number = 2000;
+
   private rocketCronJob: any;
   private boosterCronJob: any;
   private rockets: {
@@ -38,7 +38,7 @@ export class HardwareService {
 
   private asleep = false;
 
-  async postMessageToKafka(event: EventDto) {
+  async postMessageToKafka(event: any) {
     const producer = this.kafka.producer();
     await producer.connect();
     await producer.send({
@@ -59,8 +59,7 @@ export class HardwareService {
   }
 
   constructor(
-    private readonly marssyMissionProxyService: MarsyMissionProxyService,
-    private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
+    private readonly marsyMissionProxyService: MarsyMissionProxyService,
   ) {}
 
   throttleDown(rocketId: string): boolean {
@@ -80,14 +79,28 @@ export class HardwareService {
     });
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
+
+    
+
     // 9) Second engine start
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.MAXQ,
+    });
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.STAGE_SEPARATION,
+      telemetry: rocketTelemetry.telemetry,
+    });
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.MAIN_ENGINE_CUTOFF,
+    });
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.SECOND_ENGINE_START,
     });
-    await this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(
-      rocketTelemetry.telemetry,
-    );
+
 
     this.boosters.push({
       rocketId: rocketId,
@@ -313,29 +326,14 @@ export class HardwareService {
     telemetry: BoosterTelemetryRecordDto,
     rocketId: string,
   ) {
-    const boosterTelemetryStoring = {
-      recipient: 'booster-telemetry-storage',
+    const boosterTelemetry = {
+      sender: 'booster',
       telemetry: telemetry,
       rocketId: rocketId,
     };
-    const boosterTelemetry = {
-      missionId: telemetry.missionId,
-      timestamp: telemetry.timestamp,
-      latitude: telemetry.latitude,
-      longitude: telemetry.longitude,
-      altitude: telemetry.altitude,
-    };
-    const message = {
-      recipient: 'booster-telemetry',
-      telemetry: boosterTelemetry,
-      rocketId: rocketId,
-    };
-    await this.sendTelemetryToKafka(message);
-    await this.sendTelemetryToKafka(boosterTelemetryStoring);
+    await this.sendTelemetryToKafka(boosterTelemetry);
   }
-  //3) Startup (T-00:01:00)
-  // 4) Main engine start (T-00:00:03)
-  // 5) Liftoff/Launch (T+00:00:00)
+
   async startSendingTelemetry(rocketId: string) {
     await this.postMessageToKafka({
       rocketId: rocketId,
@@ -352,7 +350,7 @@ export class HardwareService {
         .toUpperCase()}`,
     );
     const missionId: string = (
-      await this.marssyMissionProxyService.getMission(rocketId)
+      await this.marsyMissionProxyService.getMission(rocketId)
     )._id;
     this.rockets.push({
       rocketId: rocketId,
@@ -366,54 +364,14 @@ export class HardwareService {
       () => {
         if (!this.asleep) {
           const telemetry = this.retrieveTelemetry(rocketId);
-          const telemetryStoring = {
-            recipient: 'telemetry-storage',
+          this.evaluateRocketDestruction(telemetry);
+
+          const telemetryMessage = {
+            sender: 'rocket',
             telemetry: telemetry,
             rocketId: telemetry.rocketId,
           };
-          const missionTelemetry = {
-            missionId: telemetry.missionId,
-            timestamp: telemetry.timestamp,
-            latitude: telemetry.latitude,
-            longitude: telemetry.longitude,
-            altitude: telemetry.altitude,
-            angle: telemetry.angle,
-            speed: telemetry.speed,
-            pressure: telemetry.pressure,
-            temperature: telemetry.temperature,
-          };
-          const missionMessage = {
-            recipient: 'mission-telemetry',
-            telemetry: missionTelemetry,
-            rocketId: telemetry.rocketId,
-          };
-          const payloadTelemetry = {
-            missionId: telemetry.missionId,
-            timestamp: telemetry.timestamp,
-            altitude: telemetry.altitude,
-            latitude: telemetry.latitude,
-            longitude: telemetry.longitude,
-            angle: telemetry.angle,
-          };
-          const payloadMessage = {
-            recipient: 'payload-telemetry',
-            telemetry: payloadTelemetry,
-            rocketId: telemetry.rocketId,
-          };
-          const controlTelemetry = {
-            rocketId: telemetry.rocketId,
-            fuel: telemetry.fuel,
-            altitude: telemetry.altitude,
-          };
-          const controlMessage = {
-            recipient: 'controlPad-telemetry',
-            telemetry: controlTelemetry,
-            rocketId: telemetry.rocketId,
-          };
-          this.sendTelemetryToKafka(missionMessage);
-          this.sendTelemetryToKafka(payloadMessage);
-          this.sendTelemetryToKafka(controlMessage);
-          this.sendTelemetryToKafka(telemetryStoring);
+          this.sendTelemetryToKafka(telemetryMessage);
         }
       },
       null,
@@ -422,6 +380,86 @@ export class HardwareService {
     );
     this.rocketCronJob.start();
     return true;
+  }
+
+  async evaluateRocketDestruction(
+    telemetryRecord: TelemetryRecordDto,
+  ): Promise<void> {
+    this.logger.log(
+      `Evaluating telemetry for rocket with ID: ${telemetryRecord.rocketId}`,
+    );
+
+    if (
+      telemetryRecord.angle > Constants.MAX_ANGLE ||
+      telemetryRecord.angle < Constants.MIN_ANGLE
+    ) {
+      this.logger.log(
+        `Angle exceeded for rocket ${telemetryRecord.rocketId
+          .slice(-3)
+          .toUpperCase()}. Angle: ${telemetryRecord.angle}`,
+      );
+      await this.destroyRocket(telemetryRecord.rocketId, 'Angle exceeded');
+      return;
+    }
+
+    if (
+      telemetryRecord.altitude > Constants.MAX_ALTITUDE ||
+      telemetryRecord.speed > Constants.MAX_SPEED
+    ) {
+      this.logger.log(
+        `Critical telemetry exceeded for rocket ${telemetryRecord.rocketId
+          .slice(-3)
+          .toUpperCase()}. Altitude: ${telemetryRecord.altitude}, Speed: ${
+          telemetryRecord.speed
+        }`,
+      );
+      await this.destroyRocket(
+        telemetryRecord.rocketId,
+        'Critical telemetry exceeded',
+      );
+      return;
+    }
+
+    if (
+      telemetryRecord.temperature > Constants.MAX_TEMPERATURE ||
+      telemetryRecord.pressure > Constants.MAX_PRESSURE
+    ) {
+      this.logger.log(
+        `Environmental conditions exceeded for rocket ${telemetryRecord.rocketId
+          .slice(-3)
+          .toUpperCase()}. Temperature: ${
+          telemetryRecord.temperature
+        }, Pressure: ${telemetryRecord.pressure}`,
+      );
+      await this.destroyRocket(
+        telemetryRecord.rocketId,
+        'Environmental conditions exceeded',
+      );
+      return;
+    }
+  }
+  async destroyRocket(rocketId: string, reason: string): Promise<void> {
+    try {
+      await this.postMessageToKafka({
+        rocketId: rocketId,
+        event: Event.START_UP_FAILURE,
+        reason: reason,
+      });
+      const formattedRocketId = rocketId.slice(-3).toUpperCase();
+      this.logger.log(
+        `Issuing order to destroy rocket ${formattedRocketId}. Reason: ${reason}`,
+      );
+      await this.postMessageToKafka({
+        rocketId: rocketId,
+        event: Event.ROCKET_DESTRUCTION,
+      });
+      this.stopSendingTelemetry(rocketId);
+    } catch (error) {
+      this.logger.error(
+        `Error while destroying rocket with ID ${rocketId}: ${error.message}`,
+      );
+      throw error;
+    }
   }
 
   stopSendingTelemetry(rocketId: string): void {

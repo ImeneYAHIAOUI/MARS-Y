@@ -70,16 +70,17 @@ export class BoosterService {
   async receiveTelemetryListener(): Promise<void> {
     const consumer = this.kafka.consumer({ groupId: 'booster-consumer-group' });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'telemetry', fromBeginning: true });
+    await consumer.subscribe({
+      topic: 'booster-telemetry',
+      fromBeginning: true,
+    });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if (responseEvent.recipient === 'booster-telemetry') {
-          this.receiveBoosterData(
-            responseEvent.telemetry,
-            responseEvent.rocketId,
-          );
-        }
+        this.receiveBoosterData(
+          responseEvent.telemetry,
+          responseEvent.rocketId,
+        );
       },
     });
   }

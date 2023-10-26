@@ -127,4 +127,13 @@ export class HardwareController {
   throttleDown(@Param('idrocket') id: string): boolean {
     return this.hardwareService.throttleDown(id);
   }
+
+  @Post('evaluateDestruction')
+  @HttpCode(200)
+  async evaluateDestruction(
+    @Body() telemetry: TelemetryRecordDto,
+  ): Promise<string> {
+    await this.hardwareService.evaluateRocketDestruction(telemetry);
+    return 'ok';
+  }
 }

@@ -3,10 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { DeliveryDto } from '../dto/delivery.dto';
 import * as cron from 'cron';
-import { MarsyHardwarePayloadProxyService } from './marsy-payload-hardware-proxy/marsy-payload-hardware-proxy.service';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import { Kafka } from 'kafkajs';
-import {TelemetryEvent} from "../dto/telemetry.event";
+import { EventDto, Event } from '../dto/event.dto';
+import { TelemetryEvent } from '../dto/telemetry.event';
 
 @Injectable()
 export class GuidanceHardwareService {
@@ -20,13 +20,43 @@ export class GuidanceHardwareService {
     telemetry: TelemetryRecordDto;
   }[] = [];
 
-  constructor(
-    private readonly marsyPayloadHardwareProxyService: MarsyHardwarePayloadProxyService,
-  ) {}
+  constructor() {
+    this.hardware();
+  }
   private kafka = new Kafka({
     clientId: 'telemetry',
     brokers: ['kafka-service:9092'],
   });
+
+  async hardware() {
+    const consumer = this.kafka.consumer({ groupId: 'guidance-group' });
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: 'events-web-caster',
+      fromBeginning: true,
+    });
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        if(message.value.toString().includes('stage separation')) {
+          this.startSendingTelemetry(JSON.parse(message.value.toString()).telemetry);
+        }
+
+      },
+    });
+  }
+  
+  async postMessageToKafka(event: any) {
+    const producer = this.kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'topic-mission-events',
+      messages: [{ value: JSON.stringify(event) }],
+    });
+    await producer.disconnect();
+  }
+
+
+
   // throttleDown(rocketId: string): boolean {
   //   this.logger.log(`Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`);
   //   let rocketTelemetry = this.rockets.find((rocket) => {
@@ -53,11 +83,14 @@ export class GuidanceHardwareService {
         .toUpperCase()}`,
     );
 
+
     this.stopSendingTelemetry(rocketId);
     return {
       _id: rocketId,
       delivered: true,
     };
+
+
   }
 
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
@@ -126,54 +159,12 @@ export class GuidanceHardwareService {
       '*/3 * * * * *',
       () => {
         const telemetry = this.retrieveTelemetry(latestTelemetry.rocketId);
-        const telemetryStoring = {
-          recipient: 'telemetry',
+        const telemetryMessage = {
+          sender: 'rocket',
           telemetry: telemetry,
           rocketId: telemetry.rocketId,
         };
-        const missionTelemetry = {
-          missionId: telemetry.missionId,
-          timestamp: telemetry.timestamp,
-          latitude: telemetry.latitude,
-          longitude: telemetry.longitude,
-          altitude: telemetry.altitude,
-          angle: telemetry.angle,
-          speed: telemetry.speed,
-          pressure: telemetry.pressure,
-          temperature: telemetry.temperature,
-        };
-        const missionMessage = {
-          recipient: 'mission-telemetry',
-          telemetry: missionTelemetry,
-          rocketId: telemetry.rocketId,
-        };
-        const payloadTelemetry = {
-          missionId: telemetry.missionId,
-          timestamp: telemetry.timestamp,
-          altitude: telemetry.altitude,
-          latitude: telemetry.latitude,
-          longitude: telemetry.longitude,
-          angle: telemetry.angle,
-        };
-        const payloadMessage = {
-          recipient: 'payload-telemetry',
-          telemetry: payloadTelemetry,
-          rocketId: telemetry.rocketId,
-        };
-        const controlTelemetry = {
-          rocketId: telemetry.rocketId,
-          fuel: telemetry.fuel,
-          altitude: telemetry.altitude,
-        };
-        const controlMessage = {
-          recipient: 'controlPad-telemetry',
-          telemetry: controlTelemetry,
-          rocketId: telemetry.rocketId,
-        };
-        this.sendTelemetryToKafka(missionMessage);
-        this.sendTelemetryToKafka(payloadMessage);
-        this.sendTelemetryToKafka(controlMessage);
-        this.sendTelemetryToKafka(telemetryStoring);
+        this.sendTelemetryToKafka(telemetryMessage);
       },
       null,
       true,
@@ -195,7 +186,7 @@ export class GuidanceHardwareService {
         .toUpperCase()}`,
     );
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const rocketTelemetry = this.rockets.find((rocket) => {
         return rocket.rocketId === rocketId;
       });
@@ -208,9 +199,16 @@ export class GuidanceHardwareService {
         longitude: rocketTelemetry.telemetry.longitude,
         angle: rocketTelemetry.telemetry.angle,
       };
-      this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.PAYLOAD_DEPLOYMENT,
+      telemetry: payloadTelemetry,
+    });
+    
+      
+     /* this.marsyPayloadHardwareProxyService.startEmittingPayloadHardware(
         payloadTelemetry,
-      );
+      );*/
     }, 3000);
   }
 }
