@@ -45,28 +45,14 @@ async receiveEventListener(): Promise<void> {
         const rocket=messageKey.slice(-3).toUpperCase()
         this.logger.log(`Payload of rocket ${rocket} has been delivered.`);
         this.appService.announceEvent(messageKey);
-        // envoyez a Payload Hardware Service
-
+      }else if(messageValue === 'BROADCASTING TERMINATED'){
+        this.logger.log(`broadcast service started broadcasting`);
+      }else if(messageValue === 'BROADCASTING STOPPED'){
+        this.logger.log(`broadcast service stopped broadcasting`);
       }
     },
   });
-    const consumer1 = this.kafka.consumer({
-      groupId: 'client-service-group-1',
-    });
 
-    await consumer1.connect();
-    await consumer1.subscribe({
-      topic: 'broadcast-events',
-      fromBeginning: true,
-    });
-
-  await consumer1.run({
-    eachMessage: async ({ message }) => {
-      const messageValue = message.value.toString();
-      const messageKey = message.key.toString();
-       this.logger.log(`Received event  ${messageValue} from broadcast service`);
-    },}
-  );
 }
 
 

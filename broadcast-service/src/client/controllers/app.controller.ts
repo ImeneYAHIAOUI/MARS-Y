@@ -8,7 +8,7 @@ export class AppController {
 
 
   constructor(private readonly appService: AppService) {
-      this.appService.launch_events_listener();
+      //this.appService.launch_events_listener();
 }
 
   @Get()

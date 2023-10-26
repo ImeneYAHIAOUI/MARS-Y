@@ -16,7 +16,7 @@ export class PayloadService {
     private readonly logger = new Logger(PayloadService.name);
 
  private kafka = new Kafka({
-    clientId: 'payload-hardware',
+    clientId: 'payload',
     brokers: ['kafka-service:9092'],
   });
   constructor(
@@ -62,8 +62,8 @@ export class PayloadService {
           topic: 'client-service-events',
           messages: [{ value: JSON.stringify(payload) }],
         });
-    this.logger.log(`Event sent to inform the client service about the payload delivery of rocket ID ${rocketId}`);
-      } finally {
+    this.logger.log(`Event sent to inform the client service about the payload delivery of rocket ID ${rocketId.slice(-3).toUpperCase()}`);
+       }finally {
         await producer.disconnect();
       }
       const payloadDelivery =

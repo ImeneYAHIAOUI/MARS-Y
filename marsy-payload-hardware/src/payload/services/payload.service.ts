@@ -9,6 +9,7 @@ const logger = new Logger('PayloadHardwareService');
 export class PayloadHardwareService {
   private readonly MAX_CRON_RUNS = 3;
   private cronRunCount = 0;
+    private cronBroadCastRunCount = 0;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
   private kafka = new Kafka({
@@ -18,6 +19,7 @@ export class PayloadHardwareService {
   private readonly logger: Logger = new Logger(PayloadHardwareService.name);
   private telemetries: PayloadTelemetryDto[] = [];
   private rocketCronJob: any;
+  private broadCastCronJob: any;
 
   async startSendingTelemetry(telemetry: PayloadTelemetryDto): Promise<void> {
     this.logger.log(`Started sending telemetry of delivered payload`);
@@ -61,33 +63,67 @@ export class PayloadHardwareService {
     // Log the cron job starting
     this.rocketCronJob.start();
   }
-  async sendDetailsToBroadCastService(){
+async sendDetailsToBroadcastService(rocketId: string) {
+    this.cronBroadCastRunCount= 0;
+   this.logger.log(`Started sending satellite details of rocket with id ${rocketId.slice(-3).toUpperCase()} to broadcast service`);
    const producer = this.kafka.producer();
-   await producer.connect();
-await producer.send({
-  topic: 'broadcast-service',
-  messages: [
-    {
-      value: JSON.stringify({
-        launchPayload: {
-          payloadType: 'Satellite',
-          satelliteName: 'Satellite-1',
-          purpose: 'Communication',
-          orbitType: 'Geostationary',
-          weightKg: 1500,
-          launchDate: '2023-11-15',
-          manufacturer: 'XYZ Aerospace',
-          communicationFrequency: 'Ku-band',
-          powerSource: 'Solar Panels',
-          operationalLifeYears: 15
-        }
-      })
-    }
-  ]
-});
-   await producer.disconnect();
-   this.logger.log('Details sent to broadcast service');
-  }
+    await producer.connect();
+    this.broadCastCronJob = new cron.CronJob(
+         '*/3 * * * * *',
+         async () => {
+            try {
+               const id = rocketId.slice(-3).toUpperCase();
+               const randomLatitude = Math.random() * (90 - (-90)) + (-90);
+               const randomLongitude = Math.random() * (180 - (-180)) + (-180);
+               const randomSpeed = Math.random() * (5000 - 1000) + 1000;
+               const directions = ['north', 'south', 'east', 'west'];
+               const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+               let lastone = false;
+               if (this.cronBroadCastRunCount === 2) {
+                   lastone = true;
+               }
+               const satelliteDetails = {
+                  messageNumber: this.cronBroadCastRunCount,
+                  rocketId: rocketId,
+                  latitude: randomLatitude,
+                  longitude: randomLongitude,
+                  speed: randomSpeed,
+                  direction: randomDirection,
+                  LastMessage: lastone
+               };
+
+               const message = {
+                  value: JSON.stringify(satelliteDetails)
+               };
+
+               await producer.send({
+                  topic: 'broadcast-service',
+                  messages: [message]
+               });
+
+               this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
+                this.cronBroadCastRunCount++;
+               if (this.cronBroadCastRunCount >= this.MAX_CRON_RUNS) {
+                this.broadCastCronJob.stop();
+                 await producer.disconnect();
+                  setTimeout(async () => {
+                     this.logger.log(
+                        `Satellite stopped of rocket with id ${id}`,
+                     );
+                  }, 1000);
+               }
+
+            } catch (error) {
+               const id = rocketId.slice(-3).toUpperCase();
+               this.logger.error(`Error while sending satellite details of rocket with id ${id} to broadcast service:`, error);
+            }
+         },
+         null,
+         true,
+         'America/Los_Angeles'
+      );
+      this.broadCastCronJob.start();
+}
 
   async retrieveTelemetry(missionId: string): Promise<PayloadTelemetryDto> {
     const telemetry = this.telemetries.find((t) => t.missionId === missionId);

@@ -42,13 +42,14 @@ export class PayloadHardwareController {
       type: RocketNotFoundException,
       description: 'Rocket not found',
     })
-    @Post('/broadcast')
+    @Post('/broadcast/:rocketId')
     @HttpCode(200)
     async sendDetailsToBroadCast(
-      @Body() telemetry: PayloadTelemetryDto,
+     @Param('rocketId') rocketId: string
     ): Promise<void> {
-      this.logger.log('Received request to launch payload');
-      return await this.payloadService.sendDetailsToBroadCastService();
+       const id=rocketId.slice(-3).toUpperCase();
+      this.logger.log('Received request to launch payload of rocket with id: ${id}');
+      return await this.payloadService.sendDetailsToBroadcastService(rocketId);
 
     }
  
