@@ -1,3 +1,5 @@
+
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
@@ -6,7 +8,7 @@ import * as cron from 'cron';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
 import { EventDto, Event } from '../dto/event.dto';
-import { Kafka } from 'kafkajs';
+import { Kaf} from 'kafkajs';
 import { TelemetryEvent } from '../dto/telemetry.event';
 import * as Constants from '../schema/constants';
 @Injectable()
@@ -65,7 +67,11 @@ export class HardwareService {
 
   throttleDown(rocketId: string): boolean {
     if (this.asleep) {
-      throw new HttpException('An error was encoutered while connecting to the Hardware.',HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'An error was encoutered while connecting to the Hardware.',
+        HttpStatus.BAD_REQUEST,
+      );
+
     }
     this.logger.log(
       `Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`,
@@ -74,6 +80,10 @@ export class HardwareService {
       return rocket.rocketId === rocketId;
     });
     rocketTelemetry.throttle = true;
+    this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.MAXQ,
+    });
     return true;
   }
 
@@ -84,13 +94,8 @@ export class HardwareService {
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
 
-    
 
-    // 9) Second engine start
-    await this.postMessageToKafka({
-      rocketId: rocketId,
-      event: Event.MAXQ,
-    });
+  
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.STAGE_SEPARATION,
@@ -391,7 +396,9 @@ export class HardwareService {
     telemetryRecord: TelemetryRecordDto,
   ): Promise<void> {
     this.logger.log(
-      `Evaluating telemetry for rocket : ${telemetryRecord.rocketId.slice(-3).toUpperCase()}`,
+      `Evaluating telemetry for rocket : ${telemetryRecord.rocketId
+        .slice(-3)
+        .toUpperCase()}`,
     );
 
     if (
@@ -461,7 +468,9 @@ export class HardwareService {
       this.stopSendingTelemetry(rocketId);
     } catch (error) {
       this.logger.error(
-        `Error while destroying rocket ${rocketId.slice(-3).toUpperCase()}: ${error.message}`,
+        `Error while destroying rocket ${rocketId.slice(-3).toUpperCase()}: ${
+          error.message
+        }`,
       );
       throw error;
     }
@@ -477,7 +486,11 @@ export class HardwareService {
   }
 
   stopSendingTelemetry(rocketId: string): void {
-    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId.slice(-3).toUpperCase()}`);
+    this.logger.log(
+      `Stopped sending telemetry for the rocket ${rocketId
+        .slice(-3)
+        .toUpperCase()}`,
+    );
     this.rocketCronJob.stop();
   }
 }

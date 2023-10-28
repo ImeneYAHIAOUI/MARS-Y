@@ -48,7 +48,7 @@ export class WebcasterController {
       fromBeginning: true,
     });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         this.webCasterService.announceEvent(
           JSON.parse(message.value.toString()),
         );

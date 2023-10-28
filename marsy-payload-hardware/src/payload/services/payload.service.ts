@@ -66,7 +66,6 @@ export class PayloadHardwareService {
           sender: 'payload-hardware',
           telemetry: payloadTelemetry,
         };
-        this.logger.debug('sending telemetry to kafka 3');
         const producer = this.kafka.producer();
         await producer.connect();
         await producer.send({

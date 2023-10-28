@@ -391,6 +391,7 @@ export class CommandService {
       topic: 'controlpad-telemetry',
       fromBeginning: true,
     });
+
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
@@ -409,7 +410,7 @@ export class CommandService {
       fromBeginning: true,
     });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if(responseEvent.mission_poll != undefined ) {
           this.sendAbortCommand(responseEvent.rocketId, responseEvent.mission_poll);

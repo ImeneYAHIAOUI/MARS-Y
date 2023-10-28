@@ -44,7 +44,7 @@ show_logs() {
 
         echo "Displaying logs for service $service_name"
          docker compose --env-file ./.env.docker -f $compose_file logs -f |
-          grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller' &
+          grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|soa-team-e-kafka' &
     done
     wait
 }
@@ -167,6 +167,7 @@ API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
 rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$API_HARDWARE_URL" -H "Content-Type: application/json" -d "$JSON_DATA")
 echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
+sleep 35
 
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
@@ -195,10 +196,9 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
+                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|soa-team-e-kafka'
                 --file client-service/client-service/docker-compose-client-service.yml \
                 --file broadcast-service/broadcast-service/docker-compose-broadcast-service.yml \
                 logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon' 
 
-                
 
-             
