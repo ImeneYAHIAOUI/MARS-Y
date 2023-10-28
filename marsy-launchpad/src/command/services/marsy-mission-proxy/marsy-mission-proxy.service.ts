@@ -62,4 +62,22 @@ export class MarsyMissionProxyService {
       throw new HttpException(response.data, response.status);
     }
   }
+
+  async missionFailed(_rocketId: string): Promise<void> {
+    try {
+      logger.debug(`Declaring the failure of the mission of the rocket ${_rocketId.slice(-3).toUpperCase()}`);
+      const response: AxiosResponse<MissionDto> = await firstValueFrom(
+        this.httpService.patch<MissionDto>(
+          `${this._baseUrl}${this._missionPath}/${_rocketId}/fail`,
+        ),
+      );
+    } catch (error) {
+      logger.error(
+        `Error in missionFailed for rocket: ${_rocketId
+          .slice(-3)
+          .toUpperCase()}`,
+      );
+      throw error;
+    }
+  }
 }

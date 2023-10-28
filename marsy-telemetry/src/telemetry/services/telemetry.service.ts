@@ -81,6 +81,7 @@ export class TelemetryService {
       telemetry: missionTelemetry,
       rocketId: telemetry.rocketId,
       destroyRocket: this.evaluateRocketDestruction(telemetry),
+
     };
     const payloadTelemetry = {
       missionId: telemetry.missionId,
@@ -183,6 +184,7 @@ export class TelemetryService {
     );
     return { destroy: false };
   }
+
 
   async sendTelemetryToKafka(topic: string, message: any) {
     const producer = this.kafka.producer();

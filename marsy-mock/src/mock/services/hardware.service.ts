@@ -1,17 +1,19 @@
+
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
 import { StagingDto } from '../dto/staging.dto';
 import * as cron from 'cron';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
-import { GuidanceHardwareProxyService } from './mock-guidance-proxy.service.ts/guidance-hardware-proxy.service';
 import { EventDto, Event } from '../dto/event.dto';
-import { Kafka } from 'kafkajs';
+import { Kaf} from 'kafkajs';
 import { TelemetryEvent } from '../dto/telemetry.event';
 import * as Constants from '../schema/constants';
 @Injectable()
 export class HardwareService {
+  private runtimes = 0;
   private readonly logger: Logger = new Logger(HardwareService.name);
   private readonly MAX_Q_ALTITUDE: number = 2000;
 
@@ -39,7 +41,7 @@ export class HardwareService {
 
   private asleep = false;
 
-  async postMessageToKafka(event: EventDto) {
+  async postMessageToKafka(event: any) {
     const producer = this.kafka.producer();
     await producer.connect();
     await producer.send({
@@ -61,7 +63,6 @@ export class HardwareService {
 
   constructor(
     private readonly marsyMissionProxyService: MarsyMissionProxyService,
-    private readonly marsyGuidanceHardwareProxyService: GuidanceHardwareProxyService,
   ) {}
 
   throttleDown(rocketId: string): boolean {
@@ -70,6 +71,7 @@ export class HardwareService {
         'An error was encoutered while connecting to the Hardware.',
         HttpStatus.BAD_REQUEST,
       );
+
     }
     this.logger.log(
       `Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`,
@@ -92,7 +94,13 @@ export class HardwareService {
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
 
-    // 9) Second engine start
+
+  
+    await this.postMessageToKafka({
+      rocketId: rocketId,
+      event: Event.STAGE_SEPARATION,
+      telemetry: rocketTelemetry.telemetry,
+    });
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.MAIN_ENGINE_CUTOFF,
@@ -101,9 +109,7 @@ export class HardwareService {
       rocketId: rocketId,
       event: Event.SECOND_ENGINE_START,
     });
-    await this.marsyGuidanceHardwareProxyService.startEmittingStageTwoTelemetry(
-      rocketTelemetry.telemetry,
-    );
+
 
     this.boosters.push({
       rocketId: rocketId,
@@ -338,6 +344,7 @@ export class HardwareService {
   }
 
   async startSendingTelemetry(rocketId: string) {
+    this.runtimes++;
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.START_UP,
@@ -467,6 +474,15 @@ export class HardwareService {
       );
       throw error;
     }
+  }
+
+  sleep(): void {
+    this.asleep = true;
+  }
+
+  wake(): void {
+    this.logger.debug(`Rebooted : Resending telemetry`);
+    this.asleep = false;
   }
 
   stopSendingTelemetry(rocketId: string): void {

@@ -19,6 +19,8 @@ compile_dir "marsy-boostercontrol"
 compile_dir "marsy-guidance"
 compile_dir "marsy-payload-hardware"
 compile_dir "marsy-webcaster"
+compile_dir "client-service"
+compile_dir "broadcast-service"
 
 echo "** Done all"
 

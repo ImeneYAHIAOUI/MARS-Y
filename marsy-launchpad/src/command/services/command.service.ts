@@ -22,12 +22,16 @@ export class CommandService {
     private readonly rocketService: RocketService,
   ) {
     this.receiveTelemetryListener();
+    this.consymeForPollGoNoGo();
   }
 
   private kafka = new Kafka({
     clientId: 'control-pad',
     brokers: ['kafka-service:9092'],
   });
+
+  private runtimes = 0;
+
   async handleTelemetry(rocketId: string, telemetry: ControlTelemetryDto) {
     try {
       logger.log(
@@ -39,19 +43,38 @@ export class CommandService {
         telemetry.altitude > 3600 && telemetry.altitude < 4400;
 
       if (approachingMaxQ) {
-        logger.warn(
+        logger.debug(
           `Approaching MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
-        logger.warn(
+        logger.debug(
           `Throttling down engines for rocket ${rocketId
             .slice(-3)
             .toUpperCase()}`,
         );
-        await this.hardwareProxyService.throttleDownEngines(rocketId);
-        logger.warn(
+
+        await this.hardwareProxyService.sleepEngine();
+
+        if (this.runtimes !== 2){
+          await this.hardwareProxyService.wakeEngine();
+        }
+
+        await this.hardwareProxyService.throttleDownEngines(rocketId, (
+          async (error) => {
+            try{
+            if (this.runtimes === 2){
+              await this.marsyMissionProxyService.missionFailed(rocketId);
+              await this.hardwareProxyService.wakeEngine();
+            }
+          } catch (error) {
+             logger.error(
+              `Error : ${error.message}`);
+                        }
+          }
+        ).bind(this));
+        logger.debug(
           `Reached MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
-        logger.warn(
+        logger.debug(
           `Throttling up engines for rocket ${rocketId
             .slice(-3)
             .toUpperCase()}`,
@@ -97,6 +120,7 @@ export class CommandService {
     }
   }
   async prepareRocket(rocketId: string) {
+    this.runtimes++;
     try {
       const rocket = await this.rocketService.findRocket(rocketId);
       const preparationSuccess = await this.hardwareProxyService.prepareRocket(
@@ -128,8 +152,44 @@ export class CommandService {
       rocketId,
       RocketStatus.READY_FOR_LAUNCH,
     );
+    this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
+    // 4) Go/NoGo Poll
 
-    const goNogo = await this.marsyMissionProxyService.goOrNoGoPoll(rocketId);
+    /*
+    const goNogo = await 
+    const commandDto: CommandDto = {
+      decision: '',
+      rocket: null,
+    };
+    await this.rocketService.updateRocketStatus(
+      rocketId,
+      RocketStatus.PRELAUNCH_CHECKS,
+    );
+    if (goNogo) {
+      logger.log(`Starting launch sequence for rocket ${rocketId}.`);
+      commandDto.decision = 'Starting launch sequence.';
+      // 5) Liftoff/Launch (T+00:00:00)
+      commandDto.rocket = await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.IN_FLIGHT,
+      );
+    } else {
+      logger.log(`Can't start launch sequence ${rocketId}.`);
+      commandDto.decision = "Can't start launch sequence.";
+      commandDto.rocket = await this.rocketService.updateRocketStatus(
+        rocketId,
+        RocketStatus.ABORTED,
+      );
+      logger.warn(`Launch sequence aborted for rocket ${rocketId}.`);
+    }
+    await this.hardwareProxyService.startEmittingTelemetry(rocketId);
+    logger.log(`Telemetry emitting started for rocket ${rocketId}.`);
+*/
+    return null;
+  }
+
+  async sendAbortCommand(rocketId: string, goNogo : boolean): Promise<CommandDto> {
+
     const commandDto: CommandDto = {
       decision: '',
       rocket: null,
@@ -229,9 +289,7 @@ export class CommandService {
   ): Promise<DeliveryResponseDto> {
     const rocket = await this.rocketService.findRocket(rocketId);
     logger.log(
-      `Sending payload delivery command for rocket ${rocketId} - JSON: ${JSON.stringify(
-        rocket,
-      )}`,
+      `Sending payload delivery command for rocket ${rocketId.slice(-3).toUpperCase()}`,
     );
     const rocketStatus = rocket.status;
 
@@ -333,12 +391,33 @@ export class CommandService {
       topic: 'controlpad-telemetry',
       fromBeginning: true,
     });
+
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         const telemetry = responseEvent.telemetry;
         const rocketId = responseEvent.rocketId;
         await this.handleTelemetry(rocketId, telemetry);
+      },
+    });
+  }
+
+  async consymeForPollGoNoGo() {
+    const consumer = this.kafka.consumer({ groupId: 'rocket-group' });
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: 'topic-mission-events',
+      fromBeginning: true,
+    });
+    await consumer.run({
+      eachMessage: async ({ message }) => {
+        const responseEvent = JSON.parse(message.value.toString());
+        if(responseEvent.mission_poll != undefined ) {
+          this.sendAbortCommand(responseEvent.rocketId, responseEvent.mission_poll);
+         logger.log(`Received poll request for rocket ${responseEvent.rocketId
+          .slice(-3)
+          .toUpperCase()}`);
+        }
       },
     });
   }

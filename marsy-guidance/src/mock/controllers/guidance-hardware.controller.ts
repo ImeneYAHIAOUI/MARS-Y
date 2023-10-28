@@ -35,7 +35,7 @@ export class GuidanceHardwareController {
     const deliveryDto = await this.hardwareService.deliverRocket(id);
     this.logger.log('Stopping sending telemetry');
     this.hardwareService.stopSendingTelemetry(id);
-    this.logger.log('Start sending payloaf hardware telemetry')
+    this.logger.log('Start sending payload hardware telemetry')
     this.hardwareService.startSendingPayloadHardwareTelemetry(id);
     return deliveryDto;
   }
