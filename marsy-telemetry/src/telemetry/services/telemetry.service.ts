@@ -8,6 +8,7 @@ import { BoosterTelemetryRecord } from '../schemas/booster-telemetry-record.sche
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
 import { PayloadTelemetry } from '../schemas/payload-telemetry.schema';
 import { Kafka } from 'kafkajs';
+import * as Constants from '../schemas/constants';
 
 @Injectable()
 export class TelemetryService {
@@ -79,6 +80,7 @@ export class TelemetryService {
     const missionMessage = {
       telemetry: missionTelemetry,
       rocketId: telemetry.rocketId,
+      destroyRocket: this.evaluateRocketDestruction(telemetry),
     };
     const payloadTelemetry = {
       missionId: telemetry.missionId,
@@ -135,6 +137,51 @@ export class TelemetryService {
       sender: 'payload-hardware',
     };
     await this.sendTelemetryToKafka('payload-telemetry', message);
+  }
+
+  evaluateRocketDestruction(telemetryRecord: TelemetryRecordDto): {
+    destroy: boolean;
+    reason?: string;
+  } {
+    const rocketId = telemetryRecord.rocketId;
+    this.logger.log(`Evaluating telemetry for rocket with ID: ${rocketId}`);
+
+    const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
+
+    if (angle > Constants.MAX_ANGLE || angle < Constants.MIN_ANGLE) {
+      this.logger.log(
+        `Angle exceeded for rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}. Angle: ${angle}`,
+      );
+      return { destroy: true, reason: 'Angle exceeded' };
+    }
+
+    if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED) {
+      this.logger.log(
+        `Critical telemetry exceeded for rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}. Altitude: ${altitude}, Speed: ${speed}`,
+      );
+      return { destroy: true, reason: 'Critical telemetry exceeded' };
+    }
+
+    if (
+      temperature > Constants.MAX_TEMPERATURE ||
+      pressure > Constants.MAX_PRESSURE
+    ) {
+      this.logger.log(
+        `Environmental conditions exceeded for rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}. Temperature: ${temperature}, Pressure: ${pressure}`,
+      );
+      return { destroy: true, reason: 'Environmental conditions exceeded' };
+    }
+
+    this.logger.log(
+      `Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`,
+    );
+    return { destroy: false };
   }
 
   async sendTelemetryToKafka(topic: string, message: any) {

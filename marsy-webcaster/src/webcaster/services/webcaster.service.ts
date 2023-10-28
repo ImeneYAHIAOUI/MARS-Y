@@ -8,6 +8,11 @@ export class WebCasterService {
   constructor() {}
 
   announceEvent(event: EventDto): void {
-    this.logger.debug(`News from ${event.rocketId.slice(-3).toUpperCase()} || ${event.event}`);
+    const reason = event.reason ? ` Reason: ${event.reason}` : '';
+    this.logger.debug(
+      `News from ${event.rocketId.slice(-3).toUpperCase()} ${
+        event.event
+      } ${reason}`,
+    );
   }
 }
