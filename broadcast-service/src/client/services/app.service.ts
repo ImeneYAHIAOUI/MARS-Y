@@ -25,7 +25,7 @@ async launch_events_listener() {
       });
 
       await consumer.run({
-         eachMessage: async ({ topic, partition, message }:EachMessagePayload ) => {
+         eachMessage: async ({  message }:EachMessagePayload ) => {
             try {
            const responseEvent = JSON.parse(message.value.toString());
            const id = responseEvent.rocketId.toString().slice(-3).toUpperCase();
