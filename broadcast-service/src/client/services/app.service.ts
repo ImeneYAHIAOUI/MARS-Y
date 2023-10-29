@@ -31,11 +31,11 @@ async launch_events_listener() {
            const responseEvent = JSON.parse(message.value.toString());
 
            const id = responseEvent.rocketId.toString().slice(-3).toUpperCase();
-           if (message.key === 'started') {
+           if (message?.key.toString() === 'started') {
               this.logger.log('start broadcasting');
               this.sendEventToClientService('BROADCASTING STARTED', responseEvent.rocketId.toString());
            }
-          if (message?.key === 'adjustment') {
+          if (message?.key.toString() === 'adjustment') {
                this.logger.log('broadcasting resumed of rocket with ID ${id}:');
                this.sendEventToClientService('BROADCASTING RESUMED', responseEvent.rocketId.toString());
           }
@@ -53,7 +53,7 @@ async launch_events_listener() {
             this.logger.log('broadcasting disturbed');
             this.sendEventToClientService('BROADCASTING DISTURBED', responseEvent.rocketId.toString());
           }
-          if (message?.key === 'terminated' ) {
+          if (message?.key.toString() === 'terminated' ) {
               this.sendEventToClientService('BROADCASTING TERMINATED', responseEvent.rocketId.toString());
               this.logger.log('broadcasting terminated');
           }

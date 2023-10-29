@@ -127,7 +127,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 
-sleep 45
+sleep 55
 
 TIMESTAMP=$(date +%s)
 LATITUDE=12.3456

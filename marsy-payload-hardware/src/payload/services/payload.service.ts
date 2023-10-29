@@ -142,11 +142,6 @@ async sendDetailsToBroadcastService(rocketId: string) {
                               });
                 this.broadCastCronJob.stop();
                  await producer.disconnect();
-                  setTimeout(async () => {
-                     this.logger.log(
-                        `Satellite stopped of rocket with id ${id}`,
-                     );
-                  }, 1000);
                }
 
             } catch (error) {
