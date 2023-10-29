@@ -7,6 +7,8 @@ import { MarsyWeatherProxyService } from './services/marsy-weather-proxy/marsy-w
 import { SiteService } from './services/site.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Site, SiteSchema } from './schema/site.schema';
+import { EventStored, EventStoredSchema } from './schema/event.stored.schema';
+
 import { Mission, missionSchema } from './schema/mission.schema';
 import { SiteController } from './controllers/site.controller';
 
@@ -15,6 +17,7 @@ import { SiteController } from './controllers/site.controller';
     MongooseModule.forFeature([
       { name: Site.name, schema: SiteSchema },
       { name: Mission.name, schema: missionSchema },
+      { name: EventStored.name, schema: EventStoredSchema },
     ]),
     HttpModule,
   ],

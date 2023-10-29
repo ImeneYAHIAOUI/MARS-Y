@@ -138,7 +138,10 @@ API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
 rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$API_HARDWARE_URL" -H "Content-Type: application/json" -d "$JSON_DATA")
 echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
-sleep 5
+
+curl -s -w "%{http_code}" -o /dev/null -X GET "${API_MISSION_URL}/${mission_id}/logs"
+
+sleep 10
 
 
 

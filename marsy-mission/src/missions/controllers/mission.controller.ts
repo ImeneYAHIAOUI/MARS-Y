@@ -30,6 +30,7 @@ import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { AddMissionDto } from '../dto/add.mission.dto';
 import { MissionBoosterDto } from '../dto/mission.booster.dto';
+import { EventStored } from '../schema/event.stored.schema';
 
 @ApiTags('Missions')
 @Controller('/missions')
@@ -108,6 +109,22 @@ export class MissionController {
       addDto.site,
     );
   }
+
+  @Get(':id/logs')
+  @ApiOkResponse({ description: 'getting mission logs' })
+  async getMissionLogs(@Param('id') id: string) : Promise<EventStored[]>{
+    try{
+      const rocket_id = (await this.missionService.getMissionById(id)).rocket;
+
+      const logs = await this.missionService.getMissionLogs(rocket_id.toString());
+    return logs;
+    }catch (error) {
+      this.logger.debug(`No event stored for mission id: ${id}`);
+      return [];
+    }
+
+}
+
 
   @Delete(':id')
   @ApiOkResponse({ type: Mission, description: 'deleting mission' })
