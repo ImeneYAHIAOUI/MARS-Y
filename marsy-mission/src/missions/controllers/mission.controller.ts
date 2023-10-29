@@ -2,14 +2,14 @@ import {
   Controller,
   Post,
   Put,
+  Patch,
   Param,
   Get,
-  Logger,
   Query,
+  Logger,
   Body,
   HttpCode,
   Delete,
-  Patch,
 } from '@nestjs/common';
 import { MissionService } from '../services/missions.service';
 
@@ -30,14 +30,13 @@ import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { AddMissionDto } from '../dto/add.mission.dto';
 import { MissionBoosterDto } from '../dto/mission.booster.dto';
-import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
-
-const logger = new Logger('MissionController');
 
 @ApiTags('Missions')
 @Controller('/missions')
 export class MissionController {
   constructor(private readonly missionService: MissionService) {}
+  private readonly logger = new Logger(MissionController.name);
+
   @Post(':id/poll')
   @HttpCode(200)
   @ApiNotFoundResponse({
@@ -109,6 +108,7 @@ export class MissionController {
       addDto.site,
     );
   }
+
   @Delete(':id')
   @ApiOkResponse({ type: Mission, description: 'deleting mission' })
   @ApiNotFoundResponse({
@@ -131,31 +131,10 @@ export class MissionController {
       await this.missionService.saveNewStatusBooster(mission);
     return updatedMission;
   }
-
-  @Post(':idrocket/telemetry')
-  @HttpCode(200)
-  async postTelemetryRecord(
-    @Param('idrocket') rocketId: string,
-    @Body() telemetryRecordDto: MissionTelemetryDto,
-  ): Promise<void> {
-    try {
-      logger.log(
-        `Received telemetry for rocket ${rocketId.slice(-3).toUpperCase()}`,
-      );
-      await this.missionService.evaluateRocketDestruction(
-        rocketId,
-        telemetryRecordDto,
-      );
-    } catch (error) {
-      logger.error(`Error while processing telemetry: ${error.message}`);
-      throw error;
-    }
-  }
-
   @Patch(':idrocket/fail')
   @HttpCode(200)
   async missionFailed(@Param('idrocket') rocketId: string): Promise<void> {
-    logger.log(
+    this.logger.log(
       `Received request to declare mission failure for rocket: ${rocketId
         .slice(-3)
         .toUpperCase()}`,

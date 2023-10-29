@@ -11,6 +11,8 @@ services:
       - PILOT_SERVICE_URL_WITH_PORT=${PILOT_SERVICE}:3000
     networks:
       - nestjs-marsy-network
+    external_links:
+      - docker-compose-kafka-service:kafka-service:kafka-service
 networks:
   nestjs-marsy-network:
     driver: bridge

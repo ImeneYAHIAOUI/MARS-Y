@@ -8,6 +8,8 @@ export class WebCasterService {
   constructor() {}
 
   announceEvent(event: EventDto): void {
-    this.logger.debug(`News from ${event.rocketId.slice(-3).toUpperCase()} || ${event.event}`);
+    this.logger.debug(
+      `News from ${event.rocketId.slice(-3).toUpperCase()} ${event.event}`,
+    );
   }
 }

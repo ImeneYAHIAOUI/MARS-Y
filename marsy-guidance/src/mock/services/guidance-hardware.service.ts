@@ -5,6 +5,7 @@ import { DeliveryDto } from '../dto/delivery.dto';
 import * as cron from 'cron';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import { Kafka } from 'kafkajs';
+
 import { EventDto, Event } from '../dto/event.dto';
 import { TelemetryEvent } from '../dto/telemetry.event';
 
