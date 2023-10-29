@@ -112,14 +112,12 @@ async sendDetailsToBroadcastService(rocketId: string) {
                   speed: randomSpeed,
                   direction: randomDirection,
                };
+               let message;
                 if(this.cronBroadCastRunCount === 0) {
-                    const message = { value: JSON.stringify(satelliteDetails), key: 'started' };
-
+                     message = { value: JSON.stringify(satelliteDetails), key: 'started' };
                 }else  {
-                    const message = { value: JSON.stringify(satelliteDetails), key: 'inProgress' };
+                     message = { value: JSON.stringify(satelliteDetails), key: 'inProgress' };
                 }
-
-
                await producer.send({
                   topic: 'broadcast-service',
                   messages: [message]
