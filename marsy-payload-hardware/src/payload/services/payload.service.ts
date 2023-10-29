@@ -227,12 +227,7 @@ async startSendingTelemetry(telemetry: PayloadTelemetryDto): Promise<void> {
               topic: 'broadcast-service',
               messages: [message]
           });
-          if(keyValue === 'inProgress') {
-              this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
-          }else if(keyValue === 'terminated') {
-              this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
-              this.logger.log(`Satellite stopped of rocket with id ${id}`);
-          }
+          this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
           await producer.disconnect();
       } catch (error) {
           this.logger.error(`Error while sending satellite details to broadcast service:`, error);
