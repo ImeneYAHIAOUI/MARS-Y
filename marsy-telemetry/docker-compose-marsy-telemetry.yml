@@ -16,6 +16,8 @@ services:
       - MARSY_MISSION_SERVICE_URL_WITH_PORT=${MARSY_MISSION_SERVICE}:3000
     networks:
       - nestjs-marsy-network
+    external_links:
+      - docker-compose-kafka-service:kafka-service:kafka-service
   mongo_db_marsy_telemetry:
     image: "mongo:4.4.15"
     restart: always

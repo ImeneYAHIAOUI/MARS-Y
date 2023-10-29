@@ -35,19 +35,7 @@ for service in "${services[@]}"; do
 done
 
 
-# Function to display real-time logs
-show_logs() {
-    for service in "${services[@]}"; do
-        IFS=':' read -ra service_info <<< "$service"
-        service_name=${service_info[0]}
-        compose_file=${service_info[1]}
 
-        echo "Displaying logs for service $service_name"
-         docker compose --env-file ./.env.docker -f $compose_file logs -f |
-          grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|kafkajs' &
-    done
-    wait
-}
 # Function to format HTTP response codes with colors
 format_http_code() {
   local code=$1
@@ -202,6 +190,6 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
                 --file client-service/client-service/docker-compose-client-service.yml \
                 --file broadcast-service/broadcast-service/docker-compose-broadcast-service.yml \
-                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs|zookeeper'
+                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs|zookeeper|kafka.*|mongo_db'
 
 
