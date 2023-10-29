@@ -33,7 +33,6 @@ export class MissionService {
     brokers: ['kafka-service:9092'],
   });
 
-
   async destroyRocket(rocketId: string, reason: string): Promise<void> {
     try {
       const formattedRocketId = rocketId.slice(-3).toUpperCase();
@@ -64,11 +63,11 @@ export class MissionService {
       const _rocketId = mission.rocket.toString();
 
       this.marsyWeatherProxyService.retrieveWeatherStatus(
-          _site.latitude,
-          _site.longitude,
-          _rocketId,
-        );
-    /*  logger.log(
+        _site.latitude,
+        _site.longitude,
+        _rocketId,
+      );
+      /*  logger.log(
         `Weather status for mission ${_missionId
           .slice(-3)
           .toUpperCase()}: ${JSON.stringify(_weatherStatus)}`,
@@ -212,48 +211,35 @@ export class MissionService {
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         await this.checkWeatherRocketStatus(responseEvent);
-        const producer = this.kafka.producer();
-        await producer.connect();
-        if(!responseEvent.event.includes("PRELAUNCH_CHECKS") ) {
-        await producer.send({
-          topic: 'events-web-caster',
-          messages: [{ value: message.value.toString() }],
-        });
-        if (message.value.toString() === this.Rocket_Destruction_EVENT) {
-          const responseEvent = JSON.parse(message.value.toString());
-          const rocketId = responseEvent.rocketId;
-          const reason = responseEvent.reason;
-          await this.destroyRocket(rocketId, reason);
+        if (!responseEvent.event.includes('PRELAUNCH_CHECKS')) {
+          const producer = this.kafka.producer();
+          await producer.connect();
+          await producer.send({
+            topic: 'events-web-caster',
+            messages: [{ value: message.value.toString() }],
+          });
+          if (message.value.toString() === this.Rocket_Destruction_EVENT) {
+            const responseEvent = JSON.parse(message.value.toString());
+            const rocketId = responseEvent.rocketId;
+            const reason = responseEvent.reason;
+            await this.destroyRocket(rocketId, reason);
+          }
+          await producer.disconnect();
         }
-        await producer.disconnect();
-      }
       },
-      
     });
   }
 
-  async postMessageToKafka(message: any) {
-    const producer = this.kafka.producer();
-    await producer.connect();
-    await producer.send({
-      topic: 'topic-mission-events',
-      messages: [{ value: JSON.stringify(message) }],
-    });
-    await producer.disconnect();
-  }
-
-
-  async checkWeatherRocketStatus(responseEvent: any){
-            
-    if(responseEvent.rocket_poll != undefined) {
+  async checkWeatherRocketStatus(responseEvent: any) {
+    if (responseEvent.rocket_poll != undefined) {
       logger.log(
-        `rocket Id ${responseEvent.rocketId
-          .slice(-3)
-          .toUpperCase()} status ${responseEvent.rocket_poll} for launch`,
+        `rocket Id ${responseEvent.rocketId.slice(-3).toUpperCase()} status ${
+          responseEvent.rocket_poll
+        } for launch`,
       );
       await this.postMessageToKafka({
         rocketId: responseEvent.rocketId,
-        event : "PRELAUNCH_CHECKS : GO/NOGO Mission",
+        event: 'PRELAUNCH_CHECKS : GO/NOGO Mission',
         mission_poll: responseEvent.rocket_poll,
       });
     }
@@ -270,7 +256,6 @@ export class MissionService {
         await this.marsyRocketProxyService.retrieveRocketStatus(
           responseEvent.rocketId,
         );
-
       }
     }
   }
@@ -283,6 +268,5 @@ export class MissionService {
     logger.log(
       `Mission of the rocket ${rocketId.slice(-3).toUpperCase()} failed`,
     );
-
   }
 }

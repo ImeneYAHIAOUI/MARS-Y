@@ -49,6 +49,7 @@ export class WebcasterController {
     });
     await consumer.run({
       eachMessage: async ({ message }) => {
+        this.logger.log(`Message from web-caster: ${message.value.toString()}`);
         this.webCasterService.announceEvent(
           JSON.parse(message.value.toString()),
         );

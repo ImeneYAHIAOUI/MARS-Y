@@ -1,7 +1,6 @@
 export class EventDto {
     rocketId: string;
     event: Event;
-    reason?: string;
 }
 
 export enum Event {

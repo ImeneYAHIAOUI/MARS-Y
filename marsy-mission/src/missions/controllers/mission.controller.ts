@@ -10,7 +10,6 @@ import {
   Body,
   HttpCode,
   Delete,
-  Patch,
 } from '@nestjs/common';
 import { MissionService } from '../services/missions.service';
 
@@ -132,22 +131,10 @@ export class MissionController {
       await this.missionService.saveNewStatusBooster(mission);
     return updatedMission;
   }
-
   @Patch(':idrocket/fail')
   @HttpCode(200)
   async missionFailed(@Param('idrocket') rocketId: string): Promise<void> {
     this.logger.log(
-      `Received request to declare mission failure for rocket: ${rocketId
-        .slice(-3)
-        .toUpperCase()}`,
-    );
-    await this.missionService.missionFailed(rocketId);
-  }
-
-  @Patch(':idrocket/fail')
-  @HttpCode(200)
-  async missionFailed(@Param('idrocket') rocketId: string): Promise<void> {
-    logger.log(
       `Received request to declare mission failure for rocket: ${rocketId
         .slice(-3)
         .toUpperCase()}`,
