@@ -1,5 +1,3 @@
-
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 
 import { TelemetryRecordDto } from '../dto/telemetry-record.dto';
@@ -8,7 +6,7 @@ import * as cron from 'cron';
 import { MarsyMissionProxyService } from './marsy-mission-proxy/marsy-mission-proxy.service';
 import { BoosterTelemetryRecordDto } from '../dto/booster-telemetry-record.dto';
 import { EventDto, Event } from '../dto/event.dto';
-import { Kaf} from 'kafkajs';
+import { Kafka } from 'kafkajs';
 import { TelemetryEvent } from '../dto/telemetry.event';
 import * as Constants from '../schema/constants';
 @Injectable()
@@ -71,7 +69,6 @@ export class HardwareService {
         'An error was encoutered while connecting to the Hardware.',
         HttpStatus.BAD_REQUEST,
       );
-
     }
     this.logger.log(
       `Throttling down the rocket ${rocketId.slice(-3).toUpperCase()}`,
@@ -94,8 +91,6 @@ export class HardwareService {
     rocketTelemetry.staged = true;
     this.stopSendingTelemetry(rocketId);
 
-
-  
     await this.postMessageToKafka({
       rocketId: rocketId,
       event: Event.STAGE_SEPARATION,
@@ -109,7 +104,6 @@ export class HardwareService {
       rocketId: rocketId,
       event: Event.SECOND_ENGINE_START,
     });
-
 
     this.boosters.push({
       rocketId: rocketId,
