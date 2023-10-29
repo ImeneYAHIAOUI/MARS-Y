@@ -99,10 +99,10 @@ export class CommandService {
 
       if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
         logger.warn(
-          'issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}',
+          `issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
         logger.warn(
-          'staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}',
+          `staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
         await this.hardwareProxyService.stageMidFlightFlight(rocketId);
         await this.rocketService.updateRocketStatus(
