@@ -134,7 +134,7 @@ async sendDetailsToBroadcastService(rocketId: string) {
                                  direction: 'undefined',
                               };
                               const message = {
-                                 value: JSON.stringify(satelliteDetails)
+                                 value: JSON.stringify(satelliteDetails), key: 'inProgress'
                               };
                               await producer.send({
                                  topic: 'broadcast-service',
@@ -196,7 +196,7 @@ async delegateControlToPilotService(controlData : ControlDataDto){
         }
       }
 
-async sendSatelliteDetailsToBroadcastService(key: string,rocketId : string) {
+async sendSatelliteDetailsToBroadcastService(keyValue: string,rocketId : string) {
        const id = rocketId.slice(-3).toUpperCase();
 
     const { latitude: randomLatitude, longitude: randomLongitude, speed: randomSpeed, direction: randomDirection } = this.orientPayload();
@@ -207,7 +207,7 @@ async sendSatelliteDetailsToBroadcastService(key: string,rocketId : string) {
         speed: randomSpeed,
         direction: randomDirection,
     };
-    const message = { value: JSON.stringify(satelliteDetails), key };
+    const message = { value: JSON.stringify(satelliteDetails), key: keyValue };
 
     try {
         const producer = this.kafka.producer();
@@ -216,9 +216,9 @@ async sendSatelliteDetailsToBroadcastService(key: string,rocketId : string) {
             topic: 'broadcast-service',
             messages: [message]
         });
-        if(key === 'inProgress') {
+        if(keyValue === 'inProgress') {
             this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
-        }else if(key === 'terminated') {
+        }else if(keyValue === 'terminated') {
             this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
             this.logger.log(`Satellite stopped of rocket with id ${id}`);
         }

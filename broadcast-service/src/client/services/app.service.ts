@@ -27,19 +27,20 @@ async launch_events_listener() {
       await consumer.run({
          eachMessage: async ({ topic, partition, message }:EachMessagePayload ) => {
             try {
-           const responseEvent = JSON.parse(message.value.toString());
-           const id = responseEvent.rocketId.toString().slice(-3).toUpperCase();
 
-           if (responseEvent?.key === 'started') {
+           const responseEvent = JSON.parse(message.value.toString());
+
+           const id = responseEvent.rocketId.toString().slice(-3).toUpperCase();
+           if (message.key === 'started') {
               this.logger.log('start broadcasting');
               this.sendEventToClientService('BROADCASTING STARTED', responseEvent.rocketId.toString());
            }
-          if (responseEvent?.key === 'adjustment') {
+          if (message?.key === 'adjustment') {
                this.logger.log('broadcasting resumed of rocket with ID ${id}:');
                this.sendEventToClientService('BROADCASTING RESUMED', responseEvent.rocketId.toString());
-          }else {
-              this.logger.log(`New message received with satellite details of rocket with ID ${id}:`);
           }
+          this.logger.log(`New message received with satellite details of rocket with ID ${id}:`);
+
           const lat = responseEvent.latitude.toString();
           this.logger.log(`- Latitude: ${lat}`);
           const long = responseEvent.longitude.toString();
@@ -52,7 +53,7 @@ async launch_events_listener() {
             this.logger.log('broadcasting disturbed');
             this.sendEventToClientService('BROADCASTING DISTURBED', responseEvent.rocketId.toString());
           }
-          if (responseEvent?.key === 'terminated' ) {
+          if (message?.key === 'terminated' ) {
               this.sendEventToClientService('BROADCASTING TERMINATED', responseEvent.rocketId.toString());
               this.logger.log('broadcasting terminated');
           }
