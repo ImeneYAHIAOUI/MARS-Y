@@ -66,8 +66,10 @@ export class AppService {
             }
 
           } catch (error) {
-                      const id = JSON.parse(message.value.toString()).rocketId.toString().slice(-3).toUpperCase();
-            this.logger.error(`Error processing satellite details of rocket with id ${id}:`, error);
+                const id = JSON.parse(message.value.toString()).rocketId.toString().slice(-3).toUpperCase();
+                this.logger.error(`Error processing satellite details of rocket with id ${id}:`, error);
+
+
           }
         },
       });

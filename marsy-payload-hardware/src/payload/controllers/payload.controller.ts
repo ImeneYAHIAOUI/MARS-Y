@@ -49,7 +49,7 @@ export class PayloadHardwareController {
      @Param('rocketId') rocketId: string
     ): Promise<void> {
        const id=rocketId.slice(-3).toUpperCase();
-      this.logger.log('Received request to launch payload of rocket with id: ${id}');
+      this.logger.log(`Received request to launch payload of rocket: ${id}`);
       return await this.payloadService.sendDetailsToBroadcastService(rocketId);
     }
 
