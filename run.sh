@@ -81,40 +81,9 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 35
+sleep 70
 
 
-
-<<<<<<< HEAD
-curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
-curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
-curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
-
-sleep 2
-
-clear
-
-echo -e "Starting tests..."
-
-echo -e "\nrocket 2 : launch rocket without destroying it\n\n\n"
-
-sleep 1
-
-
-rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
-rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite9","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
-site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission9","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
-mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-
-
-rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/prepare")
-rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
-rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
-
-
-sleep 55
 
 TIMESTAMP=$(date +%s)
 LATITUDE=12.3456
@@ -224,6 +193,3 @@ docker compose  --env-file ./.env.docker \
                 --file client-service/docker-compose-client-service.yml \
                 --file broadcast-service/docker-compose-broadcast-service.yml \
                 logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon'
-
-
-

@@ -19,11 +19,7 @@ constructor(private readonly clientServiceProxy: PayloadHardwareServiceProxy) {
     return 'Welcome to the pilot service!';
   }
     reorientPayload(rocketId : string): void {
-         this.cronBroadCastRunCount= 0;
-           //this.logger.log(`Started sending satellite details of rocket with id ${rocketId.slice(-3).toUpperCase()} to broadcast service`);
-            this.broadCastCronJob = new cron.CronJob(
-                 '*/3 * * * * *',
-                 async () => {
+
                     try {
                        const id = rocketId.slice(-3).toUpperCase();
                        const randomLatitude = Math.random() * (90 - (-90)) + (-90);
@@ -38,26 +34,12 @@ constructor(private readonly clientServiceProxy: PayloadHardwareServiceProxy) {
                         controlData.speed = randomSpeed;
                         controlData.direction = randomDirection;
                        this.clientServiceProxy.reorientPayload( controlData);
-                       this.cronBroadCastRunCount++;
-                       if (this.cronBroadCastRunCount >= this.MAX_CRON_RUNS) {
-                        this.broadCastCronJob.stop();
-                          setTimeout(async () => {
-                             this.logger.log(
-                                `Satellite stopped of rocket with id ${id}`,
-                             );
-                          }, 1000);
-                       }
 
                     } catch (error) {
                        const id = rocketId.slice(-3).toUpperCase();
                        //this.logger.error(`Error while sending satellite details of rocket with id ${id} to broadcast service:`, error);
                     }
-                 },
-                 null,
-                 true,
-                 'America/Los_Angeles'
-              );
-              this.broadCastCronJob.start();
+
     }
 
 }
