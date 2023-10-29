@@ -15,6 +15,8 @@ services=(
     "marsy-webcaster:marsy-webcaster/docker-compose-marsy-webcaster.yml"
     "client-service:client-service/docker-compose-client-service.yml"
     "broadcast-service:broadcast-service/docker-compose-broadcast-service.yml"
+    "pilot-service:pilot-service/docker-compose-pilot-service.yml"
+
 )
 container_ids=()
 
@@ -75,13 +77,12 @@ mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
 
 
-
-
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/prepare")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 sleep 35
+
 
 
 TIMESTAMP=$(date +%s)
@@ -188,8 +189,10 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
-                --file client-service/client-service/docker-compose-client-service.yml \
-                --file broadcast-service/broadcast-service/docker-compose-broadcast-service.yml \
-                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs|zookeeper|kafka.*|mongo_db'
+                --file pilot-service/docker-compose-pilot-service.yml \
+                --file client-service/docker-compose-client-service.yml \
+                --file broadcast-service/docker-compose-broadcast-service.yml \
+                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon'
+
 
 
