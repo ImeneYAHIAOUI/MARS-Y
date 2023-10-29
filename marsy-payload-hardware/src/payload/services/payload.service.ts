@@ -198,8 +198,9 @@ async startSendingTelemetry(telemetry: PayloadTelemetryDto): Promise<void> {
        });
        await producer.disconnect();
        this.logger.log(`adjustment of satellite of rocket with id ${id} sent to broadcast service`);
-       this.sendSatelliteDetailsToBroadcastService('inProgress',controlData.rocketId);
-       this.sendSatelliteDetailsToBroadcastService('terminated',controlData.rocketId);
+       await this.sendSatelliteDetailsToBroadcastService('inProgress',controlData.rocketId);
+
+       await this.sendSatelliteDetailsToBroadcastService('terminated',controlData.rocketId);
 
           } catch (error) {
                const id = controlData.rocketId.slice(-3).toUpperCase();
@@ -218,8 +219,8 @@ async startSendingTelemetry(telemetry: PayloadTelemetryDto): Promise<void> {
           speed: randomSpeed,
           direction: randomDirection,
       };
-      const message = { value: JSON.stringify(satelliteDetails), key: keyValue };
 
+      const message = { value: JSON.stringify(satelliteDetails), key: keyValue };
       try {
           const producer = this.kafka.producer();
           await producer.connect();
