@@ -37,19 +37,7 @@ for service in "${services[@]}"; do
 done
 
 
-# Function to display real-time logs
-show_logs() {
-    for service in "${services[@]}"; do
-        IFS=':' read -ra service_info <<< "$service"
-        service_name=${service_info[0]}
-        compose_file=${service_info[1]}
 
-        echo "Displaying logs for service $service_name"
-         docker compose --env-file ./.env.docker -f $compose_file logs -f |
-          grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller' &
-    done
-    wait
-}
 # Function to format HTTP response codes with colors
 format_http_code() {
   local code=$1
@@ -89,8 +77,6 @@ mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
 
 
-
-
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/prepare")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
@@ -99,6 +85,7 @@ sleep 35
 
 
 
+<<<<<<< HEAD
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
@@ -167,8 +154,44 @@ echo -e "\n\n\nscenario 2 : send telemetry data to trigger rocket destruction"
 
 API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
+
+
 rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$API_HARDWARE_URL" -H "Content-Type: application/json" -d "$JSON_DATA")
 echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
+sleep 5
+
+
+
+
+curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
+curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
+curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
+
+sleep 2
+
+clear
+
+echo -e "Starting tests..."
+
+echo -e "\nScenario 3 : launch second rocket\n\n\n"
+
+sleep 1
+
+
+rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
+rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite9","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
+site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission9","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
+mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+
+
+rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/prepare")
+rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
+rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
+
+
+sleep 70
 
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
@@ -204,4 +227,3 @@ docker compose  --env-file ./.env.docker \
 
 
 
-             

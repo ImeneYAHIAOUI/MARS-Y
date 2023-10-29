@@ -9,11 +9,8 @@ import { SiteService } from './site.service';
 import { MissionNotFoundException } from '../exceptions/mission-not-found.exception';
 import { MissionStatus } from '../schema/mission.status.schema';
 import { MissionExistsException } from '../exceptions/mission-exists.exception';
-import { MissionTelemetryDto } from '../dto/mission-telemetry.dto';
 import { BoosterStatus } from '../schema/booster.status.schema';
 import { MissionBoosterDto } from '../dto/mission.booster.dto';
-import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
-import * as Constants from '../schema/constants';
 import { Kafka } from 'kafkajs';
 
 const logger = new Logger('MissionService');
@@ -29,78 +26,12 @@ export class MissionService {
     this.receiveTelemetryListener();
     this.receiveEventListener();
   }
-  private readonly Rocket_Destruction_EVENT =
-    'Just in : the rocket is destroyed';
+
   private kafka = new Kafka({
     clientId: 'missions',
     brokers: ['kafka-service:9092'],
   });
 
-  async evaluateRocketDestruction(
-    rocketId: string,
-    telemetryRecord: MissionTelemetryDto,
-  ): Promise<void> {
-    try {
-      logger.log(`Evaluating telemetry for the rocket : ${rocketId.slice(-3).toUpperCase()}`);
-      const mission = await this.getMissionByRocketId(rocketId);
-
-      if (mission.status === MissionStatus.FAILED) {
-        logger.log(`Received telemetry from malfunctioning rocket ${rocketId
-          .slice(-3)
-          .toUpperCase()} for failed mission ${mission._id
-          }. `);
-        await this.destroyRocket(rocketId, 'Mission failed');
-        return;
-      }
-
-      const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
-
-      if (angle > Constants.MAX_ANGLE || angle < Constants.MIN_ANGLE) {
-        logger.log(
-          `Angle exceeded for rocket ${rocketId
-            .slice(-3)
-            .toUpperCase()}. Angle: ${angle}`,
-        );
-        await this.destroyRocket(rocketId, 'Angle exceeded');
-        return;
-      }
-
-      if (altitude > Constants.MAX_ALTITUDE || speed > Constants.MAX_SPEED) {
-        logger.log(
-          `Critical telemetry exceeded for rocket ${rocketId
-            .slice(-3)
-            .toUpperCase()}. Altitude: ${altitude}, Speed: ${speed}`,
-        );
-        await this.destroyRocket(rocketId, 'Critical telemetry exceeded');
-        return;
-      }
-
-      if (
-        temperature > Constants.MAX_TEMPERATURE ||
-        pressure > Constants.MAX_PRESSURE
-      ) {
-        logger.log(
-          `Environmental conditions exceeded for rocket ${rocketId
-            .slice(-3)
-            .toUpperCase()}. Temperature: ${temperature}, Pressure: ${pressure}`,
-        );
-        await this.destroyRocket(rocketId, 'Environmental conditions exceeded');
-        return;
-      }
-
-      logger.log(
-        `Telemetry for rocket ${rocketId.slice(-3).toUpperCase()} is within safe parameters. No need for destruction.`,
-      );
-    } catch (error) {
-      if (error instanceof MissionNotFoundException) {
-        logger.log(`Mission with rocketId ${rocketId} not found`);
-      } else if (error instanceof RocketNotFoundException) {
-        logger.log(`Rocket with ID ${rocketId} not found`);
-      } else {
-        logger.error(`Error: ${error.message}`);
-      }
-    }
-  }
   async destroyRocket(rocketId: string, reason: string): Promise<void> {
     try {
       const formattedRocketId = rocketId.slice(-3).toUpperCase();
@@ -131,11 +62,11 @@ export class MissionService {
       const _rocketId = mission.rocket.toString();
 
       this.marsyWeatherProxyService.retrieveWeatherStatus(
-          _site.latitude,
-          _site.longitude,
-          _rocketId,
-        );
-    /*  logger.log(
+        _site.latitude,
+        _site.longitude,
+        _rocketId,
+      );
+      /*  logger.log(
         `Weather status for mission ${_missionId
           .slice(-3)
           .toUpperCase()}: ${JSON.stringify(_weatherStatus)}`,
@@ -247,9 +178,20 @@ export class MissionService {
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        const telemetry = responseEvent.telemetry;
         const rocketId = responseEvent.rocketId;
-        await this.evaluateRocketDestruction(rocketId, telemetry);
+        const destroyRocket = responseEvent.destroyRocket;
+        const mission = await this.getMissionByRocketId(rocketId);
+        if (mission.status === MissionStatus.FAILED) {
+          logger.log(
+            `Received telemetry from malfunctioning rocket ${rocketId
+              .slice(-3)
+              .toUpperCase()} for failed mission ${mission._id}.`,
+          );
+          await this.destroyRocket(rocketId, 'Mission failed');
+        }
+        if (destroyRocket.destroy) {
+          await this.destroyRocket(rocketId, destroyRocket.reason);
+        }
       },
     });
   }
@@ -277,56 +219,57 @@ export class MissionService {
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         await this.checkWeatherRocketStatus(responseEvent);
-        const producer = this.kafka.producer();
-        await producer.connect();
-        if(!responseEvent.event.includes("PRELAUNCH_CHECKS") ) {
-        await producer.send({
-          topic: 'events-web-caster',
-          messages: [{ value: message.value.toString() }],
-        });
-        if (message.value.toString() === this.Rocket_Destruction_EVENT) {
-          const responseEvent = JSON.parse(message.value.toString());
-          const rocketId = responseEvent.rocketId;
-          const reason = responseEvent.reason;
-          await this.destroyRocket(rocketId, reason);
+        if (!responseEvent.event.includes('PRELAUNCH_CHECKS')) {
+          const producer = this.kafka.producer();
+          await producer.connect();
+          await producer.send({
+            topic: 'events-web-caster',
+            messages: [{ value: message.value.toString() }],
+          });
+
+          await producer.disconnect();
         }
-        await producer.disconnect();
-      }
       },
-      
     });
   }
 
-  async checkWeatherRocketStatus(responseEvent: any){
-            
-    if(responseEvent.rocket_poll != undefined) {
+  async checkWeatherRocketStatus(responseEvent: any) {
+    if (responseEvent.rocket_poll != undefined) {
       logger.log(
-        `rocket Id ${responseEvent.rocketId
-          .slice(-3)
-          .toUpperCase()} status ${responseEvent.rocket_poll} for launch`,
+        `rocket Id ${responseEvent.rocketId.slice(-3).toUpperCase()} status ${
+          responseEvent.rocket_poll
+        } for launch`,
       );
       await this.postMessageToKafka({
         rocketId: responseEvent.rocketId,
-        event : "PRELAUNCH_CHECKS : GO/NOGO Mission",
+        event: 'PRELAUNCH_CHECKS : GO/NOGO Mission',
         mission_poll: responseEvent.rocket_poll,
       });
     }
 
-    if(responseEvent.weather_poll != undefined) {
+    if (responseEvent.weather_poll != undefined) {
       logger.log(
         `weather for rocket Id ${responseEvent.rocketId
           .slice(-3)
-          .toUpperCase()} status ${responseEvent.weather_poll} checked before launch`,
+          .toUpperCase()} status ${
+          responseEvent.weather_poll
+        } checked before launch`,
       );
-      if(responseEvent.weather_poll == true) {
-        await this.marsyRocketProxyService.retrieveRocketStatus(responseEvent.rocketId);
+      if (responseEvent.weather_poll == true) {
+        await this.marsyRocketProxyService.retrieveRocketStatus(
+          responseEvent.rocketId,
+        );
       }
     }
   }
   async missionFailed(rocketId: string): Promise<void> {
-    const mission = await this.missionModel.findOne({ rocket: rocketId }).exec();
+    const mission = await this.missionModel
+      .findOne({ rocket: rocketId })
+      .exec();
     mission.status = MissionStatus.FAILED;
     await mission.save();
-    logger.log(`Mission of the rocket ${rocketId.slice(-3).toUpperCase()} failed`);
+    logger.log(
+      `Mission of the rocket ${rocketId.slice(-3).toUpperCase()} failed`,
+    );
   }
 }

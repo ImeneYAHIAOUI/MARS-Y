@@ -8,7 +8,8 @@ services:
       - 3011:3000
     networks:
       - nestjs-marsy-network
-
+    external_links:
+      - docker-compose-kafka-service:kafka-service:kafka-service
 networks:
   nestjs-marsy-network:
     driver: bridge

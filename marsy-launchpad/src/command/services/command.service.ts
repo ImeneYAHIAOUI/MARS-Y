@@ -99,10 +99,10 @@ export class CommandService {
 
       if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
         logger.warn(
-          'issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}',
+          `issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
         logger.warn(
-          'staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}',
+          `staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
         await this.hardwareProxyService.stageMidFlightFlight(rocketId);
         await this.rocketService.updateRocketStatus(
@@ -391,6 +391,7 @@ export class CommandService {
       topic: 'controlpad-telemetry',
       fromBeginning: true,
     });
+
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
@@ -409,7 +410,7 @@ export class CommandService {
       fromBeginning: true,
     });
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
         if(responseEvent.mission_poll != undefined ) {
           this.sendAbortCommand(responseEvent.rocketId, responseEvent.mission_poll);

@@ -14,6 +14,8 @@ services:
       - MARSY_GUIDANCE_SERVICE_URL_WITH_PORT=${MARSY_GUIDANCE_SERVICE}:3000
     networks:
       - nestjs-marsy-network
+    external_links:
+      - docker-compose-kafka-service:kafka-service:kafka-service
   mongo_db_marsy_launchpad:
     image: "mongo:4.4.15"
     restart: always
