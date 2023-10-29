@@ -1,4 +1,4 @@
-import { Controller, Get, Post , Logger } from '@nestjs/common';
+import { Controller, Get, Post , Logger,Param } from '@nestjs/common';
 import { AppService } from '../services/app.service';
 import { Kafka,EachMessagePayload } from 'kafkajs';
 @Controller()
@@ -50,6 +50,11 @@ async receiveEventListener(): Promise<void> {
       }else if(messageValue === 'BROADCASTING TERMINATED'){
         this.logger.log(`broadcast service stopped broadcasting`);
       }
+      else if(messageValue === 'BROADCASTING DISTURBED'){
+          this.logger.log(`broadcasting disturbed`);
+          this.appService.requestPilotService(messageKey);
+      }else if(messageValue === 'BROADCASTING RESUMED'){
+        this.logger.log(`broadcasting resumed`);}
     },
   });
 

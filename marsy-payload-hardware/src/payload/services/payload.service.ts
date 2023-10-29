@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
 import * as cron from 'cron';
 import { Kafka } from 'kafkajs';
-
+import {ControlDataDto } from '../dto/control-data.dto';
 const logger = new Logger('PayloadHardwareService');
 
 @Injectable()
 export class PayloadHardwareService {
   private readonly MAX_CRON_RUNS = 3;
   private cronRunCount = 0;
-    private cronBroadCastRunCount = 0;
+  private cronBroadCastRunCount = 0;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {
     this.hardware();
@@ -95,7 +95,7 @@ export class PayloadHardwareService {
     this.rocketCronJob.start();
   }
 async sendDetailsToBroadcastService(rocketId: string) {
-    this.cronBroadCastRunCount= 0;
+   this.cronBroadCastRunCount= 0;
    this.logger.log(`Started sending satellite details of rocket with id ${rocketId.slice(-3).toUpperCase()} to broadcast service`);
    const producer = this.kafka.producer();
     await producer.connect();
@@ -104,22 +104,21 @@ async sendDetailsToBroadcastService(rocketId: string) {
          async () => {
             try {
                const id = rocketId.slice(-3).toUpperCase();
-               const randomLatitude = Math.random() * (90 - (-90)) + (-90);
-               const randomLongitude = Math.random() * (180 - (-180)) + (-180);
-               const randomSpeed = Math.random() * (5000 - 1000) + 1000;
-               const directions = ['north', 'south', 'east', 'west'];
-               const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+                const { latitude: randomLatitude, longitude: randomLongitude, speed: randomSpeed, direction: randomDirection } = this.orientPayload();
                const satelliteDetails = {
-                  messageNumber: this.cronBroadCastRunCount,
                   rocketId: rocketId,
                   latitude: randomLatitude,
                   longitude: randomLongitude,
                   speed: randomSpeed,
                   direction: randomDirection,
                };
-               const message = {
-                  value: JSON.stringify(satelliteDetails)
-               };
+                if(this.cronBroadCastRunCount === 0) {
+                    const message = { value: JSON.stringify(satelliteDetails), key: 'started' };
+
+                }else  {
+                    const message = { value: JSON.stringify(satelliteDetails), key: 'inProgress' };
+                }
+
 
                await producer.send({
                   topic: 'broadcast-service',
@@ -129,6 +128,20 @@ async sendDetailsToBroadcastService(rocketId: string) {
                this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
                 this.cronBroadCastRunCount++;
                if (this.cronBroadCastRunCount >= this.MAX_CRON_RUNS) {
+                  const satelliteDetails = {
+                                 rocketId: rocketId,
+                                 latitude: 'undefined',
+                                 longitude: 'undefined',
+                                 speed: 'undefined',
+                                 direction: 'undefined',
+                              };
+                              const message = {
+                                 value: JSON.stringify(satelliteDetails)
+                              };
+                              await producer.send({
+                                 topic: 'broadcast-service',
+                                 messages: [message]
+                              });
                 this.broadCastCronJob.stop();
                  await producer.disconnect();
                   setTimeout(async () => {
@@ -148,6 +161,73 @@ async sendDetailsToBroadcastService(rocketId: string) {
          'America/Los_Angeles'
       );
       this.broadCastCronJob.start();
+}
+orientPayload(){
+      const randomLatitude = Math.random() * (90 - (-90)) + (-90);
+      const randomLongitude = Math.random() * (180 - (-180)) + (-180);
+      const randomSpeed = Math.random() * (5000 - 1000) + 1000;
+      const directions = ['north', 'south', 'east', 'west'];
+      const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+      return {
+         latitude: randomLatitude,
+         longitude: randomLongitude,
+         speed: randomSpeed,
+         direction: randomDirection,
+      };
+}
+async delegateControlToPilotService(controlData : ControlDataDto){
+   this.logger.log(controlData);
+   const id = controlData.rocketId.slice(-3).toUpperCase();
+   this.logger.log(`Adjusting satellite positioning for rocket with ID ${id} and transmitting details to broadcast service`);
+    try {
+      const producer = this.kafka.producer();
+       await producer.connect();
+     const message = { value: JSON.stringify(controlData), key: 'adjustment' };
+     await producer.send({
+         topic: 'broadcast-service',
+         messages: [message]
+     });
+     await producer.disconnect();
+     this.logger.log(`adjustment of satellite of rocket with id ${id} sent to broadcast service`);
+     this.sendSatelliteDetailsToBroadcastService('inProgress',controlData.rocketId);
+     this.sendSatelliteDetailsToBroadcastService('terminated',controlData.rocketId);
+
+        } catch (error) {
+             const id = controlData.rocketId.slice(-3).toUpperCase();
+             this.logger.error(`Error while sending satellite details of rocket with id ${id} to broadcast service:`, error);
+        }
+      }
+
+async sendSatelliteDetailsToBroadcastService(key: string,rocketId : string) {
+       const id = rocketId.slice(-3).toUpperCase();
+
+    const { latitude: randomLatitude, longitude: randomLongitude, speed: randomSpeed, direction: randomDirection } = this.orientPayload();
+    const satelliteDetails = {
+        rocketId: rocketId,
+        latitude: randomLatitude,
+        longitude: randomLongitude,
+        speed: randomSpeed,
+        direction: randomDirection,
+    };
+    const message = { value: JSON.stringify(satelliteDetails), key };
+
+    try {
+        const producer = this.kafka.producer();
+        await producer.connect();
+        await producer.send({
+            topic: 'broadcast-service',
+            messages: [message]
+        });
+        if(key === 'inProgress') {
+            this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
+        }else if(key === 'terminated') {
+            this.logger.log(`Satellite Details of rocket with id ${id} sent to broadcast service`);
+            this.logger.log(`Satellite stopped of rocket with id ${id}`);
+        }
+        await producer.disconnect();
+    } catch (error) {
+        this.logger.error(`Error while sending satellite details to broadcast service:`, error);
+    }
 }
 
   async retrieveTelemetry(missionId: string): Promise<PayloadTelemetryDto> {

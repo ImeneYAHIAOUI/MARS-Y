@@ -1,14 +1,13 @@
 version: "3.3"
 
 services:
-  client-service:
-    image: "nestjs-marsy/client-service"
+  pilot-service:
+    image: "nestjs-marsy/pilot-service"
     restart: always
     ports:
-      - 3025:3000
+      - 3026:3000
     environment:
       - PAYLOAD_HARDWARE_SERVICE_URL_WITH_PORT=${MARSY_PAYLOAD_HARDWARE_SERVICE}:3000
-      - PILOT_SERVICE_URL_WITH_PORT=${PILOT_SERVICE}:3000
     networks:
       - nestjs-marsy-network
 networks:
