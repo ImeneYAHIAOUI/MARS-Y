@@ -99,7 +99,7 @@ export class PayloadHardwareService {
   async sendDetailsToBroadcastService(rocketId: string) {
     this.cronBroadCastRunCount = 0;
     this.logger.log(
-      `Started sending satellite details of rocket with id ${rocketId
+      `Started sending satellite details of rocket ${rocketId
         .slice(-3)
         .toUpperCase()} to broadcast service`,
     );
@@ -128,19 +128,19 @@ export class PayloadHardwareService {
           await this.publishBroadcastToKafka(message);
 
           this.logger.log(
-            `Satellite Details of rocket with id ${id} sent to broadcast service`,
+            `Satellite Details of rocket ${id} sent to broadcast service`,
           );
           this.cronBroadCastRunCount++;
           if (this.cronBroadCastRunCount >= this.MAX_CRON_RUNS) {
             this.broadCastCronJob.stop();
             setTimeout(async () => {
-              this.logger.log(`Satellite stopped of rocket with id ${id}`);
+              this.logger.log(`Satellite stopped of rocket ${id}`);
             }, 1000);
           }
         } catch (error) {
           const id = rocketId.slice(-3).toUpperCase();
           this.logger.error(
-            `Error while sending satellite details of rocket with id ${id} to broadcast service:`,
+            `Error while sending satellite details of rocket  ${id} to broadcast service:`,
             error,
           );
         }

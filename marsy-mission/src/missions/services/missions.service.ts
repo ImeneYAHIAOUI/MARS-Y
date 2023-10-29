@@ -41,7 +41,7 @@ export class MissionService {
       await this.marsyRocketProxyService.destroyRocket(rocketId);
     } catch (error) {
       logger.error(
-        `Error while destroying rocket with ID ${rocketId}: ${error.message}`,
+        `Error while destroying rocket ${rocketId}: ${error.message}`,
       );
       throw error;
     }

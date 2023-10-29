@@ -145,7 +145,7 @@ export class TelemetryService {
     reason?: string;
   } {
     const rocketId = telemetryRecord.rocketId;
-    this.logger.log(`Evaluating telemetry for rocket with ID: ${rocketId}`);
+    this.logger.log(`Evaluating telemetry for rocket: ${rocketId}`);
 
     const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
 
@@ -180,7 +180,7 @@ export class TelemetryService {
     }
 
     this.logger.log(
-      `Telemetry for rocket with ID ${rocketId} is within safe parameters. No need for destruction.`,
+      `Telemetry for rocket ${rocketId} is within safe parameters. No need for destruction.`,
     );
     return { destroy: false };
   }

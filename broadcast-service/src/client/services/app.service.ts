@@ -41,7 +41,7 @@ export class AppService {
             }
 
             this.logger.log(
-              `New message received with satellite details of rocket with ID ${id}:`,
+              `New message received with satellite details of rocket ${id}:`,
             );
             const lat = responseEvent.latitude.toString();
             this.logger.log(`- Latitude: ${lat}`);
@@ -60,7 +60,7 @@ export class AppService {
             }
           } catch (error) {
             this.logger.error(
-              'Error processing satellite details of rocket with id ${id}:',
+              'Error processing satellite details of rocket ${id}:',
               error,
             );
           }

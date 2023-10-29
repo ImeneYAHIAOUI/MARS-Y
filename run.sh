@@ -81,7 +81,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 35
+sleep 45
 
 
 TIMESTAMP=$(date +%s)
@@ -159,7 +159,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 
-sleep 70
+sleep 45
 
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
