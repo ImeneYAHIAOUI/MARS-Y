@@ -13,9 +13,9 @@ const angle = 80;
 
 @Injectable()
 export class PayloadService {
-    private readonly logger = new Logger(PayloadService.name);
+  private readonly logger = new Logger(PayloadService.name);
 
- private kafka = new Kafka({
+  private kafka = new Kafka({
     clientId: 'payload',
     brokers: ['kafka-service:9092'],
   });
@@ -24,7 +24,6 @@ export class PayloadService {
   ) {
     this.receiveTelemetryListener();
   }
-
 
   async receiveTelemetry(
     rocketId: string,
@@ -51,19 +50,23 @@ export class PayloadService {
           telemetry.longitude
         } - angle: ${telemetry.angle.toPrecision(2)}`,
       );
-    const producer = this.kafka.producer();
-     try {
-     const payload = {
-       message: 'DELIVERED',
-       rocketId: rocketId,
-     };
+      const producer = this.kafka.producer();
+      try {
+        const payload = {
+          message: 'DELIVERED',
+          rocketId: rocketId,
+        };
         await producer.connect();
         await producer.send({
           topic: 'client-service-events',
           messages: [{ value: JSON.stringify(payload) }],
         });
-    this.logger.log(`Event sent to inform the client service about the payload delivery of rocket ID ${rocketId.slice(-3).toUpperCase()}`);
-       }finally {
+        this.logger.log(
+          `Event sent to inform the client service about the payload delivery of rocket ID ${rocketId
+            .slice(-3)
+            .toUpperCase()}`,
+        );
+      } finally {
         await producer.disconnect();
       }
       const payloadDelivery =

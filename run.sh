@@ -171,7 +171,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 
-sleep 35
+sleep 70
 
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
@@ -200,9 +200,8 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
-                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs'
                 --file client-service/client-service/docker-compose-client-service.yml \
                 --file broadcast-service/broadcast-service/docker-compose-broadcast-service.yml \
-                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs'
+                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs|zookeeper'
 
 

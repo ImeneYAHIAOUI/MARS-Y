@@ -29,7 +29,6 @@ async launch_events_listener() {
             try {
            const responseEvent = JSON.parse(message.value.toString());
            const id = responseEvent.rocketId.toString().slice(-3).toUpperCase();
-
            if (responseEvent.messageNumber === 0) {
               this.logger.log('start broadcasting');
               this.sendEventToClientService('BROADCASTING STARTED', responseEvent.rocketId.toString());
@@ -44,7 +43,7 @@ async launch_events_listener() {
           this.logger.log(`- Speed: ${speed}`);
           const direction = responseEvent.direction.toString();
           this.logger.log(`- Direction: ${direction}`);
-              if (responseEvent.messageNumber === 2 ) {
+              if (responseEvent.messageNumber >= 2 ) {
                           this.sendEventToClientService('BROADCASTING TERMINATED', responseEvent.rocketId.toString());
                           this.logger.log('broadcasting terminated');
                      }

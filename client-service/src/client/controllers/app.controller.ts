@@ -36,7 +36,7 @@ async receiveEventListener(): Promise<void> {
   });
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }:EachMessagePayload ) => {
+    eachMessage: async ({  message }:EachMessagePayload ) => {
       const payload = JSON.parse(message.value.toString());
       const messageValue = payload.message?.toString();
       const messageKey = payload.rocketId?.toString();
