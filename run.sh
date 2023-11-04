@@ -191,4 +191,4 @@ docker compose  --env-file ./.env.docker \
                 --file pilot-service/docker-compose-pilot-service.yml \
                 --file client-service/docker-compose-client-service.yml \
                 --file broadcast-service/docker-compose-broadcast-service.yml \
-                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon'
+                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs'
