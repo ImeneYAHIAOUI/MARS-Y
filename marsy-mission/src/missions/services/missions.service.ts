@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
 
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Mission } from '../schema/mission.schema';
 import { SiteService } from './site.service';
@@ -12,16 +12,19 @@ import { MissionExistsException } from '../exceptions/mission-exists.exception';
 import { BoosterStatus } from '../schema/booster.status.schema';
 import { MissionBoosterDto } from '../dto/mission.booster.dto';
 import { Kafka } from 'kafkajs';
+import { EventStored } from '../schema/event.stored.schema';
 
 const logger = new Logger('MissionService');
 
 @Injectable()
 export class MissionService {
+
   constructor(
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
     private readonly siteService: SiteService,
     @InjectModel(Mission.name) private missionModel: Model<Mission>,
+    @InjectModel(EventStored.name) private eventModel: Model<EventStored>,
   ) {
     this.receiveTelemetryListener();
     this.receiveEventListener();
@@ -220,6 +223,7 @@ export class MissionService {
         const responseEvent = JSON.parse(message.value.toString());
         await this.checkWeatherRocketStatus(responseEvent);
         if (!responseEvent.event.includes('PRELAUNCH_CHECKS')) {
+          await this.saveEvent(responseEvent.rocketId, responseEvent.event);
           const producer = this.kafka.producer();
           await producer.connect();
           await producer.send({
@@ -272,4 +276,43 @@ export class MissionService {
       `Mission of the rocket ${rocketId.slice(-3).toUpperCase()} failed`,
     );
   }
+
+
+  async saveEvent(mission_id : string, event : string) : Promise<void> {
+    const  newEvent = new this.eventModel({
+      mission_id,
+      date: Date.now(),
+      event
+    });
+    await newEvent.save();
+  }
+
+  async getMissionLogs(id: string) : Promise<EventStored[]> {
+    const logs = await this.eventModel
+  .find({ mission_id : id })
+  .exec();
+  
+  if (logs.length === 0) {
+    logger.debug(`No event stored for mission ${id.slice(-3).toUpperCase()}`);
+  } else {
+    logger.log(`ALL EVENTS STORED FOR MISSION ${id.slice(-3).toUpperCase()}`);
+    for (let i = 0; i < logs.length; i++) {
+      const event = logs[i];
+      const formattedTime = event.date.toLocaleString('fr-FR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short',
+        timeZone: 'Europe/Paris',
+      });
+      logger.debug(`${i + 1}- ${formattedTime} => ${event.event}`);
+    }
+}
+
+  return logs;
+  }
+    
 }
