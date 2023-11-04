@@ -8,8 +8,18 @@ services:
       - 3011:3000
     networks:
       - nestjs-marsy-network
+    depends_on:
+      - mongo_db_marsy_webcaster
     external_links:
       - docker-compose-kafka-service:kafka-service:kafka-service
+
+  mongo_db_marsy_webcaster:
+    image: "mongo:4.4.15"
+    restart: always
+    networks:
+      - nestjs-marsy-network
+    logging:
+      driver: none
 networks:
   nestjs-marsy-network:
     driver: bridge

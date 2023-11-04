@@ -1,3 +1,5 @@
 import { registerAs } from '@nestjs/config';
 
-export default registerAs('dependencies', () => ({}));
+export default registerAs('dependencies', () => ({
+
+}));

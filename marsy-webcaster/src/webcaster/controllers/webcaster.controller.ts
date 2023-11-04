@@ -1,17 +1,9 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Query,
-  Body,
-  Inject,
-  HttpCode,
-} from '@nestjs/common';
+import { Controller, Get, Query, HttpCode } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { PublishEventDto } from '../dto/publish-event.dto';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Kafka } from 'kafkajs';
 import { WebCasterService } from '../services/webcaster.service';
+import { Webcasting } from '../schema/webcasting.schema';
 
 @Controller('webcaster')
 @ApiTags('webcaster')
@@ -57,12 +49,15 @@ export class WebcasterController {
     });
   }
 
-  @ApiBody({ type: PublishEventDto })
-  @ApiOkResponse({ type: PublishEventDto, isArray: true })
-  @Post('publish')
-  @HttpCode(200)
-  async publishEvent(@Body() event: PublishEventDto): Promise<PublishEventDto> {
-    this.logger.log(`Message from ${event.publisher} : ${event.event}`);
-    return event;
+  @ApiOkResponse({ type: Webcasting, isArray: true })
+  @Get('events')
+  async listAllEvents(): Promise<Webcasting[]> {
+    try {
+      const events = await this.webCasterService.findAll();
+      return events;
+    } catch (error) {
+      this.logger.error('Error while listing all events: ', error.message);
+      throw error;
+    }
   }
 }
