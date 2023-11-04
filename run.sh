@@ -15,6 +15,8 @@ services=(
     "marsy-webcaster:marsy-webcaster/docker-compose-marsy-webcaster.yml"
     "client-service:client-service/docker-compose-client-service.yml"
     "broadcast-service:broadcast-service/docker-compose-broadcast-service.yml"
+    "pilot-service:pilot-service/docker-compose-pilot-service.yml"
+
 )
 container_ids=()
 
@@ -35,19 +37,7 @@ for service in "${services[@]}"; do
 done
 
 
-# Function to display real-time logs
-show_logs() {
-    for service in "${services[@]}"; do
-        IFS=':' read -ra service_info <<< "$service"
-        service_name=${service_info[0]}
-        compose_file=${service_info[1]}
 
-        echo "Displaying logs for service $service_name"
-         docker compose --env-file ./.env.docker -f $compose_file logs -f |
-          grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|kafkajs' &
-    done
-    wait
-}
 # Function to format HTTP response codes with colors
 format_http_code() {
   local code=$1
@@ -87,13 +77,11 @@ mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
 
 
-
-
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/prepare")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 35
+sleep 60
 
 
 TIMESTAMP=$(date +%s)
@@ -174,7 +162,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 
-sleep 70
+sleep 45
 
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
@@ -203,8 +191,7 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
-                --file client-service/client-service/docker-compose-client-service.yml \
-                --file broadcast-service/broadcast-service/docker-compose-broadcast-service.yml \
-                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon|kafkajs|zookeeper'
-
-
+                --file pilot-service/docker-compose-pilot-service.yml \
+                --file client-service/docker-compose-client-service.yml \
+                --file broadcast-service/docker-compose-broadcast-service.yml \
+                logs --follow -t | grep -E -v 'RouterExplorer|InstanceLoader|NestFactory|NestApplication|RoutesResolver|Controller|daemon'

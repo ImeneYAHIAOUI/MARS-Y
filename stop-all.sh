@@ -15,6 +15,7 @@ docker compose  --env-file ./.env.docker \
                 --file kafka-service/docker-compose-kafka-service.yml \
                 --file gateway/docker-compose-gateway.yml \
                  --file  broadcast-service/docker-compose-broadcast-service.yml \
-                 --file  client-service/docker-compose-client-service.yml down
+                 --file  client-service/docker-compose-client-service.yml \
+                 --file  pilot-service/docker-compose-pilot-service.yml down
 
 echo "all services stopped behind gateway"

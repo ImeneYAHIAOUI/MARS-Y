@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  pilot-service:
+    image: "nestjs-marsy/pilot-service"
+    restart: always
+    ports:
+      - 3026:3000
+    environment:
+      - PAYLOAD_HARDWARE_SERVICE_URL_WITH_PORT=${MARSY_PAYLOAD_HARDWARE_SERVICE}:3000
+    networks:
+      - nestjs-marsy-network
+networks:
+  nestjs-marsy-network:
+    driver: bridge

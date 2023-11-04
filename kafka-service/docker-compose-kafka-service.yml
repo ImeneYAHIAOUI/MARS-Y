@@ -13,7 +13,7 @@ services:
       - nestjs-marsy-network
 
   kafka-service:
-    container_name: soa-team-e-kafka
+    container_name: soa-team-d-kafka
     restart: unless-stopped
     image: wurstmeister/kafka
     depends_on:

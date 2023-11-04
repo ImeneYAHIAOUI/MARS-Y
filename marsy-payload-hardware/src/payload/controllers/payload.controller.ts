@@ -10,6 +10,7 @@ import { ApiNotFoundResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { RocketNotFoundException } from '../exceptions/rocket-not-found.exception';
 import { PayloadHardwareService } from '../services/payload.service';
 import { PayloadTelemetryDto } from '../dto/payload-telemetry.dto';
+import {ControlDataDto } from '../dto/control-data.dto';
 
 
 @ApiTags('payload-hardware')
@@ -48,9 +49,17 @@ export class PayloadHardwareController {
      @Param('rocketId') rocketId: string
     ): Promise<void> {
        const id=rocketId.slice(-3).toUpperCase();
-      this.logger.log('Received request to launch payload of rocket with id: ${id}');
+      this.logger.log(`Received request to launch payload of rocket: ${id}`);
       return await this.payloadService.sendDetailsToBroadcastService(rocketId);
-
     }
+
+     @Post('/orient')
+      @HttpCode(200)
+      async delegateControlToPilotService(
+        @Body() controlData: ControlDataDto
+      ): Promise<void> {
+         this.payloadService.delegateControlToPilotService(controlData);
+      }
+
  
 }

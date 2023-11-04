@@ -4,6 +4,7 @@ import { AppService } from './client/services/app.service';
 import appConfig from './shared/config/app.config';
 import swaggeruiConfig from './shared/config/swaggerui.config';
 import { ClientServiceProxy } from './client/services/client-service-proxy/client-service-proxy';
+import {PilotServiceProxy} from './client/services/client-service-proxy/pilot-service-proxy';
 import dependenciesConfig from './shared/config/dependencies.config';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
@@ -14,6 +15,6 @@ import { ConfigModule } from '@nestjs/config';
        load: [appConfig, swaggeruiConfig,dependenciesConfig],
      }), HttpModule,],
   controllers: [AppController],
-  providers: [ClientServiceProxy,AppService],
+  providers: [ClientServiceProxy,PilotServiceProxy,AppService],
 })
 export class AppModule {}

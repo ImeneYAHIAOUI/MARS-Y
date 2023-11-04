@@ -58,7 +58,7 @@ export class CommandController {
       return launchCommand;
     } catch (error) {
       logger.error(
-        `Error while processing request for rocket with id ${params.rocketId} : ${error.message} status : ${error.status}`,
+        `Error while processing request for rocket ${params.rocketId} : ${error.message} status : ${error.status}`,
       );
       throw error;
     }
