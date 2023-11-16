@@ -16,7 +16,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
  // Swagger UI Definition
   const options = new DocumentBuilder()
-      .setTitle('Broadcast Service')
+      .setTitle('Client Service')
       .setDescription('The client service, acting as a mission client, initiates satellite launches and notifies the broadcast service of this event.')
       .setVersion('1.0')
       .build();
