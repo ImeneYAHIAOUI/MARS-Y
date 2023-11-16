@@ -11,8 +11,9 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
+  ApiTags,ApiOperation, ApiResponse
 } from '@nestjs/swagger';
+
 
 
 import { DeliveryDto } from '../dto/delivery.dto';
@@ -39,7 +40,12 @@ export class GuidanceHardwareController {
     this.hardwareService.startSendingPayloadHardwareTelemetry(id);
     return deliveryDto;
   }
-
+  @Get()
+    @ApiOperation({ summary: 'Get guidance service information', description: 'Retrieve information about the guidance service.' })
+    @ApiResponse({ status: 200, description: 'Successful operation', type: String })
+  getHello(): string {
+    return this.hardwareService.getHello();
+  }
   @Post('launch')
   @ApiOkResponse({
     description: 'Starts sending guidance telemetry data',
