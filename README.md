@@ -38,6 +38,7 @@
 * `marsy-payload` (deployed on `http://localhost:3006` with API doc at `/doc/payload`): controls the delivery of the payload.
 * `marsy-mock` (deployed on `http://localhost:3005` with API doc at `/doc/mock`): represents the primary hardware of the system, responsible for the main actions of the rocket and for generating telemetry data for the rocket's first stage as well as for the booster after staging.
 * `marsy-guidance` (deployed on `http://localhost:3007` with API doc at `/doc/guidance`): responsible for guiding the rocket during the second stage and generating telemetry data.
+* `pilot-service` (deployed on `http://localhost:3026` with API doc at `/doc/pilot`): This service allows for the adjustment of a satellite's orbit.
 * `integration-tests`: a specific service that run end to end tests at the API level through frisby after docker-composing the other services.
 * `gateway` sets up a gateway to `http://localhost:9500` with subroutes to the different micro-services
 
