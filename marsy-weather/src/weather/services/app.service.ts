@@ -5,7 +5,6 @@ export class AppService {
 
   getService(): string {
     return 'Welcome to the weather service!';
-
   }
 
 }
