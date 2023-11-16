@@ -32,7 +32,7 @@
 
 * `marsy-launchpad` (deployed on `http://localhost:3001` with API doc at `/doc/launchpad`): implements the launchpad context, with rocket management, staging and launch commands.
 * `marsy-mission` (deployed on `http://localhost:3000` with API doc at `/doc/mission`): implements the mission context, with mission and site management and go and no go polling.
-* `marsy-weather` (deployed on `http://localhost:3002` with API doc at `doc/weather`): sends weather status.
+* `marsy-weather` (deployed on `http://localhost:3002` with API doc at `doc/weather`): provides weather status.
 * `marsy-telemetry` (deployed on `http://localhost:3004` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
 * `marsy-boostercontrol` (deployed on `http://localhost:3030` with API doc at `/doc/booster`): controls the booster telemetry data and assure the landing.
 * `marsy-payload` (deployed on `http://localhost:3006` with API doc at `/doc/payload`): controls the delivery of the payload.
