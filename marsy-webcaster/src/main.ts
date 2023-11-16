@@ -16,22 +16,14 @@ async function bootstrap() {
   // Add validation pipi for all endpoints
   app.useGlobalPipes(new ValidationPipe());
 
-  // Swagger UI Definition
-  const swaggeruiConfig = configService.get<SwaggerUIConfig>('swaggerui');
-  const config = new DocumentBuilder()
-    .setTitle(swaggeruiConfig.title)
-    .setDescription(swaggeruiConfig.description)
-    .setVersion(configService.get('npm_package_version'))
-    .addServer('/', 'Without gateway')
-    .addServer('/webcaster', 'Through gateway')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(swaggeruiConfig.path, app, document);
-
-  // Starts listening for shutdown hooks
+    const options = new DocumentBuilder()
+        .setTitle('Webcaster Service')
+        .setDescription('The role of the Webcaster service is to provide real-time updates about launch procedure events')
+        .setVersion('1.0')
+        .build();
+  const document = SwaggerModule.createDocument(app, options);
+   SwaggerModule.setup('/doc/webcaster', app, document);
   app.enableShutdownHooks();
-
-  // Run the app
   const appPort = configService.get('app.port');
   console.log(appPort);
   await app.listen(appPort);

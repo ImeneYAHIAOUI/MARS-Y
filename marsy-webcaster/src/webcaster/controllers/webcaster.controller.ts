@@ -1,6 +1,7 @@
 import { Controller, Get, Query, HttpCode } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {ApiOkResponse, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
 import { Kafka } from 'kafkajs';
 import { WebCasterService } from '../services/webcaster.service';
 import { Webcasting } from '../schema/webcasting.schema';
@@ -18,6 +19,12 @@ export class WebcasterController {
   constructor(private readonly webCasterService: WebCasterService) {
     this.mission_launch_steps_events_listener();
   }
+    @Get('/service')
+    @ApiOperation({ summary: 'Get webcaster service information', description: 'Retrieve information about the webcaster service.' })
+    @ApiResponse({ status: 200, description: 'Successful operation', type: String })
+    getService(): string {
+      return this.webCasterService.getService();
+    }
 
   @Get()
   @HttpCode(200)

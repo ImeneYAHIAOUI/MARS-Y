@@ -28,7 +28,9 @@ export class GuidanceHardwareService {
     clientId: 'telemetry',
     brokers: ['kafka-service:9092'],
   });
-
+  getHello(): string {
+    return 'Welcome to the guidance service!';
+  }
   async hardware() {
     const consumer = this.kafka.consumer({ groupId: 'guidance-group' });
     await consumer.connect();

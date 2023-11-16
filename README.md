@@ -32,14 +32,17 @@
 
 * `marsy-launchpad` (deployed on `http://localhost:3001` with API doc at `/doc/launchpad`): implements the launchpad context, with rocket management, staging and launch commands.
 * `marsy-mission` (deployed on `http://localhost:3000` with API doc at `/doc/mission`): implements the mission context, with mission and site management and go and no go polling.
-* `marsy-weather` (deployed on `http://localhost:3002` with API doc at `doc/weather`): sends weather status.
+* `marsy-weather` (deployed on `http://localhost:3002` with API doc at `doc/weather`): provides weather status.
 * `marsy-telemetry` (deployed on `http://localhost:3004` with API doc at `/doc/telemetry`): recieves, stores and retreives telemetry data.
 * `marsy-boostercontrol` (deployed on `http://localhost:3030` with API doc at `/doc/booster`): controls the booster telemetry data and assure the landing.
 * `marsy-payload` (deployed on `http://localhost:3006` with API doc at `/doc/payload`): controls the delivery of the payload.
 * `marsy-mock` (deployed on `http://localhost:3005` with API doc at `/doc/mock`): represents the primary hardware of the system, responsible for the main actions of the rocket and for generating telemetry data for the rocket's first stage as well as for the booster after staging.
 * `marsy-guidance` (deployed on `http://localhost:3007` with API doc at `/doc/guidance`): responsible for guiding the rocket during the second stage and generating telemetry data.
+* `pilot-service` (deployed on `http://localhost:3026` with API doc at `/doc/pilot`): This service allows for the adjustment of a satellite's orbit.
+* `webcaster-service` (deployed on `http://localhost:3011` with API doc at `/doc/webcaster`): The role of the Webcaster service is to provide real-time updates about launch procedure events.
+* `broacast-service` (deployed on `http://localhost:3021` with API doc at `/doc/broadcast`): The broadcast service shares information about the satellite's orbit launch.
+* `client-service` (deployed on `http://localhost:3025` with API doc at `/doc/client`): The client service, acting as a mission client, initiates satellite launches and notifies the broadcast service of this event.
 * `integration-tests`: a specific service that run end to end tests at the API level through frisby after docker-composing the other services.
-* `gateway` sets up a gateway to `http://localhost:9500` with subroutes to the different micro-services
 
 ##  Common implementation stack
 
