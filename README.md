@@ -41,7 +41,7 @@
 * `pilot-service` (deployed on `http://localhost:3026` with API doc at `/doc/pilot`): This service allows for the adjustment of a satellite's orbit.
 * `webcaster-service` (deployed on `http://localhost:3011` with API doc at `/doc/webcaster`): The role of the Webcaster service is to provide real-time updates about launch procedure events.
 * `broacast-service` (deployed on `http://localhost:3021` with API doc at `/doc/broadcast`): The broadcast service shares information about the satellite's orbit launch.
-
+* `client-service` (deployed on `http://localhost:3025` with API doc at `/doc/client`): The client service, acting as a mission client, initiates satellite launches and notifies the broadcast service of this event.
 * `integration-tests`: a specific service that run end to end tests at the API level through frisby after docker-composing the other services.
 * `gateway` sets up a gateway to `http://localhost:9500` with subroutes to the different micro-services
 
