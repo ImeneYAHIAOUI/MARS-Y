@@ -187,11 +187,7 @@ export class HardwareService {
 
   // before landing speed is zero and we are falling in altitude free fall
   retrieveBoosterTelemetry(rocketId: string): BoosterTelemetryRecordDto {
-    this.logger.log(
-      `Retrieving telemetry from the booster of the staged rocket ${rocketId
-        .slice(-3)
-        .toUpperCase()}`,
-    );
+
     const boosterTelemetry = this.boosters.find((booster) => {
       return booster.rocketId === rocketId;
     });
@@ -351,7 +347,7 @@ export class HardwareService {
     this.logger.log(
       `Started sending telemetry for the rocket ${rocketId
         .slice(-3)
-        .toUpperCase()}`,
+        .toUpperCase()} (us 5)`,
     );
     const missionId: string = (
       await this.marsyMissionProxyService.getMission(rocketId)
@@ -389,11 +385,6 @@ export class HardwareService {
   async evaluateRocketDestruction(
     telemetryRecord: TelemetryRecordDto,
   ): Promise<void> {
-    this.logger.log(
-      `Evaluating telemetry for rocket : ${telemetryRecord.rocketId
-        .slice(-3)
-        .toUpperCase()}`,
-    );
 
     if (
       telemetryRecord.angle > Constants.MAX_ANGLE ||
@@ -453,7 +444,7 @@ export class HardwareService {
       });
       const formattedRocketId = rocketId.slice(-3).toUpperCase();
       this.logger.log(
-        `Issuing order to destroy rocket ${formattedRocketId}. Reason: ${reason}`,
+        `Issuing order to destroy rocket ${formattedRocketId}. Reason: ${reason} (us 18)`,
       );
       await this.postMessageToKafka({
         rocketId: rocketId,
@@ -480,11 +471,7 @@ export class HardwareService {
   }
 
   stopSendingTelemetry(rocketId: string): void {
-    this.logger.log(
-      `Stopped sending telemetry for the rocket ${rocketId
-        .slice(-3)
-        .toUpperCase()}`,
-    );
+
     this.rocketCronJob.stop();
   }
 }

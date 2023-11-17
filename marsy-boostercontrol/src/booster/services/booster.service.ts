@@ -32,8 +32,8 @@ export class BoosterService {
         boosterTelemetryDto.altitude < altitudeThreshold &&
         boosterTelemetryDto.altitude > 300
       ) {
-        logger.warn(
-          `Booster has reached the altitude to initiate landing - Altitude: ${boosterTelemetryDto.altitude} meters.`,
+        logger.log(
+          `Booster has reached the altitude to initiate landing - Altitude: ${boosterTelemetryDto.altitude} meters. (us 9)`,
         );
         const result = this.hardwareProxyService.callHardwareToLand(rocketId);
 

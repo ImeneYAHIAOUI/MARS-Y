@@ -3,8 +3,8 @@ import { EventDto } from '../dto/event.dto';
 import { Kafka, EachMessagePayload } from 'kafkajs';
 
 @Injectable()
-export class AppService {
-  private readonly logger = new Logger(AppService.name);
+export class BroadcastService {
+  private readonly logger = new Logger(BroadcastService.name);
   private kafka = new Kafka({
     clientId: 'broadcast',
     brokers: ['kafka-service:9092'],
@@ -40,11 +40,11 @@ export class AppService {
             }
 
             if (message?.key.toString() === 'adjustment') {
-              this.logger.log(`broadcasting resumed of rocket with ID ${id}:`);
+              this.logger.log(`broadcasting resumed of rocket  ${id}:`);
               this.sendEventToClientService('BROADCASTING RESUMED', responseEvent.rocketId.toString());
             }
 
-            this.logger.log(`New message received with satellite details of rocket with ID ${id}:`);
+            this.logger.log(`New message received with satellite details of rocket ${id} (us 19)`);
 
             const lat = responseEvent.latitude.toString();
             this.logger.log(`- Latitude: ${lat}`);
@@ -67,7 +67,7 @@ export class AppService {
 
           } catch (error) {
                 const id = JSON.parse(message.value.toString()).rocketId.toString().slice(-3).toUpperCase();
-                this.logger.error(`Error processing satellite details of rocket with id ${id}:`, error);
+                this.logger.error(`Error processing satellite details of rocket ${id}:`, error);
 
 
           }

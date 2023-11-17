@@ -22,7 +22,7 @@ export class CommandService {
     private readonly rocketService: RocketService,
   ) {
     this.receiveTelemetryListener();
-    this.consymeForPollGoNoGo();
+    this.consumeForPollGoNoGo();
   }
 
   private kafka = new Kafka({
@@ -54,23 +54,23 @@ export class CommandService {
 
         await this.hardwareProxyService.sleepEngine();
 
-        if (this.runtimes !== 2){
+        if (this.runtimes !== 2) {
           await this.hardwareProxyService.wakeEngine();
         }
 
-        await this.hardwareProxyService.throttleDownEngines(rocketId, (
-          async (error) => {
-            try{
-            if (this.runtimes === 2){
-              await this.marsyMissionProxyService.missionFailed(rocketId);
-              await this.hardwareProxyService.wakeEngine();
+        await this.hardwareProxyService.throttleDownEngines(
+          rocketId,
+          (async (error) => {
+            try {
+              if (this.runtimes === 2) {
+                await this.marsyMissionProxyService.missionFailed(rocketId);
+                await this.hardwareProxyService.wakeEngine();
+              }
+            } catch (error) {
+              logger.error(`Error : ${error.message}`);
             }
-          } catch (error) {
-             logger.error(
-              `Error : ${error.message}`);
-                        }
-          }
-        ).bind(this));
+          }).bind(this),
+        );
         logger.debug(
           `Reached MaxQ for rocket ${rocketId.slice(-3).toUpperCase()}`,
         );
@@ -98,11 +98,13 @@ export class CommandService {
       );
 
       if (telemetry.fuel === 0 && rocket.status === RocketStatus.IN_FLIGHT) {
-        logger.warn(
-          `issuing fuel depletion mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}`,
+        logger.log(
+          `issuing fuel depletion mid-flight for rocket ${rocketId
+            .slice(-3)
+            .toUpperCase()}`,
         );
-        logger.warn(
-          `staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()}`,
+        logger.log(
+          `staging mid-flight for rocket ${rocketId.slice(-3).toUpperCase()} (us 6)`,
         );
         await this.hardwareProxyService.stageMidFlightFlight(rocketId);
         await this.rocketService.updateRocketStatus(
@@ -128,7 +130,9 @@ export class CommandService {
       );
     } catch (error) {
       logger.error(
-        `An error occurred while preparing  rocket ${rocketId}: ${error.message}`,
+        `An error occurred while preparing  rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}: ${error.message}`,
       );
     }
   }
@@ -141,13 +145,19 @@ export class CommandService {
       );
     } catch (error) {
       logger.error(
-        `An error occurred while powering on rocket ${rocketId}: ${error.message}`,
+        `An error occurred while powering on rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}: ${error.message}`,
       );
     }
   }
 
   async sendLaunchCommand(rocketId: string): Promise<CommandDto> {
-    logger.log(`Initiating launch sequence for rocket ${rocketId}.`);
+    logger.log(
+      `Initiating launch sequence for rocket ${rocketId
+        .slice(-3)
+        .toUpperCase()}.`,
+    );
     await this.rocketService.updateRocketStatus(
       rocketId,
       RocketStatus.READY_FOR_LAUNCH,
@@ -188,8 +198,10 @@ export class CommandService {
     return null;
   }
 
-  async sendAbortCommand(rocketId: string, goNogo : boolean): Promise<CommandDto> {
-
+  async checkRocketStatus(
+    rocketId: string,
+    goNogo: boolean,
+  ): Promise<CommandDto> {
     const commandDto: CommandDto = {
       decision: '',
       rocket: null,
@@ -198,8 +210,13 @@ export class CommandService {
       rocketId,
       RocketStatus.PRELAUNCH_CHECKS,
     );
+    logger.log('Monitor rocket status (us 2');
     if (goNogo) {
-      logger.log(`Starting launch sequence for rocket ${rocketId}.`);
+      logger.log(
+        `All checks passed for rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}. Starting launch. (us 4)`,
+      );
       commandDto.decision = 'Starting launch sequence.';
       // 5) Liftoff/Launch (T+00:00:00)
       commandDto.rocket = await this.rocketService.updateRocketStatus(
@@ -207,16 +224,22 @@ export class CommandService {
         RocketStatus.IN_FLIGHT,
       );
     } else {
-      logger.log(`Can't start launch sequence ${rocketId}.`);
+      logger.error(
+        `Can't start launch sequence ${rocketId.slice(-3).toUpperCase()}.`,
+      );
       commandDto.decision = "Can't start launch sequence.";
       commandDto.rocket = await this.rocketService.updateRocketStatus(
         rocketId,
         RocketStatus.ABORTED,
       );
-      logger.warn(`Launch sequence aborted for rocket ${rocketId}.`);
+      logger.warn(
+        `Launch sequence aborted for rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()}.`,
+      );
     }
     await this.hardwareProxyService.startEmittingTelemetry(rocketId);
-    logger.log(`Telemetry emitting started for rocket ${rocketId}.`);
+
 
     return commandDto;
   }
@@ -247,7 +270,9 @@ export class CommandService {
       });
       await producer.disconnect();
       logger.log(
-        `Rocket ${rocketId} is currently in mid-flight. Initiating mid-stage separation process.`,
+        `Rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()} is currently in mid-flight. Initiating mid-stage separation process.`,
       );
       const midStageSeparationSuccess =
         await this.hardwareProxyService.stageMidFlightFlight(rocketId);
@@ -278,7 +303,9 @@ export class CommandService {
       }
     } else {
       logger.error(
-        `Rocket ${rocketId} is not in mid-flight. Mid-stage separation cannot proceed.`,
+        `Rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()} is not in mid-flight. Mid-stage separation cannot proceed.`,
       );
       throw new RocketNotInFlightException(rocketId);
     }
@@ -289,7 +316,9 @@ export class CommandService {
   ): Promise<DeliveryResponseDto> {
     const rocket = await this.rocketService.findRocket(rocketId);
     logger.log(
-      `Sending payload delivery command for rocket ${rocketId.slice(-3).toUpperCase()}`,
+      `Sending payload delivery command for rocket ${rocketId
+        .slice(-3)
+        .toUpperCase()} (us 7)`,
     );
     const rocketStatus = rocket.status;
 
@@ -362,7 +391,11 @@ export class CommandService {
         });
         await producer.disconnect();
 
-        logger.warn(`Payload delivery failed for rocket ${rocketId}.`);
+        logger.warn(
+          `Payload delivery failed for rocket ${rocketId
+            .slice(-3)
+            .toUpperCase()}.`,
+        );
 
         const updatedRocket = await this.rocketService.updateRocketStatus(
           rocketId,
@@ -376,7 +409,9 @@ export class CommandService {
       }
     } else {
       logger.error(
-        `Rocket ${rocketId} is not staged. Payload delivery cannot proceed.`,
+        `Rocket ${rocketId
+          .slice(-3)
+          .toUpperCase()} is not staged. Payload delivery cannot proceed.`,
       );
       throw new RocketNotStagedException(rocketId);
     }
@@ -402,7 +437,7 @@ export class CommandService {
     });
   }
 
-  async consymeForPollGoNoGo() {
+  async consumeForPollGoNoGo() {
     const consumer = this.kafka.consumer({ groupId: 'rocket-group' });
     await consumer.connect();
     await consumer.subscribe({
@@ -412,11 +447,12 @@ export class CommandService {
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        if(responseEvent.mission_poll != undefined ) {
-          this.sendAbortCommand(responseEvent.rocketId, responseEvent.mission_poll);
-         logger.log(`Received poll request for rocket ${responseEvent.rocketId
-          .slice(-3)
-          .toUpperCase()}`);
+        if (responseEvent.mission_poll != undefined) {
+          this.checkRocketStatus(
+            responseEvent.rocketId,
+            responseEvent.mission_poll,
+          );
+
         }
       },
     });

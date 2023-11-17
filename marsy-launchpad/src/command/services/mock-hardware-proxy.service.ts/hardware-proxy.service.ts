@@ -158,11 +158,6 @@ export class HardwareProxyService {
   }
 
   async startEmittingTelemetry(_rocketId: string): Promise<void> {
-    logger.log(
-      `Request to start sending telemetry for rocket: ${_rocketId
-        .slice(-3)
-        .toUpperCase()}`,
-    );
     const response: AxiosResponse = await firstValueFrom(
       this.httpService.post(`${this._baseUrl}${this._hardwarePath}/launch`, {
         rocketId: _rocketId,

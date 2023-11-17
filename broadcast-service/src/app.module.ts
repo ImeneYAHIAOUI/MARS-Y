@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import {AppController } from './client/controllers/app.controller';
-import { AppService } from './client/services/app.service';
+import { BroadcastService } from './client/services/broadcast.service';
 import appConfig from './shared/config/app.config';
 import swaggeruiConfig from './shared/config/swaggerui.config';
 import { ConfigModule } from '@nestjs/config';
@@ -13,6 +13,6 @@ import { HttpModule } from '@nestjs/axios';
        load: [appConfig, swaggeruiConfig],
      }), HttpModule,],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [BroadcastService],
 })
 export class AppModule {}

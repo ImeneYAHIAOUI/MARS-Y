@@ -17,7 +17,7 @@ export class ClientServiceProxy {
 
     async requestLaunchDetails(rocketId :string): Promise<boolean> {
         try {
-        logger.log(`Requesting launch details from ${this._baseUrl}${this._client}/${rocketId}`);
+        logger.log(`Requesting launch updates`);
         const response = await this.httpService
                 .post(`${this._baseUrl}/payload-hardware${this._client}/${rocketId}`, { })
                 .toPromise();

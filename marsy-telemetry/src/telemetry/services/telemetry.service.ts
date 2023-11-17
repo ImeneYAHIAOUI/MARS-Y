@@ -81,7 +81,6 @@ export class TelemetryService {
       telemetry: missionTelemetry,
       rocketId: telemetry.rocketId,
       destroyRocket: this.evaluateRocketDestruction(telemetry),
-
     };
     const payloadTelemetry = {
       missionId: telemetry.missionId,
@@ -145,7 +144,9 @@ export class TelemetryService {
     reason?: string;
   } {
     const rocketId = telemetryRecord.rocketId;
-    this.logger.log(`Evaluating telemetry for rocket: ${rocketId}`);
+    this.logger.log(
+      `Evaluating telemetry for rocket: ${rocketId.slice(-3).toUpperCase()}`,
+    );
 
     const { altitude, speed, temperature, pressure, angle } = telemetryRecord;
 
@@ -180,11 +181,12 @@ export class TelemetryService {
     }
 
     this.logger.log(
-      `Telemetry for rocket ${rocketId} is within safe parameters. No need for destruction.`,
+      `Telemetry for rocket ${rocketId
+        .slice(-3)
+        .toUpperCase()} is within safe parameters. No need for destruction.`,
     );
     return { destroy: false };
   }
-
 
   async sendTelemetryToKafka(topic: string, message: any) {
     const producer = this.kafka.producer();
@@ -210,10 +212,20 @@ export class TelemetryService {
         const sender = JSON.parse(message.value.toString()).sender;
         if (sender === 'booster') {
           const rocketId = JSON.parse(message.value.toString()).rocketId;
+          this.logger.log(
+            `Retrieving telemetry from the booster of the staged rocket ${rocketId
+              .slice(-3)
+              .toUpperCase()} (us 10)`,
+          );
           await this.storeBoosterTelemetryRecord(telemetry, rocketId);
           await this.publishBoosterTelemetry(telemetry, rocketId);
         }
         if (sender === 'payload-hardware') {
+          this.logger.log(
+              `Retrieving telemetry from the payload of the staged rocket ${rocketId
+                  .slice(-3)
+                  .toUpperCase()} (us 11)`,
+          );
           const rocketId = JSON.parse(message.value.toString()).rocketId;
           await this.storePayLoadTelemetry(telemetry);
           await this.publishPayloadTelemetry(telemetry, rocketId);

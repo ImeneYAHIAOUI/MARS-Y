@@ -44,6 +44,7 @@ export class WeatherController {
     async pollWeather(@Body() weatherDto: WeatherDto):Promise<{ go: boolean }> {
       const weatherStatusResponse = await this.getWeatherStatus(weatherDto.lat, weatherDto.long);
       const canGo = weatherStatusResponse.status === WeatherStatus.Sunny;
+      this.logger.log(`Polling weather status for rocket ${weatherDto.rocketId}. (US 1)`);
       this.postMessageToKafka({
         rocketId: weatherDto.rocketId,
         weather_poll: true,

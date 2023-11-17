@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MarsyRocketProxyService } from './marsy-rocket-proxy/marsy-rocket-proxy.service';
 import { MarsyWeatherProxyService } from './marsy-weather-proxy/marsy-weather-proxy.service';
 
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Mission } from '../schema/mission.schema';
 import { SiteService } from './site.service';
@@ -18,7 +18,6 @@ const logger = new Logger('MissionService');
 
 @Injectable()
 export class MissionService {
-
   constructor(
     private readonly marsyRocketProxyService: MarsyRocketProxyService,
     private readonly marsyWeatherProxyService: MarsyWeatherProxyService,
@@ -39,12 +38,14 @@ export class MissionService {
     try {
       const formattedRocketId = rocketId.slice(-3).toUpperCase();
       logger.log(
-        `Issuing order to destroy rocket ${formattedRocketId}. Reason: ${reason}`,
+        `Issuing order to destroy rocket ${formattedRocketId}. Reason: ${reason} (us 8)`,
       );
       await this.marsyRocketProxyService.destroyRocket(rocketId);
     } catch (error) {
       logger.error(
-        `Error while destroying rocket ${rocketId}: ${error.message}`,
+        `Error while destroying rocket ${rocketId.slice(-3).toUpperCase()}: ${
+          error.message
+        }`,
       );
       throw error;
     }
@@ -117,7 +118,7 @@ export class MissionService {
       .exec();
     if (!mission) {
       throw new MissionNotFoundException(
-        `Mission with rocketId ${rocketId} not found`,
+        `Mission with rocketId ${rocketId.slice(-3).toUpperCase()} not found`,
       );
     }
     return mission;
@@ -132,7 +133,9 @@ export class MissionService {
       .exec();
     if (!mission) {
       throw new MissionNotFoundException(
-        `Mission with rocketId ${rocketId} and status ${missionStatus} not found`,
+        `Mission with rocketId ${rocketId
+          .slice(-3)
+          .toUpperCase()} and status ${missionStatus} not found`,
       );
     }
     return mission;
@@ -221,7 +224,7 @@ export class MissionService {
     await consumer.run({
       eachMessage: async ({ message }) => {
         const responseEvent = JSON.parse(message.value.toString());
-        await this.checkWeatherRocketStatus(responseEvent);
+        await this.checkRocketStatus(responseEvent);
         if (!responseEvent.event.includes('PRELAUNCH_CHECKS')) {
           await this.saveEvent(responseEvent.rocketId, responseEvent.event);
           const producer = this.kafka.producer();
@@ -237,13 +240,13 @@ export class MissionService {
     });
   }
 
-  async checkWeatherRocketStatus(responseEvent: any) {
+  async checkRocketStatus(responseEvent: any) {
+    logger.log(
+      `checking rocket ${responseEvent.rocketId
+        .slice(-3)
+        .toUpperCase()} status`,
+    );
     if (responseEvent.rocket_poll != undefined) {
-      logger.log(
-        `rocket Id ${responseEvent.rocketId.slice(-3).toUpperCase()} status ${
-          responseEvent.rocket_poll
-        } for launch`,
-      );
       await this.postMessageToKafka({
         rocketId: responseEvent.rocketId,
         event: 'PRELAUNCH_CHECKS : GO/NOGO Mission',
@@ -252,14 +255,12 @@ export class MissionService {
     }
 
     if (responseEvent.weather_poll != undefined) {
-      logger.log(
-        `weather for rocket Id ${responseEvent.rocketId
-          .slice(-3)
-          .toUpperCase()} status ${
-          responseEvent.weather_poll
-        } checked before launch`,
-      );
       if (responseEvent.weather_poll == true) {
+        logger.log(
+          `weather status OK for rocket ${responseEvent.rocketId
+            .slice(-3)
+            .toUpperCase()}`,
+        );
         await this.marsyRocketProxyService.retrieveRocketStatus(
           responseEvent.rocketId,
         );
@@ -277,42 +278,39 @@ export class MissionService {
     );
   }
 
-
-  async saveEvent(mission_id : string, event : string) : Promise<void> {
-    const  newEvent = new this.eventModel({
+  async saveEvent(mission_id: string, event: string): Promise<void> {
+    logger.log(`Saving event  for mission ${mission_id.slice(-3).toUpperCase()} (us 14)`);
+    const newEvent = new this.eventModel({
       mission_id,
       date: Date.now(),
-      event
+      event,
     });
     await newEvent.save();
   }
 
-  async getMissionLogs(id: string) : Promise<EventStored[]> {
-    const logs = await this.eventModel
-  .find({ mission_id : id })
-  .exec();
-  
-  if (logs.length === 0) {
-    logger.debug(`No event stored for mission ${id.slice(-3).toUpperCase()}`);
-  } else {
-    logger.log(`ALL EVENTS STORED FOR MISSION ${id.slice(-3).toUpperCase()}`);
-    for (let i = 0; i < logs.length; i++) {
-      const event = logs[i];
-      const formattedTime = event.date.toLocaleString('fr-FR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short',
-        timeZone: 'Europe/Paris',
-      });
-      logger.debug(`${i + 1}- ${formattedTime} => ${event.event}`);
-    }
-}
+  async getMissionLogs(id: string): Promise<EventStored[]> {
+    const logs = await this.eventModel.find({ mission_id: id }).exec();
 
-  return logs;
+    if (logs.length === 0) {
+      logger.debug(`No event stored for mission ${id.slice(-3).toUpperCase()}`);
+    } else {
+      logger.log(`ALL EVENTS STORED FOR MISSION ${id.slice(-3).toUpperCase()}`);
+      for (let i = 0; i < logs.length; i++) {
+        const event = logs[i];
+        const formattedTime = event.date.toLocaleString('fr-FR', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZoneName: 'short',
+          timeZone: 'Europe/Paris',
+        });
+        logger.debug(`${i + 1}- ${formattedTime} => ${event.event}`);
+      }
+    }
+
+    return logs;
   }
-    
 }

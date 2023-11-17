@@ -63,7 +63,8 @@ export class RocketController {
   async getRocket(@Param() params: { rocketId: string }): Promise<RocketDto> {
     try {
       const rocketId = params.rocketId; // Access the 'rocketName' property
-      logger.log(`Received request to get rocket by ID: ${rocketId}`);
+      logger.log(`Received request to get rocket by ID: ${rocketId.slice(-3)
+          .toUpperCase()}`);
       return this.rocketService.findRocket(rocketId);
     } catch (error) {
       logger.error(`Error while getting rocket by ID: ${error.message}`);
@@ -82,10 +83,12 @@ export class RocketController {
   ): Promise<SendStatusDto> {
     try {
       const rocketId = params.rocketId; // Access the 'rocketId' property
-      logger.log(`Received request to get rocket status by ID: ${rocketId}`);
+      logger.log(`Received request to get rocket status by ID: ${rocketId.slice(-3)
+          .toUpperCase()}`);
       const status = await this.rocketService.getRocketStatus(rocketId);
       logger.log(
-        `Successfully retrieved the status of rocket by ID: ${rocketId}`,
+        `Successfully retrieved the status of rocket by ID: ${rocketId.slice(-3)
+            .toUpperCase()}`,
       );
       return SendStatusDto.SendStatusDtoFactory(status);
     } catch (error) {
@@ -180,9 +183,11 @@ export class RocketController {
   async deleteRocket(@Param() params: { rocketId: string }): Promise<void> {
     try {
       const rocketId = params.rocketId; // Access the 'rocketId' property
-      logger.log(`Received request to delete rocket by ID: ${rocketId}`);
+      logger.log(`Received request to delete rocket by ID: ${rocketId.slice(-3)
+          .toUpperCase()}`);
       await this.rocketService.deleteRocket(rocketId);
-      logger.log(`Successfully deleted the rocket by ID: ${rocketId}`);
+      logger.log(`Successfully deleted the rocket by ID: ${rocketId.slice(-3)
+          .toUpperCase()}`);
     } catch (error) {
       logger.error(`Error while deleting rocket by ID: ${error.message}`);
       throw error;

@@ -15,7 +15,7 @@ export class WebCasterService {
   async announceEvent(event: EventDto) {
     const eventString: string = `News from ${event.rocketId
       .slice(-3)
-      .toUpperCase()} ${event.event}`;
+      .toUpperCase()} ${event.event} (us 15)`;
 
     const rocketId = event.rocketId;
     try {

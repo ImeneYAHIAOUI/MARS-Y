@@ -25,7 +25,7 @@ export class GuidanceHardwareProxyService {
 
 async deliverPayload(_rocketId: string): Promise<boolean> {
   try {
-    logger.log(`Requesting payload delivery for rocket ${_rocketId.slice(-3).toUpperCase()}`);
+    logger.log(`Requesting payload delivery for rocket ${_rocketId.slice(-3).toUpperCase()} (us 7)`);
     const response: AxiosResponse<DeliveryDto> = await firstValueFrom(
       this.httpService.post<DeliveryDto>(
         `${this._baseUrl}${this._guidancePath}/${_rocketId}/deliver`,

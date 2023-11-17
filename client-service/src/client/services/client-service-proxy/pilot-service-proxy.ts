@@ -18,7 +18,8 @@ export class PilotServiceProxy {
 
     async requestPilotDetails(rocketId :string): Promise<boolean> {
         try {
-        logger.log(`requesting pilot details for rocket ${rocketId} ${this._baseUrl}${this._pilot}/${rocketId}`);
+        logger.log(`requesting pilot details for rocket ${rocketId.slice(-3)
+            .toUpperCase()} (us 20)`);
         const response = await this.httpService
                 .post(`${this._baseUrl}${this._pilot}/${rocketId}`, { })
                 .toPromise();

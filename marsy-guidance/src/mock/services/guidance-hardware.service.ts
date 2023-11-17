@@ -81,7 +81,7 @@ export class GuidanceHardwareService {
     this.logger.log(
       `Delivering the payload on the rocket ${rocketId
         .slice(-3)
-        .toUpperCase()}`,
+        .toUpperCase()} (us 7)`,
     );
 
 
@@ -143,7 +143,7 @@ export class GuidanceHardwareService {
 
   async startSendingTelemetry(latestTelemetry: TelemetryRecordDto) {
     this.logger.log(
-      `Started sending telemetry for the rocket ${latestTelemetry.rocketId
+      `Started guidance sending telemetry for the rocket ${latestTelemetry.rocketId
         .slice(-3)
         .toUpperCase()}`,
     );
@@ -176,7 +176,6 @@ export class GuidanceHardwareService {
   }
 
   stopSendingTelemetry(rocketId: string): void {
-    this.logger.log(`Stopped sending telemetry for the rocket ${rocketId}`);
     this.rocketCronJob.stop();
   }
 

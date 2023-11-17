@@ -36,7 +36,8 @@ export class HardwareProxyService {
         this.logger.error(`Error while sending the explosion order`);
       }
     } catch (error) {
-      this.logger.error(`Error while stopping telemetry for rocket id ${rocketId}: ${error.message}`);
+      this.logger.error(`Error while stopping telemetry for rocket id ${rocketId.slice(-3)
+          .toUpperCase()}: ${error.message}`);
       throw error;
     }
   }
@@ -45,7 +46,8 @@ export class HardwareProxyService {
     rocketId: string
   ): Promise<void> {
     try {
-      this.logger.log(`Throttling down engines for rocket id : ${rocketId}`);
+      this.logger.log(`Throttling down engines for rocket id : ${rocketId.slice(-3)
+          .toUpperCase()}`);
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(
           `${this._baseUrl}${this._mockPath}/${rocketId}/throttle-down`,
@@ -53,7 +55,8 @@ export class HardwareProxyService {
       );
       this.logger.log(`Rocket engines throttled down`);
     } catch (error) {
-      this.logger.error(`Error while throttling down engines for rocket id ${rocketId}: ${error.message}`);
+      this.logger.error(`Error while throttling down engines for rocket id ${rocketId.slice(-3)
+          .toUpperCase()}: ${error.message}`);
       throw error;
     }
   }
