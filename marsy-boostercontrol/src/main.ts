@@ -18,17 +18,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   // Swagger UI Definition
-  const swaggeruiConfig = configService.get<SwaggerUIConfig>('swaggerui');
-  const config = new DocumentBuilder()
-    .setTitle(swaggeruiConfig.title)
-    .setDescription(swaggeruiConfig.description)
-    .setVersion(configService.get('npm_package_version'))
-    .addServer('/', 'Without gateway')
-    .addServer('/rocket', 'Through gateway')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(swaggeruiConfig.path, app, document);
-
+ const options = new DocumentBuilder()
+     .setTitle('Booster Service')
+     .setDescription('This service controls the booster telemetry data and assure the landing..')
+     .setVersion('1.0')
+     .build();
+   const document = SwaggerModule.createDocument(app, options);
+   SwaggerModule.setup('/doc/booster', app, document);
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();
 

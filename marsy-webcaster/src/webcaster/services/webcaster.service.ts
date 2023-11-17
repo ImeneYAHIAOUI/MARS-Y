@@ -11,7 +11,9 @@ export class WebCasterService {
   constructor(
     @InjectModel(Webcasting.name) private webcastingModel: Model<Webcasting>,
   ) {}
-
+  getService(): string {
+    return 'Welcome to the webcaster service!';
+  }
   async announceEvent(event: EventDto) {
     const eventString: string = `News from ${event.rocketId
       .slice(-3)

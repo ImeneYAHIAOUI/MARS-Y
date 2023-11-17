@@ -1,6 +1,7 @@
-import { Controller, Get, Post , Logger,Param } from '@nestjs/common';
+import { Controller, Get, Post , Logger, Param, HttpException, HttpStatus } from '@nestjs/common';
 import { AppService } from '../services/app.service';
 import { Kafka,EachMessagePayload } from 'kafkajs';
+import {ApiOkResponse, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 @Controller()
 export class AppController {
     private readonly logger = new Logger(AppController.name);
@@ -10,18 +11,22 @@ export class AppController {
   });
   constructor(private readonly appService: AppService) {
       this.receiveEventListener();
-}
+  }
 
   @Get()
+    @ApiOperation({ summary: 'Get client service information', description: 'Retrieve information about the client service.' })
+    @ApiResponse({ status: 200, description: 'Successful operation', type: String })
   getService(): string {
     return this.appService.getService();
   }
  @Post('/send')
+ @ApiOperation({ summary: ' initiates satellite launches ', description: 'client service initiates satellite launches.' })
+ @ApiResponse({ status: 500, description: 'Failed to initiate satellite launches : Internal server error' })
   async sendLaunchDetails(): Promise<void> {
     try {
-    this.logger.log('Sending launch details');
+    this.logger.log('Initializing launch details');
     } catch (error) {
-      throw new Error('Failed to send launch details');
+       throw new HttpException('Failed to initiate satellite launches', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 async receiveEventListener(): Promise<void> {
