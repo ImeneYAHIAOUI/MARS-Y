@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventDto } from '../dto/event.dto';
 import { Kafka, EachMessagePayload } from 'kafkajs';
 
 @Injectable()
@@ -29,22 +28,37 @@ export class BroadcastService {
       });
 
       await consumer.run({
-        eachMessage: async ({ topic, partition, message }: EachMessagePayload ) => {
+        eachMessage: async ({
+          topic,
+          partition,
+          message,
+        }: EachMessagePayload) => {
           try {
             const responseEvent = JSON.parse(message.value.toString());
-            const id = responseEvent.rocketId.toString().slice(-3).toUpperCase();
+            const id = responseEvent.rocketId
+              .toString()
+              .slice(-3)
+              .toUpperCase();
 
             if (message?.key.toString() === 'started') {
               this.logger.log('start broadcasting');
-              this.sendEventToClientService('BROADCASTING STARTED', responseEvent.rocketId.toString());
+              this.sendEventToClientService(
+                'BROADCASTING STARTED',
+                responseEvent.rocketId.toString(),
+              );
             }
 
             if (message?.key.toString() === 'adjustment') {
               this.logger.log(`broadcasting resumed of rocket  ${id}:`);
-              this.sendEventToClientService('BROADCASTING RESUMED', responseEvent.rocketId.toString());
+              this.sendEventToClientService(
+                'BROADCASTING RESUMED',
+                responseEvent.rocketId.toString(),
+              );
             }
 
-            this.logger.log(`New message received with satellite details of rocket ${id} (us 19)`);
+            this.logger.log(
+              `New message received with satellite details of rocket ${id} (us 19)`,
+            );
 
             const lat = responseEvent.latitude.toString();
             this.logger.log(`- Latitude: ${lat}`);
@@ -55,25 +69,38 @@ export class BroadcastService {
             const direction = responseEvent.direction.toString();
             this.logger.log(`- Direction: ${direction}`);
 
-            if (lat === 'undefined' || long === 'undefined' || speed === 'undefined' || direction === 'undefined') {
+            if (
+              lat === 'undefined' ||
+              long === 'undefined' ||
+              speed === 'undefined' ||
+              direction === 'undefined'
+            ) {
               this.logger.log('broadcasting disturbed');
-              this.sendEventToClientService('BROADCASTING DISTURBED', responseEvent.rocketId.toString());
+              this.sendEventToClientService(
+                'BROADCASTING DISTURBED',
+                responseEvent.rocketId.toString(),
+              );
             }
 
-            if (message?.key.toString() === 'terminated' ) {
-              this.sendEventToClientService('BROADCASTING TERMINATED', responseEvent.rocketId.toString());
+            if (message?.key.toString() === 'terminated') {
+              this.sendEventToClientService(
+                'BROADCASTING TERMINATED',
+                responseEvent.rocketId.toString(),
+              );
               this.logger.log('broadcasting terminated');
             }
-
           } catch (error) {
-                const id = JSON.parse(message.value.toString()).rocketId.toString().slice(-3).toUpperCase();
-                this.logger.error(`Error processing satellite details of rocket ${id}:`, error);
-
-
+            const id = JSON.parse(message.value.toString())
+              .rocketId.toString()
+              .slice(-3)
+              .toUpperCase();
+            this.logger.error(
+              `Error processing satellite details of rocket ${id}:`,
+              error,
+            );
           }
         },
       });
-
     } catch (error) {
       this.logger.error('Error connecting to Kafka:', error);
       await consumer.disconnect();
@@ -94,7 +121,6 @@ export class BroadcastService {
         topic: 'client-service-events',
         messages: [{ value: JSON.stringify(payload) }],
       });
-
     } finally {
       await producer.disconnect();
     }
