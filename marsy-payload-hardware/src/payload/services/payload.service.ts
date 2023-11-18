@@ -198,7 +198,6 @@ export class PayloadHardwareService {
   }
 
   async delegateControlToPilotService(controlData: ControlDataDto) {
-    this.logger.log(controlData);
     const id = controlData.rocketId.slice(-3).toUpperCase();
     this.logger.log(
       `Adjusting satellite positioning for rocket with ID ${id

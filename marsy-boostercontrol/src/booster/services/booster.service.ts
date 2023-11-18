@@ -58,7 +58,11 @@ export class BoosterService {
 
         this.missionProxyService.updateMission(missionBoosterDto);
         logger.log(
-          `Booster has landed successfully for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`,
+          `Booster has landed successfully for mission ${missionBoosterDto._id
+            .slice(-3)
+            .toUpperCase()} at latitude ${
+            boosterTelemetryDto.latitude
+          } and longitude ${boosterTelemetryDto.longitude}.`,
         );
       }
     } catch (e) {

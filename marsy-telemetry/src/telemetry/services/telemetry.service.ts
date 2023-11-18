@@ -222,9 +222,9 @@ export class TelemetryService {
         }
         if (sender === 'payload-hardware') {
           this.logger.log(
-              `Retrieving telemetry from the payload of the staged rocket ${rocketId
-                  .slice(-3)
-                  .toUpperCase()} (us 11)`,
+             `Retrieving telemetry from the payload of the staged rocket ${rocketId
+              .slice(-3)
+              .toUpperCase()} (us 11)`,
           );
           const rocketId = JSON.parse(message.value.toString()).rocketId;
           await this.storePayLoadTelemetry(telemetry);

@@ -68,11 +68,11 @@ tests() {
 
   sleep 1
 
-rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket8","status":"readyForLaunch"}' "${API_CONTROL_URL}")
+rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket","status":"readyForLaunch"}' "${API_CONTROL_URL}")
 rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite8","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
+site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
 site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission8","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
+mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
 mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
 
@@ -82,6 +82,10 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
 sleep 60
+
+curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
+curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
+curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
 
 
 TIMESTAMP=$(date +%s)
@@ -115,10 +119,21 @@ JSON_DATA=$(cat <<EOF
 EOF
 )
 
+
+
 clear
 echo "..."
 echo "..."
 echo -e "\n\n\nscenario 2 : send telemetry data to trigger rocket destruction"
+
+rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
+rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite9","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
+site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission9","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
+mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
+
+sleep 5
 
 API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
@@ -134,9 +149,7 @@ sleep 10
 
 
 
-curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
-curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
-curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
+
 
 sleep 2
 
@@ -149,11 +162,11 @@ echo -e "\nScenario 3 : launch second rocket\n\n\n"
 sleep 1
 
 
-rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
+rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket10","status":"readyForLaunch"}' "${API_CONTROL_URL}")
 rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite9","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
+site_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testSite10","latitude":1,"longitude":1,"altitude":1}' "${API_SITE_URL}")
 site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
-mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission9","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
+mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission10","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
 mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
 

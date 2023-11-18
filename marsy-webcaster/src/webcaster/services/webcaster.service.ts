@@ -37,7 +37,7 @@ export class WebCasterService {
         });
       }
 
-      this.logger.debug(eventString);
+      this.logger.log(`\x1b[35m${eventString}\x1b[0m`);
     } catch (error) {
       this.logger.error(`An error occurred: ${error.message}`);
     }
