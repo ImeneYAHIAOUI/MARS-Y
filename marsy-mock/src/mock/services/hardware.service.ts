@@ -230,9 +230,6 @@ export class HardwareService {
   }
 
   retrieveTelemetry(rocketId: string): TelemetryRecordDto {
-    this.logger.log(
-      `Sending telemetry from the rocket ${rocketId.slice(-3).toUpperCase()}`,
-    );
     const rocketTelemetry = this.rockets.find((rocket) => {
       return rocket.rocketId === rocketId;
     });
