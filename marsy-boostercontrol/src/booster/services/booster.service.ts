@@ -45,7 +45,7 @@ export class BoosterService {
           const res = this.missionProxyService.updateMission(missionBoosterDto);
           if (res) {
             logger.log(
-              `Booster is landing for mission ${missionBoosterDto._id} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`,
+              `Booster is landing for mission ${missionBoosterDto._id.slice(-3).toUpperCase()} at latitude ${boosterTelemetryDto.latitude} and longitude ${boosterTelemetryDto.longitude}.`,
             );
           }
         }
