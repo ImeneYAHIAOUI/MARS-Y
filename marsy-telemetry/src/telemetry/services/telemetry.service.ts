@@ -221,12 +221,12 @@ export class TelemetryService {
           await this.publishBoosterTelemetry(telemetry, rocketId);
         }
         if (sender === 'payload-hardware') {
+          const rocketId = JSON.parse(message.value.toString()).rocketId;
           this.logger.log(
-             `Retrieving telemetry from the payload of the staged rocket ${rocketId
+            `Retrieving telemetry from the payload of the staged rocket ${rocketId
               .slice(-3)
               .toUpperCase()} (us 11)`,
           );
-          const rocketId = JSON.parse(message.value.toString()).rocketId;
           await this.storePayLoadTelemetry(telemetry);
           await this.publishPayloadTelemetry(telemetry, rocketId);
         }

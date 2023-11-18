@@ -248,10 +248,7 @@ export class HardwareService {
       ? rocketTelemetry.telemetry.speed + throttle
       : 0;
 
-    rocketTelemetry.throttle &&
-      this.logger.log(
-        `Approaching the max Q altitude with throttled speed ${newSpeed}`,
-      );
+    rocketTelemetry.throttle;
 
     rocketTelemetry.telemetry = {
       timestamp: Date.now(),

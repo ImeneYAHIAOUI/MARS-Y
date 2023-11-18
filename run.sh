@@ -81,7 +81,7 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 60
+sleep 48
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
@@ -157,7 +157,7 @@ clear
 
 echo -e "Starting tests..."
 
-echo -e "\nScenario 3 : launch second rocket\n\n\n"
+echo -e "\nScenario 3 : launch second rocket with service failure\n\n\n"
 
 sleep 1
 
