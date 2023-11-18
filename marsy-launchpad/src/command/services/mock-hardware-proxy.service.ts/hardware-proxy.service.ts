@@ -38,7 +38,6 @@ export class HardwareProxyService {
 
   async sleepEngine(): Promise<void> {
     try {
-      logger.log(`Request to sleep engine`);
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(`${this._baseUrl}${this._hardwarePath}/sleep`, {
         }),
