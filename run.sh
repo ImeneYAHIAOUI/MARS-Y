@@ -2,7 +2,6 @@
 
 # List of service names and their docker-compose files
 services=(
-    "kafka-service:kafka-service/docker-compose-kafka-service.yml"
     "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
     "marsy-launchpad:marsy-launchpad/docker-compose-marsy-launchpad.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
@@ -20,6 +19,17 @@ services=(
 )
 container_ids=()
 
+echo "Starting service kafka-service..."
+docker compose --env-file ./.env.docker -f kafka-service/docker-compose-kafka-service.yml up -d
+
+echo "Waiting for the broker to be setup..."
+
+sleep 5
+
+echo "Creating topics..."
+
+kafka-service/init-topic.sh
+
 start_service() {
     local service_name=$1
     local compose_file=$2
@@ -34,9 +44,14 @@ for service in "${services[@]}"; do
     compose_file=${service_info[1]}
 
     start_service "$service_name" "$compose_file"
+    sleep 1
 done
 
+sleep 2
 
+echo "Done starting services."
+
+echo "Launching Tests now..."
 
 # Function to format HTTP response codes with colors
 format_http_code() {
@@ -81,14 +96,14 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 48
+sleep 44
 
 clear
 echo -e "\n\n\nscenario 1 History"
 
 curl -s -w "%{http_code}" -o /dev/null -X GET "${API_MISSION_URL}/${mission_id}/logs"
 
-sleep 6
+sleep 4
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
@@ -131,7 +146,7 @@ EOF
 clear
 echo "..."
 echo "..."
-echo -e "\n\n\nscenario 2 : send telemetry data to trigger rocket destruction"
+echo -e "\n\nscenario 2 : send telemetry data to trigger rocket destruction"
 
 rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
 rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
@@ -140,7 +155,7 @@ site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission9","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
 mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
-sleep 5
+sleep 3
 
 API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
@@ -151,18 +166,11 @@ echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
 
 sleep 10
 
-
-
-
-
-
 sleep 2
 
 clear
 
-echo -e "Starting tests..."
-
-echo -e "\nScenario 3 : launch second rocket with service failure\n\n\n"
+echo -e "\nScenario 3 : launch second rocket with service failure\n\n"
 
 sleep 1
 
