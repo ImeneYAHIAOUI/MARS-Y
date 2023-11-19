@@ -98,5 +98,4 @@ The overall build and run of all services (+ the integration testing service) ar
 
 ## Rapport :
 
-- Notre rapport est sous le repertoire docs/report.pdf.
-  Pour une meilleure qualité des diagmmes, les liens fournis dans le rapport doivent être ouverts dans draw.io, ils contiennent tous les schémas qui s'y trouvent.
+- Our report is located in the directory docs/report.pdf. For better visualisation of the diagrams, we added the draw.io links in the report 
