@@ -14,6 +14,7 @@ docker compose  --env-file ./.env.docker \
                 --file marsy-payload-hardware/docker-compose-marsy-payload-hardware.yml \
                 --file marsy-guidance/docker-compose-marsy-guidance.yml \
                 --file kafka-service/docker-compose-kafka-service.yml \
+                --file load-tests/docker-compose.yml \
                 --file marsy-webcaster/docker-compose-marsy-webcaster.yml \
                 --file client-service/docker-compose-client-service.yml \
                 --file broadcast-service/docker-compose-broadcast-service.yml \

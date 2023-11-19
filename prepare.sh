@@ -22,6 +22,7 @@ compile_dir "marsy-webcaster"
 compile_dir "client-service"
 compile_dir "broadcast-service"
 compile_dir "pilot-service"
+compile_dir "load-tests"
 
 echo "** Done all"
 
