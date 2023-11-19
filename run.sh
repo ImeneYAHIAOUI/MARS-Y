@@ -98,8 +98,9 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 
 sleep 44
 
-clear
-echo -e "\n\n\nscenario 1 History"
+echo -e "\n\n\n\n\n\n\n\n"
+
+echo -e "\n\n\nscenario 1 History\n\n\n\n"
 
 curl -s -w "%{http_code}" -o /dev/null -X GET "${API_MISSION_URL}/${mission_id}/logs"
 
@@ -143,10 +144,9 @@ EOF
 
 
 
-clear
-echo "..."
-echo "..."
-echo -e "\n\nscenario 2 : send telemetry data to trigger rocket destruction"
+echo -e "\n\n\n\n\n\n\n\n\n\n..."
+echo -e "\n..."
+echo -e "\n\nscenario 2 : send telemetry data to trigger rocket destruction\n\n"
 
 rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
 rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
@@ -168,9 +168,9 @@ sleep 10
 
 sleep 2
 
-clear
 
-echo -e "\nScenario 3 : launch second rocket with service failure\n\n"
+
+echo -e "\n\n\n\n\n\n\n\n\n\n\nScenario 3 : launch second rocket with service failure\n\n\n\n\n"
 
 sleep 1
 
