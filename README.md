@@ -2,7 +2,13 @@
 
 - Authors: Team D (AL ACHKAR Badr/ BEN AISSA Nadim/ EL GAZZEH Sourour/ YAHIAOUI Imène)
 
-- The report can be found in ./docs under the name "report.pdf"
+- # The report can be found in ./docs under the name "report.pdf"
+
+## Report :
+
+- Our report is under docs/report.pdf
+
+For the best diagrams quality, the links provided in the report must be opened in draw.io, as they contain all the diagrams found there.
 
 ## Principles
 
