@@ -1,30 +1,33 @@
 # Marsy NestJS implementation
 
-* Authors: Team D (AL ACHKAR / BEN AISSA / EL GAZZEH / YAHIAOUI)
+* Authors: Team D (AL ACHKAR Badr/ BEN AISSA Nadim/ EL GAZZEH Sourour/ YAHIAOUI Imène)
 
-* The report can be found in ./docs under the name "MVP SOA.pdf"
+* The report can be found in ./docs under the name "soa_final_report.pdf"
 
 ## Principles
 
 * Bounded contexts used for the different context of usage within the Marsy missions
 * Isolated micro-services with own DB
-
-**Not applied:**
-
 * Event sourcing with event bus
-* Full DDD
+* Relative DDD
 
 ## Features
 
-* Marsy Launchpad (rocket command departement)
-* Marsy Mission (mission departement)
-* Marsy Telemetry (recieve, store and retreive telemetry)
-* Marsy Weather (send weather for site)
-* Marsy Payload (Payload Department)
-* Marsy Booster (controls the booster while landing)
-* Marsy Hardware (Responsible for generating telemetry in each step of the mission)
+* Marsy LaunchPad (Representing the rocket command departement) 
+* Marsy Mission (Representing the mission departement)
+* Marsy Telemetry (Representing the telemetry department)
+* Marsy Weather (Representing the weather monitoring department)
+* Marsy Payload (Representing the payload department)
+* Marsy BoosterControl (Controls the booster while landing)
+* Marsy HardwareMock (Responsible for generating telemetry as propelant and booster in two phases of the mission)
+* Marsy GuidanceHardwareMock (Responsible for generating telemetry as guidance system in the second phase of the mission)
+* Marsy PayloadHardawreMock (Responsible for generating telemetry as payload in the last phase of the mission)
+* Marsy WebCaster (Webcasting the mission in the Web flux)
+* Marsy Client (Representing the client who owns the satellite after the mission)
+* Marsy Broadcast (Responsible for broadcasting details coming from the satellite)
+* Marsy Pilot (Representing the piloting team of the satellite to change its params)
 
-**Not yet implemented:**
+**Not implemented:**
 
 * Gateway
 
@@ -38,6 +41,7 @@
 * `marsy-payload` (deployed on `http://localhost:3006` with API doc at `/doc/payload`): controls the delivery of the payload.
 * `marsy-mock` (deployed on `http://localhost:3005` with API doc at `/doc/mock`): represents the primary hardware of the system, responsible for the main actions of the rocket and for generating telemetry data for the rocket's first stage as well as for the booster after staging.
 * `marsy-guidance` (deployed on `http://localhost:3007` with API doc at `/doc/guidance`): responsible for guiding the rocket during the second stage and generating telemetry data.
+* `marsy-payload-hardware` (deployed on `http://localhost:3010` with API doc at `/doc/payload-hardware`): represent the payload after its has been deployed and sends telemetry data about it while stabilizing in its orbit.
 * `pilot-service` (deployed on `http://localhost:3026` with API doc at `/doc/pilot`): This service allows for the adjustment of a satellite's orbit.
 * `webcaster-service` (deployed on `http://localhost:3011` with API doc at `/doc/webcaster`): The role of the Webcaster service is to provide real-time updates about launch procedure events.
 * `broacast-service` (deployed on `http://localhost:3021` with API doc at `/doc/broadcast`): The broadcast service shares information about the satellite's orbit launch.
