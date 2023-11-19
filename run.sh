@@ -64,7 +64,7 @@ tests() {
 
   echo -e "Starting tests..."
 
-  echo -e "\nrocket 1 : launch rocket without destroying it\n\n\n"
+  echo -e "\nscenario 1 : launch rocket without destroying it\n\n\n"
 
   sleep 1
 
