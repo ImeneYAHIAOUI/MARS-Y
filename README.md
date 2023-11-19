@@ -2,7 +2,11 @@
 
 * Authors: Team D (AL ACHKAR Badr/ BEN AISSA Nadim/ EL GAZZEH Sourour/ YAHIAOUI Imène)
 
-* The report can be found in ./docs under the name "report.pdf"
+ ## Report :
+ 
+* Our report is under docs/report.pdf
+  
+For the best diagrams quality, the links provided in the report must be opened in draw.io, as they contain all the diagrams found there.
 
 ## Principles
 
@@ -76,9 +80,6 @@ The overall build and run of all services (+ the integration testing service) ar
 * Execute script `prepare.sh` to Load dependencies, compile if necessary, prepare the environment and build the docker containers.
 * Execute script `run.sh` start the services and to run the three scenarios explained in the report.
 
-​ ## Work distribution :
+​## Work distribution :
 * At the beginning of each week, we assign tasks through user stories, using GitHub issues to allocate and monitor the progress of each user story. Each team member is individually responsible for completing their user stories while meeting the specified acceptance criteria. Consequently, we attribute a score of (**100**) points to each team member.
 
- ## Rapport :
-* Notre rapport est sous le repertoire docs/report.pdf.
-Pour une meilleure qualité des diagmmes, les liens fournis dans le rapport doivent être ouverts dans draw.io, ils contiennent tous les schémas qui s'y trouvent.
