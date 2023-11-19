@@ -2,7 +2,6 @@
 
 # List of service names and their docker-compose files
 services=(
-    "kafka-service:kafka-service/docker-compose-kafka-service.yml"
     "marsy-weather:marsy-weather/docker-compose-marsy-weather.yml"
     "marsy-launchpad:marsy-launchpad/docker-compose-marsy-launchpad.yml"
     "marsy-mission:marsy-mission/docker-compose-marsy-mission-alone.yml"
@@ -97,14 +96,14 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/powerOn")
 rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_CONTROL_URL}/${rocket_id}/launch")
 
-sleep 48
+sleep 44
 
 clear
 echo -e "\n\n\nscenario 1 History"
 
 curl -s -w "%{http_code}" -o /dev/null -X GET "${API_MISSION_URL}/${mission_id}/logs"
 
-sleep 6
+sleep 4
 
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
@@ -156,7 +155,7 @@ site_id=$(echo "$site_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 mission_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testMission9","site":"'"$site_id"'","rocket":"'"$rocket_id"'"}' "${API_MISSION_URL}")
 mission_id=$(echo "$mission_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 
-sleep 5
+sleep 3
 
 API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
@@ -166,11 +165,6 @@ rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$A
 echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
 
 sleep 10
-
-
-
-
-
 
 sleep 2
 
