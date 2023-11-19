@@ -20,6 +20,17 @@ services=(
 )
 container_ids=()
 
+echo "Starting service kafka-service..."
+docker compose --env-file ./.env.docker -f kafka-service/docker-compose-kafka-service.yml up -d
+
+echo "Waiting for the broker to be setup..."
+
+sleep 5
+
+echo "Creating topics..."
+
+kafka-service/init-topic.sh
+
 start_service() {
     local service_name=$1
     local compose_file=$2
@@ -34,9 +45,14 @@ for service in "${services[@]}"; do
     compose_file=${service_info[1]}
 
     start_service "$service_name" "$compose_file"
+    sleep 1
 done
 
+sleep 2
 
+echo "Done starting services."
+
+echo "Launching Tests now..."
 
 # Function to format HTTP response codes with colors
 format_http_code() {
@@ -131,7 +147,7 @@ EOF
 clear
 echo "..."
 echo "..."
-echo -e "\n\n\nscenario 2 : send telemetry data to trigger rocket destruction"
+echo -e "\n\nscenario 2 : send telemetry data to trigger rocket destruction"
 
 rocket_response=$(curl -s -X POST -H "Content-Type: application/json" -d '{"name":"testRocket9","status":"readyForLaunch"}' "${API_CONTROL_URL}")
 rocket_id=$(echo "$rocket_response" | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
@@ -160,9 +176,7 @@ sleep 2
 
 clear
 
-echo -e "Starting tests..."
-
-echo -e "\nScenario 3 : launch second rocket with service failure\n\n\n"
+echo -e "\nScenario 3 : launch second rocket with service failure\n\n"
 
 sleep 1
 
