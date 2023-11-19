@@ -2,7 +2,7 @@
 
 * Authors: Team D (AL ACHKAR Badr/ BEN AISSA Nadim/ EL GAZZEH Sourour/ YAHIAOUI Imène)
 
-* The report can be found in ./docs under the name "soa_final_report.pdf"
+* The report can be found in ./docs under the name "report.pdf"
 
 ## Principles
 
