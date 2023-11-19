@@ -7,6 +7,7 @@ import {
     ApiTags
   } from '@nestjs/swagger';
 import { BoosterTelemetryDto } from '../dtos/booster.telemetry.dto';
+import { BoosterDto } from '../dtos/booster.dto';
 
 const logger = new Logger('BoosterController');
 
@@ -22,6 +23,10 @@ export class BoosterController {
    @Param() params: { rocketId: string }) : Promise<string> {
     logger.log(`Received booster telemetry data  for mission id ${boosterTelemetryDto.missionId}`);
     return this.boosterService.receiveBoosterData(boosterTelemetryDto, params.rocketId);
+  }
 
+  @Post()
+  async createBooster(@Body() BoosterDto: BoosterDto) : Promise<void> {
+    return this.boosterService.createBooster(BoosterDto);
   }
 }

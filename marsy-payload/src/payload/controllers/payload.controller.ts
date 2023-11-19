@@ -2,6 +2,7 @@ import {
   Controller,
   Param,
   Post,
+  Put,
   Logger,
   HttpCode,
   Body,
@@ -11,6 +12,7 @@ import { RocketNotFoundException } from '../exceptions/rocket-not-found.exceptio
 import { TelemetryDto } from '../dto/telemetry.dto';
 import { PayloadService } from '../services/payload.service';
 import { PayloadDeliveryDto } from '../dto/payload-delivery.dto';
+import { PayloadDto } from '../dto/payload.dto';
 
 @ApiTags('payload')
 @Controller('/payload')
@@ -23,7 +25,7 @@ export class PayloadController {
     type: RocketNotFoundException,
     description: 'Rocket not found',
   })
-  @Post(':rocketId/telemetry')
+  @Put(':rocketId/telemetry/delivery')
   @HttpCode(200)
   async receiveTelemetry(
     @Param() params: { rocketId: string },
@@ -40,12 +42,20 @@ export class PayloadController {
     );
   }
 
+  @Post()
+  @HttpCode(200)
+  async receivePayloadDelivery(
+    @Body() payload: PayloadDto,
+  ): Promise<void> {
+    return await this.payloadService.createPayload(payload);
+  }
+
   @ApiParam({ name: 'rocketId' })
   @ApiNotFoundResponse({
     type: RocketNotFoundException,
     description: 'Rocket not found',
   })
-  @Post('telemetry/delivery')
+  @Post(':rocketId/telemetry')
   @HttpCode(200)
   async receiveTelemetryAfterDelivery(
     @Body() telemetry: TelemetryDto,

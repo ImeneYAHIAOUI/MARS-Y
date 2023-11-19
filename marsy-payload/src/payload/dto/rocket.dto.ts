@@ -7,10 +7,10 @@ export class RocketDto {
   @IsMongoId()
   _id: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  name: string;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // name: string;
 
-  @ApiProperty()
-  status: string;
+  // @ApiProperty()
+  // status: string;
 }

@@ -4,6 +4,7 @@ import { HardwareProxyService } from './proxies/hardware-proxy.service';
 import { MarsyMissionProxyService } from './proxies/mission-proxy.service';
 import { MissionBoosterDto } from '../dtos/mission.booster.dto';
 import { Kafka } from 'kafkajs';
+import { BoosterDto } from '../dtos/booster.dto';
 
 const logger = new Logger('BoosterControlService');
 
@@ -71,6 +72,10 @@ export class BoosterService {
 
     return 'Booster telemetry received!';
   }
+
+  createBooster(boosterDto: BoosterDto){
+  }
+
   async receiveTelemetryListener(): Promise<void> {
     const consumer = this.kafka.consumer({ groupId: 'booster-consumer-group' });
     await consumer.connect();

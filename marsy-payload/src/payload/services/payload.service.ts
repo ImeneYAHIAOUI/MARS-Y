@@ -3,6 +3,7 @@ import { MarsyLaunchpadProxyService } from './marsy-launchpad-proxy/marsy-launch
 import { TelemetryDto } from '../dto/telemetry.dto';
 import { PayloadDeliveryDto } from '../dto/payload-delivery.dto';
 import { Kafka } from 'kafkajs';
+import { PayloadDto } from '../dto/payload.dto';
 
 const logger = new Logger('PayloadService');
 
@@ -85,6 +86,9 @@ export class PayloadService {
         telemetry.longitude
       } - angle: ${telemetry.angle.toPrecision(1)} ** PAYLOAD IN RIGHT ORBIT`,
     );
+  }
+
+  createPayload(payload: PayloadDto): void | Promise<void> {
   }
 
   async receiveTelemetryListener(): Promise<PayloadDeliveryDto | void> {
