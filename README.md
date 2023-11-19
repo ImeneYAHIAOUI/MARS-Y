@@ -86,6 +86,7 @@ The overall build and run of all services (+ the integration testing service) ar
 - Execute script `prepare.sh` to Load dependencies, compile if necessary, prepare the environment and build the docker containers.
 - Execute script `run.sh` start the services and to run the three scenarios explained in the report.
 
+
 ## Load testing :
 
 - We used the tool `k6` to perform load testing on the different services. The script used for the load testing is located in the `load-testing` folder.
