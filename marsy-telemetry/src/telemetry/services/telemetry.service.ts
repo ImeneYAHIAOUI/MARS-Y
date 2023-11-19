@@ -213,9 +213,7 @@ export class TelemetryService {
         if (sender === 'booster') {
           const rocketId = JSON.parse(message.value.toString()).rocketId;
           this.logger.log(
-            `Retrieving telemetry from the booster of the staged rocket ${rocketId
-              .slice(-3)
-              .toUpperCase()} (us 10)`,
+            `Retrieving telemetry from the booster of the staged rocket (us 10)`,
           );
           await this.storeBoosterTelemetryRecord(telemetry, rocketId);
           await this.publishBoosterTelemetry(telemetry, rocketId);
@@ -223,9 +221,7 @@ export class TelemetryService {
         if (sender === 'payload-hardware') {
           const rocketId = JSON.parse(message.value.toString()).rocketId;
           this.logger.log(
-            `Retrieving telemetry from the payload of the staged rocket ${rocketId
-              .slice(-3)
-              .toUpperCase()} (us 11)`,
+            `Retrieving telemetry from the payload of the staged rocket (us 11)`,
           );
           await this.storePayLoadTelemetry(telemetry);
           await this.publishPayloadTelemetry(telemetry, rocketId);

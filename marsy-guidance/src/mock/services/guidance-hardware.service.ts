@@ -182,12 +182,6 @@ export class GuidanceHardwareService {
   }
 
   startSendingPayloadHardwareTelemetry(rocketId: string) {
-    this.logger.log(
-      `Started sending payload hardware telemetry for the rocket ${rocketId
-        .slice(-3)
-        .toUpperCase()}`,
-    );
-
     setTimeout(async () => {
       const rocketTelemetry = this.rockets.find((rocket) => {
         return rocket.rocketId === rocketId;

@@ -83,6 +83,13 @@ rocket_launch_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "${API_C
 
 sleep 48
 
+clear
+echo -e "\n\n\nscenario 1 History"
+
+curl -s -w "%{http_code}" -o /dev/null -X GET "${API_MISSION_URL}/${mission_id}/logs"
+
+sleep 6
+
 curl -s -X DELETE "${API_CONTROL_URL}/${rocket_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_SITE_URL}/${site_id}" -w "%{http_code}" >/dev/null
 curl -s -X DELETE "${API_MISSION_URL}/${mission_id}" -w "%{http_code}" >/dev/null
@@ -141,8 +148,6 @@ API_HARDWARE_URL="http://localhost:3005/mock/evaluateDestruction"
 
 rocket_destruction_response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$API_HARDWARE_URL" -H "Content-Type: application/json" -d "$JSON_DATA")
 echo -e "HTTP Response Code: $(format_http_code "$rocket_destruction_response")"
-
-curl -s -w "%{http_code}" -o /dev/null -X GET "${API_MISSION_URL}/${mission_id}/logs"
 
 sleep 10
 
