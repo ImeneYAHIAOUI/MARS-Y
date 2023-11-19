@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  k6-test:
+    image: k6-image
+    command: run --vus 10 --duration 30s /scripts/test.ts
+    networks:
+      - nestjs-marsy-network
+
+
+
+networks:
+  nestjs-marsy-network:
+    driver: bridge

@@ -50,3 +50,5 @@ build/
 
 ### Mono build ###
 **/*.exe
+/load-tests/node_modules/
+/node_modules/
