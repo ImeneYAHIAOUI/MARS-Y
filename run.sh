@@ -28,7 +28,7 @@ sleep 5
 
 echo "Creating topics..."
 
-kafka-service/init-topic.sh
+./kafka-service/init-topic.sh
 
 start_service() {
     local service_name=$1
